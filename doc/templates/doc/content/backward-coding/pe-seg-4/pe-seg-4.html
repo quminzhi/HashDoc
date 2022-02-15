@@ -32,7 +32,7 @@
 </ul>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/MessageBox.png' %}" alt="Address of MessageBox" />
+<img src="{% static 'doc/images/backward-coding/MessageBox.png' %}" alt="Address of MessageBox" />
 <figcaption>Address of MessageBox</figcaption>
 </figure>
 
@@ -113,7 +113,7 @@ int main(int argc, char* argv[]) {
 <p>Therefore, the complete hard code is <code>6A 00 6A 00 6A 00 6A 00 E8 XX XX XX XX E9 XX XX XX XX</code>. We are going to insert the hard code to code section(.text).</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/insertToCodeSection.png' %}" alt="Insert to Code Section" />
+<img src="{% static 'doc/images/backward-coding/insertToCodeSection.png' %}" alt="Insert to Code Section" />
 <figcaption>Insert to Code Section</figcaption>
 </figure>
 
@@ -163,7 +163,7 @@ EntryPoint = AddressOfEntryPoint + ImageBase = 739d + 1000000 = 100739d</code></
 <p>Therefore, we know that <code>Available Memory Size = SizeOfRawData[0] - Misc[0] = 7800 - 7748 = 52 bytes</code>, and <code>The End Of Code[0] = PointerToRawData[0] + Misc[0] = 400 + 7748 = 7B48</code>.</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/endOfCode.png' %}" alt="End of Code in Section 0" />
+<img src="{% static 'doc/images/backward-coding/endOfCode.png' %}" alt="End of Code in Section 0" />
 <figcaption>End of Code in Section 0</figcaption>
 </figure>
 
@@ -355,7 +355,7 @@ void TEST_AddShellCodeToCodeSection();</code></pre>
 <p>In general, the member <code>SizeOfHeaders</code> is immune to change since it will change the address of following code when it is changed.</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/fileBuffer.png' %}" alt="Diagram of SizeOfHeaders" />
+<img src="{% static 'doc/images/backward-coding/fileBuffer.png' %}" alt="Diagram of SizeOfHeaders" />
 <figcaption>Diagram of SizeOfHeaders</figcaption>
 </figure>
 
@@ -381,7 +381,7 @@ typedef struct _IMAGE_SECTION_HEADER {
 <p>From the struct of a section header, we know that the size of it is 40(0x28) bytes. We need at least two section headers - one is reserved for new section and the other (all zero) is for checking end of section as requested by Win32 system.</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/addNewSection.png' %}" alt="Add New Section" />
+<img src="{% static 'doc/images/backward-coding/addNewSection.png' %}" alt="Add New Section" />
 <figcaption>Add New Section</figcaption>
 </figure>
 
@@ -520,14 +520,14 @@ Characteristics: 60000020</code></pre>
 <p>Yet, when we execute new notepad, alas!</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/dllError.png' %}" alt="DLL Indexing Error" />
+<img src="{% static 'doc/images/backward-coding/dllError.png' %}" alt="DLL Indexing Error" />
 <figcaption>DLL Indexing Error</figcaption>
 </figure>
 
 <p>Take a look back to original notepad, we will find there is some .dll indexing code right after section table. However, we overwrite it!</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/dllIndexing.png' %}" alt="DLL Indexing Code" />
+<img src="{% static 'doc/images/backward-coding/dllIndexing.png' %}" alt="DLL Indexing Code" />
 <figcaption>DLL Indexing Code</figcaption>
 </figure>
 

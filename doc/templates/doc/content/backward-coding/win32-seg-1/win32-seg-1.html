@@ -46,14 +46,14 @@
 <p>For standard ASCII, it takes 7 bits, ranging from 0 ~ 128. In memory, it takes 1 byte block. For example, <code>65</code> (<code>0x41</code> or <code>0x01000001</code>) for <code>A</code>.</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/ascii-table.png' %}" alt="Standard ASCII Table" />
+<img src="{% static 'doc/images/backward-coding/ascii-table.png' %}" alt="Standard ASCII Table" />
 <figcaption>Standard ASCII Table</figcaption>
 </figure>
 
 <p>To store more symbols, programmers take use of the most significant bit, ranging from 128 ~ 255, which is called ANSI encoding. For example, <code>128</code> (<code>0x80</code> or <code>0x10000000</code>) for <code>?</code>.</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/ascii-table-extended.png' %}" alt="Extended ASCII Table" />
+<img src="{% static 'doc/images/backward-coding/ascii-table-extended.png' %}" alt="Extended ASCII Table" />
 <figcaption>Extended ASCII Table</figcaption>
 </figure>
 
@@ -269,7 +269,7 @@ The <code>GetLastError</code> function retrieves the calling thread&#8217;s last
 --&gt; call WindowProc() </code></pre>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/message-flow.png' %}" alt="Message Flow" />
+<img src="{% static 'doc/images/backward-coding/message-flow.png' %}" alt="Message Flow" />
 <figcaption>Message Flow</figcaption>
 </figure>
 
@@ -576,7 +576,7 @@ Avoiding Bottlenecks in Your Window Procedure: While your window procedure execu
 <p>The first time a window is shown, the entire client area of the window must be painted. Therefore, you will always receive at least one <code>WM_PAINT</code> message when you show a window.</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/painting-01.png' %}" alt="Client Area" />
+<img src="{% static 'doc/images/backward-coding/painting-01.png' %}" alt="Client Area" />
 <figcaption>Client Area</figcaption>
 </figure>
 
@@ -585,14 +585,14 @@ Avoiding Bottlenecks in Your Window Procedure: While your window procedure execu
 <p>Now suppose the user moves another window so that it obscures a portion of your window. When the obscured portion becomes visible again, that portion is added to the update region, and your window receives another <code>WM_PAINT</code> message.</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/painting-02.png' %}" alt="Update Region" />
+<img src="{% static 'doc/images/backward-coding/painting-02.png' %}" alt="Update Region" />
 <figcaption>Update Region</figcaption>
 </figure>
 
 <p>The update region also changes if the user stretches the window. In the following diagram, the user stretches the window to the right. The newly exposed area on the right side of the window is added to the update region:</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/painting-03.png' %}" alt="Stretch" />
+<img src="{% static 'doc/images/backward-coding/painting-03.png' %}" alt="Stretch" />
 <figcaption>Stretch</figcaption>
 </figure>
 
@@ -616,7 +616,7 @@ Avoiding Bottlenecks in Your Window Procedure: While your window procedure execu
 <p>Start the painting operation by calling the BeginPaint function. This function fills in the <code>PAINTSTRUCT</code>structure with information on the repaint request. The current update region is given in the <code>rcPaint</code> member of <code>PAINTSTRUCT</code>. This update region is defined relative to the client area:</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/painting-04.png' %}" alt="Location" />
+<img src="{% static 'doc/images/backward-coding/painting-04.png' %}" alt="Location" />
 <figcaption>Location</figcaption>
 </figure>
 
@@ -670,7 +670,7 @@ Avoiding Bottlenecks in Your Window Procedure: While your window procedure execu
 <code>WM_DESTROY</code> messages:</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/wmclose-01.png' %}" alt="Close the Window" />
+<img src="{% static 'doc/images/backward-coding/wmclose-01.png' %}" alt="Close the Window" />
 <figcaption>Close the Window</figcaption>
 </figure>
 

@@ -217,7 +217,7 @@ typedef IMAGE_THUNK_DATA32* PIMAGE_THUNK_DATA32;				</code></pre>
 <p>After introducing each table, how they are related to each other?</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/ImportTableRelationship.png' %}" alt="Relationship among Tables" />
+<img src="{% static 'doc/images/backward-coding/ImportTableRelationship.png' %}" alt="Relationship among Tables" />
 <figcaption>Relationship among Tables</figcaption>
 </figure>
 
@@ -227,7 +227,7 @@ typedef IMAGE_THUNK_DATA32* PIMAGE_THUNK_DATA32;				</code></pre>
 </ul>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/relationship.png' %}" alt="Index Function Address" />
+<img src="{% static 'doc/images/backward-coding/relationship.png' %}" alt="Index Function Address" />
 <figcaption>Index Function Address</figcaption>
 </figure>
 
@@ -451,7 +451,7 @@ int main(int argc, char* argv[]) {
 <p>Take an example, if pad.exe relies on three dlls, assuming dll1, dll2, dll3. And preferred <code>ImageBase</code> of dlls are <code>0x100000</code>. The diagram below describes how a loader works.</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/DLLExample.png' %}" alt="How Loader Works" />
+<img src="{% static 'doc/images/backward-coding/DLLExample.png' %}" alt="How Loader Works" />
 <figcaption>How Loader Works</figcaption>
 </figure>
 
@@ -475,12 +475,12 @@ int main(int argc, char* argv[]) {
 <p>See two import tables of different applications.</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/myAppImportTable.png' %}" alt="Import Table of MyApp.exe" />
+<img src="{% static 'doc/images/backward-coding/myAppImportTable.png' %}" alt="Import Table of MyApp.exe" />
 <figcaption>Import Table of MyApp.exe</figcaption>
 </figure>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/notepadImportTable.png' %}" alt="Import Table of Notepad.exe" />
+<img src="{% static 'doc/images/backward-coding/notepadImportTable.png' %}" alt="Import Table of Notepad.exe" />
 <figcaption>Import Table of Notepad.exe</figcaption>
 </figure>
 
@@ -545,7 +545,7 @@ typedef struct _IMAGE_BOUND_FORWARDER_REF {
 <p>Which looks like this:</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/StructureOfBoundTable.png' %}" alt="Structure of Bound Import Table" />
+<img src="{% static 'doc/images/backward-coding/StructureOfBoundTable.png' %}" alt="Structure of Bound Import Table" />
 <figcaption>Structure of Bound Import Table</figcaption>
 </figure>
 

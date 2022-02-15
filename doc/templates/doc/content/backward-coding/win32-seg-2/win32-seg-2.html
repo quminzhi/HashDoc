@@ -178,17 +178,17 @@ CON: addresses are various with <code>esp</code>.</p>
 <p>We are able to find the address of <code>WindowProc()</code> in the second member of <code>WNDCLASS</code>, which is <code>lpfnWndProc</code>. Given that the parameter of <code>RegisterClass()</code> is a pointer to a WNDCLASS struct, so this is the crux.</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/winapp-01.png' %}" alt="RegisterClass" />
+<img src="{% static 'doc/images/backward-coding/winapp-01.png' %}" alt="RegisterClass" />
 <figcaption>RegisterClass</figcaption>
 </figure>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/winapp-02.png' %}" alt="Pointer to WndProc" />
+<img src="{% static 'doc/images/backward-coding/winapp-02.png' %}" alt="Pointer to WndProc" />
 <figcaption>Pointer to WndProc</figcaption>
 </figure>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/winapp-03.png' %}" alt="Conditional Breakpoint" />
+<img src="{% static 'doc/images/backward-coding/winapp-03.png' %}" alt="Conditional Breakpoint" />
 <figcaption>Conditional Breakpoint</figcaption>
 </figure>
 
@@ -197,7 +197,7 @@ CON: addresses are various with <code>esp</code>.</p>
 <p>There is a ascii table to refer in the </p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/ascii-web.png' %}" alt="ASCII" />
+<img src="{% static 'doc/images/backward-coding/ascii-web.png' %}" alt="ASCII" />
 <figcaption>ASCII</figcaption>
 </figure>
 
@@ -258,7 +258,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 <p>The output of program is as follows,</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/button-01.png' %}" alt="Create Button" />
+<img src="{% static 'doc/images/backward-coding/button-01.png' %}" alt="Create Button" />
 <figcaption>Create Button</figcaption>
 </figure>
 
@@ -300,7 +300,7 @@ OutputDebugStringF(&quot;--&gt;%x\n&quot;, bt.lpfnWndProc);					</code></pre>
 <p>When click button,</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/button-02.png' %}" alt="Button Demo" />
+<img src="{% static 'doc/images/backward-coding/button-02.png' %}" alt="Button Demo" />
 <figcaption>Button Demo</figcaption>
 </figure>
 
@@ -333,7 +333,7 @@ OutputDebugStringF(&quot;--&gt;%x\n&quot;, bt.lpfnWndProc);					</code></pre>
 </ol>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/button-03.png' %}" alt="Button Demo2" />
+<img src="{% static 'doc/images/backward-coding/button-03.png' %}" alt="Button Demo2" />
 <figcaption>Button Demo2</figcaption>
 </figure>
 
@@ -395,7 +395,7 @@ BOOL CALLBACK DialogProc(HWND hwndDlg,
 <p>Now we are able to make a simple login dialog with resource script.</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/demo-01.png' %}" alt="Login Demo" />
+<img src="{% static 'doc/images/backward-coding/demo-01.png' %}" alt="Login Demo" />
 <figcaption>Login Demo</figcaption>
 </figure>
 <pre><code class="cpp">// process function:
@@ -490,7 +490,7 @@ GetWindowText(hEditPasswd, passwdBuffer, 0x20);</code></pre>
 }</code></pre>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/demo-02.png' %}" alt="Login Demo Output" />
+<img src="{% static 'doc/images/backward-coding/demo-02.png' %}" alt="Login Demo Output" />
 <figcaption>Login Demo Output</figcaption>
 </figure>
 
@@ -506,7 +506,7 @@ GetWindowText(hEditPasswd, passwdBuffer, 0x20);</code></pre>
 <p>As known before, user-customized process function is called by one of system process functions at some time. We are able to locate system process functions by debug tools as follows,</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/msgbp-01.png' %}" alt="System Process Functions" />
+<img src="{% static 'doc/images/backward-coding/msgbp-01.png' %}" alt="System Process Functions" />
 <figcaption>System Process Functions</figcaption>
 </figure>
 
@@ -527,7 +527,7 @@ GetWindowText(hEditPasswd, passwdBuffer, 0x20);</code></pre>
 <p>Click <code>ok</code> button, then the process will stop on the first instruction of system process.</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/msgbp-02.png' %}" alt="Message Breakpoint" />
+<img src="{% static 'doc/images/backward-coding/msgbp-02.png' %}" alt="Message Breakpoint" />
 <figcaption>Message Breakpoint</figcaption>
 </figure>
 
@@ -536,14 +536,14 @@ GetWindowText(hEditPasswd, passwdBuffer, 0x20);</code></pre>
 <p>Then set memory access breakpoint.</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/msgbp-03.png' %}" alt="Memory Access Breakpoint" />
+<img src="{% static 'doc/images/backward-coding/msgbp-03.png' %}" alt="Memory Access Breakpoint" />
 <figcaption>Memory Access Breakpoint</figcaption>
 </figure>
 
 <p>Continue the program,</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/msgbp-04.png' %}" alt="Pitfall" />
+<img src="{% static 'doc/images/backward-coding/msgbp-04.png' %}" alt="Pitfall" />
 <figcaption>Pitfall</figcaption>
 </figure>
 
@@ -565,7 +565,7 @@ GetWindowText(hEditPasswd, passwdBuffer, 0x20);</code></pre>
 <p>Experiment tells us after <code>WM_CTLCOLORBTN</code> is <code>WM_COMMAND</code>, which is <code>0x111</code>.</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/msgbp-05.png' %}" alt="WM_COMMAND" />
+<img src="{% static 'doc/images/backward-coding/msgbp-05.png' %}" alt="WM_COMMAND" />
 <figcaption>WM_COMMAND</figcaption>
 </figure>
 

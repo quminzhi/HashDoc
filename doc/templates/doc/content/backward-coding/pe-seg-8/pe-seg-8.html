@@ -35,7 +35,7 @@
 <p>Now let&#8217;s see what virtual memory looks like,</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/win32Memory.png' %}" alt="Virtual Memory" />
+<img src="{% static 'doc/images/backward-coding/win32Memory.png' %}" alt="Virtual Memory" />
 <figcaption>Virtual Memory</figcaption>
 </figure>
 
@@ -48,7 +48,7 @@
 <p>Yet, a problem arises &#8211; what if the address to be allocated of dll is occupied by previous codes? In other word, the <code>ImageBase</code> of different files conflicts with each other.</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/dllProblem.png' %}" alt="Dynamic Link Library" />
+<img src="{% static 'doc/images/backward-coding/dllProblem.png' %}" alt="Dynamic Link Library" />
 <figcaption>Dynamic Link Library</figcaption>
 </figure>
 
@@ -158,7 +158,7 @@
 <p>To apply a base relocation, the difference is calculated between the preferred base address and the base where the image is actually loaded. If the image is loaded at its preferred base, the difference is zero and thus the base relocations do not have to be applied.</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/BaseRelocationBlock.png' %}" alt="Block Structure" />
+<img src="{% static 'doc/images/backward-coding/BaseRelocationBlock.png' %}" alt="Block Structure" />
 <figcaption>Block Structure</figcaption>
 </figure>
 
@@ -167,7 +167,7 @@
 </ul>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/PageSize.png' %}" alt="Page Size" />
+<img src="{% static 'doc/images/backward-coding/PageSize.png' %}" alt="Page Size" />
 <figcaption>Page Size</figcaption>
 </figure>
 
@@ -344,14 +344,14 @@ void TEST_UpdateAddrWithBaseRelocationTable() {
 <p>Why to move tables? If we want to encrypt our program, we have to keep some information unencrypted that loader needs when loading file into memory image, such as headers, tables and so on. Yet some tables are mixed into sections with data as follows,</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/MixedStructure.png' %}" alt="Mixed Structure" />
+<img src="{% static 'doc/images/backward-coding/MixedStructure.png' %}" alt="Mixed Structure" />
 <figcaption>Mixed Structure</figcaption>
 </figure>
 
 <p>Therefore the proper process of encryption is shown below,</p>
 
 <figure>
-<img src="{% static 'notebook/images/reverse-programming/Encryption.png' %}" alt="Process of Encryption" />
+<img src="{% static 'doc/images/backward-coding/Encryption.png' %}" alt="Process of Encryption" />
 <figcaption>Process of Encryption</figcaption>
 </figure>
 
