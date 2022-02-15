@@ -1,0 +1,72 @@
+{% extends 'doc/main.html' %}
+{% load static %}
+
+{% block title %}
+{{ tutorial }} - {{ cur.title }}
+{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'src/vendor/boxicons/css/boxicons.min.css' %}">
+<link rel="stylesheet" href="{% static 'doc/css/notepage/markdown.css' %}">
+<link rel="stylesheet" href="{% static 'doc/css/notepage/pre-next.css' %}">
+<link rel="stylesheet" href="{% static 'doc/css/notepage/font-awesome.css' %}">
+<link rel="stylesheet" href="{% static 'doc/css/notepage/notepage.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="notepage" class="container page__bg mt-3">
+    <div class="row justify-content-center">
+        <div class="col-md-3">
+            <div id="table" class="my-3 p-3 bg-light rounded shadow-sm">
+                <div id="wrapper">
+                    {% include tableURL %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div id="content" class="my-3 p-3 bg-light rounded shadow-sm">
+                <div id="wrapper">
+                    {% include contentURL %}
+                    <!-- pre and next --> 
+                    <div class="row"> 
+                        <div class="col-md-12 prenextstyle"> 
+                            <ul class="pagination justify-content-center"> 
+                                {% if pre is not None %}
+                                <li><a href="{% url 'notepage' pre.belong_to.filename pre.filename %}" class="button primary icon solid fa-backward">Back: {{ pre.order }}. {{ pre.title }}</a></li> 
+                                {% endif %}
+                                <li><span class="button">{{ cur.order }}. {{ cur.title }}</span></li> 
+                                {% if next is not None %}
+                                <li><a href="{% url 'notepage' next.belong_to.filename next.filename%}" class="button primary icon solid fa-forward">Next: {{ next.order }}. {{ next.title }}</a></li>
+                                {% endif %}
+                            </ul> 
+                        </div> 
+                    </div>
+                </div>
+
+                <!-- back to toc -->
+                <a href="#tableofcontents" class="back-to-toc float-right mr-1">
+                    <i class="bx bxs-up-arrow-alt"></i>
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'doc/js/notepage/scrollbar.js' %}"></script>
+<div style="display: none;" markdown="0">
+    <!--This seemingly unnecessary div markup is the only thing keeping this script working after Markdown conversion. Trust me.-->
+    <script src="{% static 'doc/js/notepage/markdown.js' %}"></script>
+    <script>
+        hljs.initHighlightingOnLoad();
+    </script>
+    <!-- add class to all img to center them -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            $("img").addClass("rounded mx-auto d-block");
+        })
+    </script>
+</div>
+{% endblock %}

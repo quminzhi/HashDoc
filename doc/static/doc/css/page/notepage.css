@@ -1,0 +1,116 @@
+.page__bg {
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  background: transparent;
+  height: 99vh;
+}
+
+.page__bg::after {
+  z-index: -1;
+  opacity: 0.2;
+  content: "";
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: url(../../images/pattern.jpg);
+}
+
+#notepage #wrapper {
+  max-height: 98vh;
+  overflow: scroll;
+  scroll-behavior: smooth;
+}
+
+#notepage #wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+/* for old version */
+#table-of-contents {
+  padding-top: 0.5rem !important;
+}
+
+/* ScrollSpy active styles (see JS tab for activation) */
+.section-nav li.active > a {
+  color: rgba(70, 50, 126, 1) !important;
+  font-weight: 400 !important;
+  padding-left: 4px !important;
+  border-color: rgba(70, 50, 126, 1) !important;
+  border-left: 3px solid !important;
+}
+
+#wrapper section {
+  padding: 0em;
+}
+
+/* Sidebar Table of Content */
+#wrapper .section-nav h2 {
+  font-size: 1.8rem;
+}
+
+#wrapper .section-nav a {
+  color: #aaa;
+  text-decoration: none;
+}
+
+#wrapper .section-nav li a:hover {
+  color: rgba(70, 50, 126, 1) !important;
+}
+
+#wrapper .section-nav ul {
+  list-style: none;
+  margin: 0em 0.5em !important;
+}
+
+#wrapper .section-nav ul ul {
+  list-style: none;
+  margin: 0em 0.8em !important;
+}
+
+#wrapper .section-nav ul > li {
+  font-size: 85%;
+}
+
+#wrapper .section-nav ul li ul li {
+  font-size: 95%;
+}
+
+/* back to table of contents / category / home */
+
+.back-to-toc,
+.back-to-category,
+.back-to-home {
+  position: relative;
+  bottom: 40px;
+  z-index: 100;
+}
+
+.back-to-toc i,
+.back-to-category i,
+.back-to-home i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  background: rgba(70, 50, 126, 0.5);
+  color: #fff;
+  transition: all 0.4s;
+  z-index: 100;
+}
+
+.back-to-toc i:hover,
+.back-to-category i:hover,
+.back-to-home i:hover {
+  background: rgba(70, 50, 126, 1);
+  color: #fff;
+  z-index: 100;
+}
+
+/* back to category */

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta content="author" name="Minzhi Qu">
+    <meta content="mail" name="quminzhi@gmail.com">
+
+    <link rel="icon" href="{% static 'logo/icon_512x512@2x.png' %}" sizes="32x32" type="image/png" />
+    <link rel="icon" href="{% static 'logo/icon_512x512@2x.png' %}" sizes="16x16" type="image/png" />
+
+    <!-- Favicons -->
+    <link href="{% static 'logo/icon_512x512@2x.png' %}" rel="icon">
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+
+    {% block style %}
+
+    {% endblock %}
+
+    <title>{% block title %} {% endblock %}</title>
+</head>
+<!-- <body oncontextmenu="return false"> -->
+
+<body>
+    {% block content %}
+
+    {% endblock %}
+
+    <script>
+        !(function (d, s, id) {
+            var js,
+                fjs = d.getElementsByTagName(s)[0];
+            if (!d.getElementById(id)) {
+                js = d.createElement(s);
+                js.id = id;
+                js.src = '../../static/doc/js/widgets.js';
+                fjs.parentNode.insertBefore(js, fjs);
+            }
+        })(document, "script", "twitter-wjs");
+    </script>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+
+    {% block js %}
+
+    {% endblock %}
+</body>
+
+</html>

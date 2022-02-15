@@ -1,0 +1,93 @@
+{% extends 'doc/main.html' %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'doc/css/kontext.css' %}">
+<link rel="stylesheet" href="{% static 'doc/css/home.css' %}">
+{% endblock %}
+
+{% block title %}
+Doc Home
+{% endblock %}
+
+{% block content %}
+
+<article class="kontext">
+    <div class="layer one show note__bg">
+        <div class="container note__list" role="backward-programming section">
+            <div class="row justify-content-center" name="backward-programming section">
+                <div class="col-10">
+                    <div class="my-3 mt-5 p-3 bg-white rounded shadow-sm">
+                        <form action="{% url 'docHome' %}" method="GET" class="d-flex">
+                            <input class="form-control form-control-lg" type="text" name="q" value="{{ q }}" placeholder="search by note title, e.g. shellscript" aria-label="search">
+                            <button class="btn btn-outline-dark btn-lg" type="submit">Search</button>
+                        </form>
+                        <ul>
+                            {% for note in notes_found %}
+                            <li>
+                                <div class="media text-muted pt-3">
+                                    <svg class="bd-placeholder-img mr-2 rounded" width="32" height="32"
+                                        xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"
+                                        focusable="false" role="img" aria-label="3Sum: 32x32">
+                                        <title>{{ note.title }}</title>
+                                        <rect width="100%" height="100%" fill="{{ note.color }}" />
+                                        <text x="50%" y="50%" fill="{{ note.color }}" dy=".3em">32x32</text>
+                                    </svg>
+                                    <p
+                                        class="note__description media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                        <strong class="d-block text-gray-dark"><a href="{% url 'page' note.belong_to.filename note.filename %}" target="_blank">{{ note.title }}</a></strong>
+                                        {{ note.intro }}
+                                    </p>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ul name="topicEnd">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% for topic in topics %}
+    <div class="layer {{ topic.page_no }} note__bg">
+        <div class="container note__list" role="{{ topic.topic }} section">
+            <div class="row justify-content-center" name="{{ topic.topic }} section">
+                <div class="col-10">
+                    <div class="my-3 mt-5 p-3 bg-white rounded shadow-sm">
+                        <h3 class="border-bottom border-gray pb-3 mb-0 text-center">
+                            {{ topic.topic }}
+                        </h3>
+                        <ul>
+                            {% for note in topic.note_set.all %}
+                            <li>
+                                <div class="media text-muted pt-3">
+                                    <svg class="bd-placeholder-img mr-2 rounded" width="32" height="32"
+                                        xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"
+                                        focusable="false" role="img" aria-label="3Sum: 32x32">
+                                        <title>{{ note.title }}</title>
+                                        <rect width="100%" height="100%" fill="{{ note.color }}" />
+                                        <text x="50%" y="50%" fill="{{ note.color }}" dy=".3em">32x32</text>
+                                    </svg>
+                                    <p
+                                        class="note__description media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                        <strong class="d-block text-gray-dark"><a href="{% url 'page' note.belong_to.filename note.filename %}" target="_blank">{{ note.title }}</a></strong>
+                                        {{ note.intro }}
+                                    </p>
+                                </div>
+                            </li>
+                            {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</article>
+
+<ul class="bullets"></ul>
+
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'doc/js/kontext.js' %}"></script>
+<script src="{% static 'doc/js/util.js' %}"></script>
+{% endblock %}

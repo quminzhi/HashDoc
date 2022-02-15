@@ -1,0 +1,184 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  /* set scroll */
+  overflow: scroll;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: "nunito";
+  font-size: 18px;
+}
+
+@font-face {
+	font-family: "nunito";
+	src: url("../font/Nunito-Regular.ttf"), url("../font/Nunito-Italic.ttf"),
+	  url("../font/Nunito-Bold.ttf");
+  }
+
+.note__list h3 {
+	  font-size: 2.5em;
+	  font-family: "nunito";
+	  color: rgb(45, 32, 80);
+  }
+
+.note__list a {
+    color: rgb(45, 32, 80);
+    font-size: 20px;
+}
+
+.note__list ul {
+    position: relative;
+    max-height: 70vh;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    list-style: none !important;
+
+    -webkit-perspective: 400px;
+    -moz-perspective: 400px;
+    -ms-perspective: 400px;
+    -o-perspective: 400px;
+    perspective: 400px;
+}
+
+.note__list ul li {
+    position: relative;
+    padding: 4px;
+    font-size: 16px;
+    z-index: 2;
+
+    -webkit-transform: translateZ(0px);
+    -moz-transform: translateZ(0px);
+    -ms-transform: translateZ(0px);
+    -o-transform: translateZ(0px);
+    transform: translateZ(0px);
+}
+
+.note__bg {
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  background: transparent;
+  height: 99vh;
+}
+
+.note__bg::after {
+  z-index: -1;
+  opacity: 0.2;
+  content: "";
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: url(../images/pattern.jpg);
+}
+
+.note__description {
+	font-size: 18px !important;
+}
+
+
+
+/* Scroll CSS */
+
+/* globally set display of scrollbar */
+::-webkit-scrollbar {
+  display: none;
+}
+
+body::-webkit-scrollbar {
+  /* basic style of scroll */
+  width: 10px;
+  height: 1px;
+  display: none;
+}
+
+body::-webkit-scrollbar-thumb {
+  /* blocks in scrollbar */
+  border-radius: 10px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  background: #535353;
+}
+
+body::-webkit-scrollbar-track {
+  /* track */
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  background: #ededed;
+}
+
+.greet {
+  color: azure;
+  text-align: center;
+  text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
+}
+
+.greet h2 {
+  position: relative;
+  top: 30%;
+  margin: 0;
+  font-size: 5.25em;
+}
+
+.greet p {
+  position: relative;
+  top: 30%;
+  margin: 0;
+  font-size: 3.25em;
+}
+
+/* Layer CSS */
+
+.layer.end {
+  background: #64b9d2;
+}
+
+.bullets {
+  position: absolute;
+  width: 100%;
+  bottom: 20px;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+}
+
+.bullets li {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin: 0 3px;
+  background: rgba(70, 50, 126, 0.5);
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.bullets li:hover {
+  background: rgba(87, 49, 190, 0.8);
+}
+
+.bullets li.active {
+  cursor: default;
+  background: rgba(70, 50, 126, 1);
+}
+
+@media screen and (max-width: 400px) {
+  body {
+    font-size: 12px;
+  }
+  .layer h2 {
+    font-size: 5em;
+  }
+  .bullets li {
+    margin: 0 6px;
+  }
+}
