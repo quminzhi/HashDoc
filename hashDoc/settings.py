@@ -83,6 +83,16 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.environ.get('HASH_DB_NAME'),
+#         'USER': os.environ.get('HASH_DB_USERNAME'),
+#         'PASSWORD': os.environ.get('HASH_DB_PASSWD'),
+#         'HOST': os.environ.get('HASH_DB_ENDPOINT'),
+#         'PORT': '5432'
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
