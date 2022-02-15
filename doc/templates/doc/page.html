@@ -2,19 +2,19 @@
 {% load static %}
 
 {% block title %}
-{{ tutorial }} - {{ cur.title }}
+{{ topic }} - {{ cur.title }}
 {% endblock %}
 
 {% block style %}
 <link rel="stylesheet" href="{% static 'src/vendor/boxicons/css/boxicons.min.css' %}">
-<link rel="stylesheet" href="{% static 'doc/css/notepage/markdown.css' %}">
-<link rel="stylesheet" href="{% static 'doc/css/notepage/pre-next.css' %}">
-<link rel="stylesheet" href="{% static 'doc/css/notepage/font-awesome.css' %}">
-<link rel="stylesheet" href="{% static 'doc/css/notepage/notepage.css' %}">
+<link rel="stylesheet" href="{% static 'doc/css/page/markdown.css' %}">
+<link rel="stylesheet" href="{% static 'doc/css/page/pre-next.css' %}">
+<link rel="stylesheet" href="{% static 'doc/css/page/font-awesome.css' %}">
+<link rel="stylesheet" href="{% static 'doc/css/page/page.css' %}">
 {% endblock %}
 
 {% block content %}
-<div id="notepage" class="container page__bg mt-3">
+<div id="page" class="container page__bg mt-3">
     <div class="row justify-content-center">
         <div class="col-md-3">
             <div id="table" class="my-3 p-3 bg-light rounded shadow-sm">
@@ -32,11 +32,11 @@
                         <div class="col-md-12 prenextstyle"> 
                             <ul class="pagination justify-content-center"> 
                                 {% if pre is not None %}
-                                <li><a href="{% url 'notepage' pre.belong_to.filename pre.filename %}" class="button primary icon solid fa-backward">Back: {{ pre.order }}. {{ pre.title }}</a></li> 
+                                <li><a href="{% url 'page' pre.belong_to.filename pre.filename %}" class="button primary icon solid fa-backward">Back: {{ pre.order }}. {{ pre.title }}</a></li> 
                                 {% endif %}
                                 <li><span class="button">{{ cur.order }}. {{ cur.title }}</span></li> 
                                 {% if next is not None %}
-                                <li><a href="{% url 'notepage' next.belong_to.filename next.filename%}" class="button primary icon solid fa-forward">Next: {{ next.order }}. {{ next.title }}</a></li>
+                                <li><a href="{% url 'page' next.belong_to.filename next.filename%}" class="button primary icon solid fa-forward">Next: {{ next.order }}. {{ next.title }}</a></li>
                                 {% endif %}
                             </ul> 
                         </div> 
@@ -55,10 +55,10 @@
 {% endblock %}
 
 {% block js %}
-<script src="{% static 'doc/js/notepage/scrollbar.js' %}"></script>
+<script src="{% static 'doc/js/page/scrollbar.js' %}"></script>
 <div style="display: none;" markdown="0">
     <!--This seemingly unnecessary div markup is the only thing keeping this script working after Markdown conversion. Trust me.-->
-    <script src="{% static 'doc/js/notepage/markdown.js' %}"></script>
+    <script src="{% static 'doc/js/page/markdown.js' %}"></script>
     <script>
         hljs.initHighlightingOnLoad();
     </script>

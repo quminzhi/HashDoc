@@ -13,9 +13,10 @@ Doc Home
 {% block content %}
 
 <article class="kontext">
+    <!-- search section -->
     <div class="layer one show note__bg">
-        <div class="container note__list" role="backward-programming section">
-            <div class="row justify-content-center" name="backward-programming section">
+        <div class="container note__list" role="search section">
+            <div class="row justify-content-center" name="search section">
                 <div class="col-10">
                     <div class="my-3 mt-5 p-3 bg-white rounded shadow-sm">
                         <form action="{% url 'docHome' %}" method="GET" class="d-flex">
@@ -47,6 +48,8 @@ Doc Home
             </div>
         </div>
     </div>
+
+    <!-- topic section -->
     {% for topic in topics %}
     <div class="layer {{ topic.page_no }} note__bg">
         <div class="container note__list" role="{{ topic.topic }} section">

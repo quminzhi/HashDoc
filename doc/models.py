@@ -23,6 +23,7 @@ class Topic(models.Model):
     topic = models.CharField(max_length=200)
     page_no = models.CharField(unique=True, max_length=100, choices=NUM_CHOICE)
 
+    # @filename: topic name, ex> linux
     filename = models.CharField(max_length=200, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     id = models.UUIDField(default=uuid.uuid4, unique=True,
@@ -51,6 +52,7 @@ class Note(models.Model):
     intro = models.TextField(null=True, blank=True)
     order = models.IntegerField(default=0, null=True, blank=True)
 
+    # @filename: note name, ex> bash
     filename = models.CharField(max_length=200, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     id = models.UUIDField(default=uuid.uuid4, unique=True,
