@@ -17,7 +17,7 @@ def docHome(request):
         )
     
     context = {
-        'search_notes': notes_found,
+        'notes_found': notes_found,
         'topics': topics,
         'q': q,
     }
