@@ -84,9 +84,10 @@ def createNote(sender, instance, created, **kwargs):
         filename = note.filename + '.md'
         if not os.path.exists(md_dir):
             os.makedirs(md_dir)
-        src = os.path.join(BASE_DIR, 'md/md-template.md')
         dst = os.path.join(md_dir, filename)
-        copyfile(src, dst)
+        if not os.path.exists(dst): # if not created manually
+            src = os.path.join(BASE_DIR, 'md/md-template.md')
+            copyfile(src, dst)
 
         # TODO: update order automatically
         topic = note.belong_to

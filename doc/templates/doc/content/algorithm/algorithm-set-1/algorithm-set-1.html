@@ -1,0 +1,1864 @@
+{% load static %}
+
+<h1 id="algorithmset1">Algorithm Set 1</h1>
+
+<h2 id="tableofcontents">Table of Contents</h2>
+
+<ul>
+<li><a href="#algorithm-set-1">Algorithm Set 1</a></li>
+<li><a href="#table-of-contents">Table of Contents</a></li>
+<li><a href="#binary-search-and-array">Binary Search and Array</a>
+
+<ul>
+<li><a href="#binary-search-without-known-size">Binary Search without Known Size</a></li>
+</ul></li>
+<li><a href="#array-and-pointers">Array and Pointers</a>
+
+<ul>
+<li><a href="#square-array">Square Array</a></li>
+<li><a href="#rotate-array">Rotate Array</a></li>
+<li><a href="#move-zeroes">Move Zeroes</a></li>
+<li><a href="#two-sum-ordered">Two Sum Ordered</a></li>
+<li><a href="#reverse-words">Reverse Words</a></li>
+<li><a href="#link-list">Link List</a></li>
+</ul></li>
+<li><a href="#slide-window">Slide Window</a>
+
+<ul>
+<li><a href="#longest-substring-without-repeating-characters">Longest Substring Without Repeating Characters</a></li>
+<li><a href="#permutation-in-string">Permutation In String</a></li>
+</ul></li>
+<li><a href="#bfs-and-dfs">BFS and DFS</a>
+
+<ul>
+<li><a href="#flood-fill">Flood Fill</a></li>
+<li><a href="#max-area-of-island">Max Area of Island</a></li>
+<li><a href="#merge-trees">Merge Trees</a></li>
+<li><a href="#connect-tree">Connect Tree</a></li>
+<li><a href="#update-matrix">Update Matrix</a></li>
+</ul></li>
+<li><a href="#recursion-and-backtracking">Recursion and Backtracking</a>
+
+<ul>
+<li><a href="#reverse-linklist">Reverse LinkList</a></li>
+<li><a href="#merge-two-sorted-linklist">Merge Two Sorted LinkList</a></li>
+<li><a href="#combination">Combination</a></li>
+<li><a href="#permutation">Permutation</a></li>
+<li><a href="#letter-case-permutation">Letter Case Permutation</a></li>
+</ul></li>
+<li><a href="#dynamic-programming">Dynamic Programming</a>
+
+<ul>
+<li><a href="#climbing-stairs">Climbing Stairs</a></li>
+<li><a href="#house-robber">House Robber</a></li>
+<li><a href="#triangle">Triangle</a></li>
+</ul></li>
+<li><a href="#bitwise-manipulation">Bitwise Manipulation</a>
+
+<ul>
+<li><a href="#power-of-two">Power of Two</a></li>
+<li><a href="#hamming-weight">Hamming Weight</a></li>
+<li><a href="#reverse-bits">Reverse Bits</a></li>
+<li><a href="#single-number">Single Number</a></li>
+</ul></li>
+</ul>
+
+<p><TableEndMark></p>
+<!-- DO NOT ADD EndOfTable MANUALLY -->
+
+<section	id="binarysearchandarray">
+<h2>Binary Search and Array</h2>
+
+<section	id="binarysearchwithoutknownsize">
+<h3>Binary Search without Known Size</h3>
+
+<blockquote>
+<p>Problem: You have a sorted array of unique elements and an unknown size. You do not have an access to the array but you can use the ArrayReader interface to access it.<br/>
+You are also given an integer target. Return the index k of the hidden array where <code>secret[k] == target</code> or return &#8211;1 otherwise. </p>
+
+<p>Constrains: <code>1 &lt;= secret.length &lt;= 10^4, -10^4 &lt;= secret[i]</code>, <code>target &lt;= 10^4</code>, secret is sorted in a strictly increasing order.</p>
+</blockquote>
+
+<p><em>Keyword: unique, sorted, constrains</em></p>
+
+<p>There are two ways to solve the problem:</p>
+
+<ul>
+<li>define search limits<br/>
+Start from a small range <code>[left, right]</code> and expand it exponentially until the target is in the range.<br/>
+If <code>v[left] &gt; target</code>, which means target is not in the array.</li>
+</ul>
+<pre><code class="cpp">int search_sol2(const ArrayReader&amp; reader, int target) {
+    if (reader.get(0) == target) {
+        return 0;
+    }
+    
+    // TODO: search potential limits
+    int left = 0; int right = 1;
+    while (target &gt; reader.get(right)) {
+        left = right;
+        right &lt;&lt;= 2;
+    }
+
+    // TODO: binary search
+    int num, pivot;
+    while (left &lt; right) {
+        pivot = left + (right - left) / 2;
+        num = reader.get(pivot);
+        if (num == target) {
+            return pivot;
+        }
+        else {
+            if (num &gt; target) {
+                right = pivot - 1;
+            }
+            else {
+                left = pivot + 1;
+            }
+        }
+    }
+
+    return -1;
+}</code></pre>
+
+<ul>
+<li>&#8220;brute force&#8221; binary search<br/>
+Notice that with the help of reader function, which return INT_MAX if the index is out of range. So the secret array can be seen as one with size of 10<sup>4</sup>, and all null value would be filled with INT_MAX. Therefore, we are able to &#8220;brute force&#8221; binary search on the secret array directly.</li>
+</ul>
+<pre><code class="cpp">int search_sol3(const ArrayReader&amp; reader, int target) {
+    int left = 0;
+    int right = 39999; // 10^4 - 1
+
+    int num, pivot;
+    while (left &lt;= right) {
+        pivot = left + (right - left) / 2;
+        num = reader.get(pivot);
+        if (num == target) {
+            return pivot;
+        }
+        else {
+            if (num &gt; target) {
+                right = pivot - 1;
+            }
+            else {
+                left = pivot + 1;
+            }
+        }
+    }
+
+    return -1;
+}</code></pre>
+
+<p>Tricks:</p>
+
+<ul>
+<li>use <code>pivot = left + (right - left) / 2</code> instead of <code>pivot = (left + right) / 2</code> for the latter may overflow when <code>left + right &gt; INT_MAX</code>.</li>
+<li>use <code>right &lt;&lt; 2</code> to replace <code>right * 2</code> if possible.</li>
+<li>double check special cases, such as null input, repetition, and overflow.</li>
+</ul>
+
+</section>
+</section>
+<section	id="arrayandpointers">
+<h2>Array and Pointers</h2>
+
+<section	id="squarearray">
+<h3>Square Array</h3>
+
+<blockquote>
+<p>Given an integer array nums sorted in non-decreasing order, return an array of the squares of each number sorted in non-decreasing order. </p>
+
+<p>Constrains: 1 &lt;= nums.length &lt;= 10<sup>4</sup>, &#8211;10<sup>4</sup> &lt;= nums[i] &lt;= 10<sup>4</sup>, nums is sorted in non-decreasing order.</p>
+</blockquote>
+
+<p>What we can learn from the problem is that how to carefully design your pointers. Either scanning from ends and go inward or from center and go outward.</p>
+<pre><code class="cpp">vector&lt;int&gt; sortedSquares_sol2(vector&lt;int&gt;&amp; nums) {
+    vector&lt;int&gt; result;
+    int left = 0;
+    int right = nums.size() - 1;
+
+    while (left &lt;= right) {
+        if (abs(nums[left]) &gt;= abs(nums[right])) {
+            result.insert(result.begin(), nums[left] * nums[left]);
+            left++;
+        }
+        else {
+            result.insert(result.begin(), nums[right] * nums[right]);
+            right--;
+        }
+    }
+
+    return result;
+}</code></pre>
+
+<p>Tricks:</p>
+
+<ul>
+<li>insert at the end <code>vector.push_back</code>, and at the front <code>vector.insert(vector.begin(), val)</code></li>
+</ul>
+
+</section>
+<section	id="rotatearray">
+<h3>Rotate Array</h3>
+
+<blockquote>
+<p>Given an integer array nums sorted in non-decreasing order, return an array of the squares of each number sorted in non-decreasing order. </p>
+
+<p>Constrains: 1 &lt;= nums.length &lt;= 10<sup>4</sup>, &#8211;10<sup>4</sup> &lt;= nums[i] &lt;= 10<sup>4</sup>, nums is sorted in non-decreasing order.</p>
+</blockquote>
+
+<p>When comes to rotation or circulation, we have to take into consideration effective steps.</p>
+
+<p><code>effective steps = steps mod array.size</code>: if an array has size of 5, the steps is 5. Actually, the effective step is 0 since the elements in the array has not been changed.</p>
+
+<p>So we can enumerate all possible answers with an array which is the double of original array.</p>
+<pre><code class="cpp">/**
+ * ex: original: [1, 2, 3, 5, 7]
+ *     enumeration: [1, 2, 3, 5, 7, 1, 2, 3, 5, 7]
+ * when step=1:    [^           ^]
+ *      step=2:       [^           ^]
+ *      step=3:          [^           ^]
+ * ...
+ */ </code></pre>
+
+<p>The time complexity is O(N), and space complexity is O(2N)</p>
+
+</section>
+<section	id="movezeroes">
+<h3>Move Zeroes</h3>
+
+<blockquote>
+<p>Given an integer array nums, move all 0&#8217;s to the end of it while maintaining the relative order of the non-zero elements. Note that you must do this in-place without making a copy of the array. </p>
+
+<p>Constrains: 1 &lt;= nums.length &lt;= 10<sup>4</sup>, &#8211;2<sup>31</sup> &lt;= nums[i] &lt;= 2<sup>31</sup> - 1</p>
+</blockquote>
+
+<p>The problem teaches us how to make use of spaces we have without soliciting unnecessary memory spaces.<br/>
+For example, if we want to move all non-zero numbers to the front of an array, we don't have to worry about the value of some index is overwritten, since we just padding zeroes after the last non-zero number is okay. Following is what code looks like:</p>
+<pre><code class="cpp">void moveZeroes_sol2(vector&lt;int&gt;&amp; nums) {
+    // TODO: move non-zero numbers to the front
+    int lastNonZero = 0;
+    for (int i = 0; i &lt; nums.size(); i++) {
+        if (nums[i] != 0) {
+            nums[lastNonZero++] = nums[i];
+        }
+    }
+    
+    // TODO: padding zeros
+    for (int i = lastNonZero; i &lt; nums.size(); i++) {
+        nums[i] = 0;
+    }
+}</code></pre>
+
+<p>Also we are able to solve the problem by STL function <code>std::stable_partition</code>, what function does is exectly what we did above.</p>
+<pre><code class="cpp">void moveZeroes_sol3(vector&lt;int&gt;&amp; nums) {
+    // if the third parameter is true, it will be partitioned.
+    stable_partition(begin(nums), end(nums), [](int i){ return i; });
+}</code></pre>
+
+<p>Tricks:</p>
+
+<ul>
+<li><code>std::stable_partition</code> will make partition according to the lambda expression you pass.</li>
+<li>lambda expression: <code>[capture clause](param list){ lambda body }</code>.</li>
+<li>use STL function: <code>swap(a, b)</code> if needed.</li>
+</ul>
+
+</section>
+<section	id="twosumordered">
+<h3>Two Sum Ordered</h3>
+
+<blockquote>
+<p>Given a 1-indexed array of integers numbers that is already sorted in non-decreasing order, find two numbers such that they add up to a specific target number. Let these two numbers be numbers[index1] and numbers[index2] where 1 &lt;= first &lt; second &lt;= numbers.length.<br/>
+Return the indices of the two numbers, index1 and index2, as an integer array [index1, index2] of length 2.<br/>
+The tests are generated such that there is exactly one solution. You may not use the same element twice.</p>
+</blockquote>
+<pre><code class="bash">Input: [-100, -10, 0, 0, 6, 18, 22, 22]  Target: 6
+Output: [3, 5]</code></pre>
+
+<p>There are two common methods: 1. looking for dictionary 2. two pointers (ordered)</p>
+
+<p>Both of methods above are O(N), but the latter does not need extra space.</p>
+
+<p>Since the input is in non-descending order, we assgined two pointers to the maximum and minimum number of array, leftmost and rightmost respectively.</p>
+<pre><code class="bash">Input: [-100, -10, 0, 0, 6, 18, 22, 22]  Target: 6
+         ^                          ^
+        left                       right</code></pre>
+
+<p>Then there are three cases:</p>
+
+<ul>
+<li><code>a[left] + a[right] == target</code>: there you go!</li>
+<li><code>a[left] + a[right] &lt; target</code>: then we know that the left number added the maximum number is still less than target, thereby there is no matching number in the array for <code>a[left]</code>. Therefore, <code>left++</code>.</li>
+<li><code>a[left] + a[right] &gt; target</code>: with the same logic, right number is out. Consequently, <code>right--</code>.</li>
+</ul>
+
+<p>Following is the code for the problem:</p>
+<pre><code class="cpp">vector&lt;int&gt; twoSum_sol2(vector&lt;int&gt;&amp; numbers, int target) {
+    int left = 0;
+    int right = numbers.size() - 1;
+
+    int sum = 0;
+    while (left &lt; right) {
+        sum = numbers[left] + numbers[right];
+        if (sum == target) {
+            return {left+1, right+1};
+        }
+        else {
+            if (sum &lt; target) {
+                left++;
+            }
+            else {
+                right--;
+            }
+        }
+    }
+
+    return {-1, -1};
+}</code></pre>
+
+<p>BTW: the first method (by looking for dictionary) is a more generic model for those problems. Even if it is disordered, it also works.</p>
+
+</section>
+<section	id="reversewords">
+<h3>Reverse Words</h3>
+
+<blockquote>
+<p>Given a string s, reverse the order of characters in each word within a sentence while still preserving whitespace and initial word order. </p>
+
+<p>Constrains: 1 &lt;= s.length &lt;= 5 * 104. s contains printable ASCII characters. s does not contain any leading or trailing spaces. There is at least one word in s. All the words in s are separated by a single space.</p>
+</blockquote>
+
+<p>There are two things to do in the problem:</p>
+
+<ol>
+<li>split words from the string.</li>
+<li>reverse each word found.</li>
+</ol>
+<pre><code class="cpp">string reverseWords_sol2(string s) {
+    int begin = 0;
+    for (int end = 0; end &lt; s.size(); end++) {
+        if (s[end] == &apos; &apos;) {    // one word found
+            reverse(s.begin() + begin, s.begin() + end);
+            // words are separated by a single blank space.
+            begin = end + 1;
+        }
+    }
+
+    reverse(s.begin() + begin, s.end());
+
+    return s;
+}</code></pre>
+
+<p>Tricks:</p>
+
+<ul>
+<li><code>reverse(iter.begin(), iter.end())</code>: <code>iter.end()</code> is excluded.</li>
+</ul>
+
+</section>
+<section	id="linklist">
+<h3>Link List</h3>
+
+<p>There are two problems here, but they have similar idea.</p>
+
+<p>The first is find the middle node of a node list.</p>
+
+<blockquote>
+<p>Given the head of a singly linked list, return the middle node of the linked list. If there are two middle nodes, return the second middle node. </p>
+
+<p>Constrains: The number of nodes in the list is in the range [1, 100]. 1 &lt;= Node.val &lt;= 100.</p>
+</blockquote>
+
+<p>The second is remove Nth node counting from the end.</p>
+
+<blockquote>
+<p>Given the head of a linked list, remove the nth node from the end of the list and return its head. </p>
+
+<p>Constrains: The number of nodes in the list is sz. 1 &lt;= sz &lt;= 30. 0 &lt;= Node.val &lt;= 100. 1 &lt;= n &lt;= sz.</p>
+</blockquote>
+
+<p>Our method is to track key node with pointers.</p>
+
+<p>For instance in the second problem, we use &#8216;end&#8217; and &#8216;del&#8217; to track the end of node list and node to delete.</p>
+<pre><code class="cpp">ListNode* removeNthFromEnd(ListNode* head, int n) {
+    ListNode* del = nullptr;
+    ListNode* end = head;
+    ListNode* pre = nullptr;
+
+    // TODO: find the first possible node to delete
+    int cnt = 0;
+    while (end != nullptr) {
+        cnt++;
+        end = end-&gt;next;
+        if (cnt == n) {
+            del = head;
+            break;
+        }
+    }
+
+    // TODO: probe to the rest of nodes
+    while (end != nullptr) {
+        end = end-&gt;next;
+        pre = del;
+        del = del-&gt;next;
+    }
+
+    // TODO: delete target node
+    if (del != nullptr) {
+        if (pre == nullptr) {  // delete the first node
+            head = head-&gt;next;
+            delete del;
+        }
+        else {
+            pre-&gt;next = del-&gt;next;
+            delete del;
+        }
+    }
+
+    return head;
+}</code></pre>
+
+<p>Tricks:</p>
+
+<ul>
+<li>WHENEVER accessing to memory where a pointer points, CHECK if the pointer is <code>nullptr</code>.</li>
+</ul>
+
+</section>
+</section>
+<section	id="slidewindow">
+<h2>Slide Window</h2>
+
+<section	id="longestsubstringwithoutrepeatingcharacters">
+<h3>Longest Substring Without Repeating Characters</h3>
+
+<blockquote>
+<p>Given a string s, find the length of the longest substring without repeating characters. </p>
+
+<p>Constrains: 0 &lt;= s.length &lt;= 5 * 104. s consists of English letters, digits, symbols and spaces.</p>
+</blockquote>
+
+<p>At first glance, we have to &#8220;brute force&#8221; all possible substrings and check from longer string to short if there is repeating characters. The time complexity is O(N<sup>3</sup>) if so.</p>
+
+<p>In fact, we don&#8217;t have to check every substring, there are a lot of silly operations. Take &#8216;aaaaa&#8217; as example, if I know substring &#8216;aa&#8217; has repeating characters, then any substring that includes &#8216;aa&#8217; as substring must have repeating characters, at least one.</p>
+
+<p>So there is a pretty smart way to solve the problem called slide window.</p>
+<pre><code class="cpp">/**
+ * string: a   b   c   b   a   b   c   b   b  
+ *         ^   ^                              ^
+ *       begin end                           END
+ */</code></pre>
+
+<p>we define a window <code>[begin, end)</code> to detect the longest substring without repeating characters. Obviously, the length of window is <code>end - begin</code>. The philosophy here is to keep all the characters in the window unique.</p>
+
+<p>The algorithm for the problem is:</p>
+
+<ul>
+<li>resolve corner cases, null string and string with single character.</li>
+<li>initialize window.</li>
+<li>move end until it is out of the range of the string
+
+<ul>
+<li>if s[end] has the same character in window, then find it, and move begin to the next element of repeating character in the window.</li>
+<li>update max length at each iteration.</li>
+</ul></li>
+</ul>
+<pre><code class="cpp">int lengthOfLongestString_sol1(const string s) {
+    if ((s.size() == 0) || (s.size() == 1)) return s.size();
+
+    int maxLength = 0;
+    int begin = 0;
+    int end = 1;
+    while (end &lt; s.size()) {
+        // TODO: find repeating index
+        int repeatingIndex = -1;
+        for (int i = begin; i &lt; end; i++) {
+            if (s[i] == s[end]) repeatingIndex = i;
+        }
+
+        if (repeatingIndex != -1) {
+            begin = repeatingIndex + 1;
+        }
+
+        end++;
+        // TODO: update max length
+        if ((end - begin) &gt; maxLength) {
+            maxLength = end - begin;
+        }
+    }
+}</code></pre>
+
+<p>Solution 1 uses for loop to search repeating character, thereby the time complexity is O(N<sup>2</sup>). To improve that, we are able to use <code>vector</code> or <code>hashmap</code> to buffer characters within the window.</p>
+
+<ul>
+<li>vector buffer</li>
+</ul>
+<pre><code class="cpp">int lengthOfLongestString_sol2(const string s) {
+    if ((s.size() == 0) || (s.size() == 1)) return s.size();
+
+    vector&lt;int&gt; notes(128, 0);
+
+    int maxLength = 0;
+    int begin = 0;
+    notes[s[begin]]++;  // !!!
+    int end = 1;
+    while (end &lt; s.size()) {
+        // TODO: find repeating index
+        while (notes[s[end]] &gt; 0) {
+            notes[s[begin]]--;
+            begin++;
+        }
+
+        notes[s[end]]++;
+        end++;
+
+        // TODO: update max length
+        maxLength = max(maxLength, end - begin);
+    }
+
+    return maxLength;
+}</code></pre>
+
+<ul>
+<li>hashmap buffer</li>
+</ul>
+<pre><code class="cpp">int lengthOfLongestString_sol3(const string s) {
+    if ((s.size() == 0) || (s.size() == 1)) return s.size();
+
+    unordered_map&lt;char, int&gt; index;
+
+    int maxLength = 0;
+    int begin = 0;
+    index[s[begin]] = 0; // !!!
+    int end = 1;
+    while (end &lt; s.size()) {
+        // TODO: find repeating index
+        if (index.find(s[end]) != index.end()) {
+            begin = index[s[end]] + 1;
+        }
+
+        index[s[end]] = end;
+        end++;
+
+        // TODO: update max length
+        maxLength = max(maxLength, end - begin);
+    }
+
+    return maxLength;
+}</code></pre>
+
+<p>In general, hash map is better since we have to cover all possible characters in vector method, whereas we only cache occurred characters.</p>
+
+<p>Tricks:</p>
+
+<ul>
+<li>buffer method: trade off between time and space.</li>
+</ul>
+
+</section>
+<section	id="permutationinstring">
+<h3>Permutation In String</h3>
+
+<blockquote>
+<p>Given two strings s1 and s2, return true if s2 contains a permutation of s1, or false otherwise. In other words, return true if one of s1&#8217;s permutations is the substring of s2. </p>
+
+<p>1 &lt;= s1.length, s2.length &lt;= 10<sup>4</sup>. s1 and s2 consist of lowercase English letters.</p>
+</blockquote>
+
+<p>Our preliminary method is decomposing the problem into two subproblems:</p>
+
+<ul>
+<li>enumerate all permutation of <code>s1</code>. (how to deal with repetition) =&gt; set</li>
+<li>check if <code>s2</code> contains the given string. (how to do it efficiently, notice that the permutation of a string has equal length)</li>
+</ul>
+
+<p>For the second subproblem, we are able to use a slide window with fixed length to check if <code>s2</code> contains the given string.</p>
+<pre><code class="cpp">bool checkInclusion_sol1(string s1, string s2) {
+    if (s2.size() &lt; s1.size()) return false;
+
+    // TODO: get permutation strings
+    unordered_set&lt;string&gt; records;
+    string result;
+    permutation(s1, result, records);
+
+    // TODO: check if match
+    int begin = 0;
+    int end = s1.length();
+    bool flag = true;
+    int index = 0;
+    for (string s : records) {
+        while (end &lt; s2.length()) {
+            for (int i = begin; i &lt; end; i++) {
+                if (s[index] != s2[i]) {
+                    flag = false;
+                    break;
+                }
+                index++;
+            }
+            if (flag) {
+                return true;
+            }
+
+            // TODO: move forward
+            begin++;
+            end++;
+            flag = true;
+            index = 0;
+        }
+
+        // TODO: reset begin and end
+        begin = 0;
+        end = s1.length();
+    }
+
+    return false;
+}</code></pre>
+
+<p>Is there anything can be optimized? How about constructing two sets? One for all permutations of <code>s1</code>, and the other for all window substrings of <code>s2</code>. And we will check if intersection of set1 and set2 is <code>null</code>. </p>
+<pre><code class="cpp">bool checkInclusion_sol2(string s1, string s2) {
+    if (s2.size() &lt; s1.size()) return false;
+
+    // TODO: get permutation strings
+    unordered_set&lt;string&gt; records_s1;
+    string result;
+    permutation(s1, result, records_s1);
+
+    // TODO: construct set2
+    unordered_set&lt;string&gt; records_s2;
+    int begin = 0;
+    int size = s1.size();
+    while (begin &lt;= (s2.size() - size)) {
+        records_s2.insert(s2.substr(begin, size));
+        begin++;
+    }
+
+    // TODO: check if there is intersection
+    for (auto&amp;&amp; str : records_s1) {
+        if (records_s2.find(str) != records_s2.end()) {
+            return true;
+        }
+    }
+
+    return false;
+}</code></pre>
+
+<p>Great! Now we are able to do some optimization for recursion. We are able to simulate recursion with queue for &#8216;BFS&#8217; recursion, and stack for &#8216;DFS&#8217; recursion.</p>
+<pre><code class="cpp">bool checkInclusion_sol3(string s1, string s2) {
+    if (s2.size() &lt; s1.size()) return false;
+
+    // TODO: construct set2
+    unordered_set&lt;string&gt; records_s2;
+    int begin = 0;
+    int size = s1.size();
+    while (begin &lt;= (s2.size() - size)) {
+        records_s2.insert(s2.substr(begin, size));
+        begin++;
+    }
+
+    // TODO: search permutations and find if s2 contains it
+    class PermutationState {
+    public:
+        string left;
+        string result;
+        PermutationState(string left, string result)
+            : left(left), result(result) {}
+    };
+
+    queue&lt;PermutationState*&gt; buffer;
+    buffer.push(new PermutationState(s1, &quot;&quot;));
+    while (!buffer.empty()) {
+        PermutationState* cur = buffer.front();
+        if (cur-&gt;left.size() == 0) {
+            // Base case: find one
+            if (records_s2.find(cur-&gt;result) != records_s2.end()) {
+                return true;
+            }
+        }
+        else {
+            for (int i = 0; i &lt; cur-&gt;left.size(); i++) {
+                // choose left[i]
+                cur-&gt;result += cur-&gt;left[i];
+                cur-&gt;left = cur-&gt;left.substr(0, i) + cur-&gt;left.substr(i+1);
+                // recursion
+                buffer.push(new PermutationState(cur-&gt;left, cur-&gt;result));
+                // unchoose left[i]
+                cur-&gt;left = cur-&gt;left.substr(0, i) + *cur-&gt;result.rbegin() + cur-&gt;left.substr(i);
+                cur-&gt;result.pop_back();
+            }
+        }
+        buffer.pop();
+        delete cur;
+    }
+
+    return false;
+}</code></pre>
+
+<p>But, there is a problem here that enumerating all permutation is a time-consuming task! If the length of <code>s1</code> is 10, then the number of permutations of <code>s1</code> is <code>10!</code>, which is gigantic.</p>
+
+<p>Obviously, brute force will result in TLE (Time Limit Error). Think of something else.</p>
+
+<p>How will you check whether one string is a permutation of another string? One way is to sort the string and then compare. But, Is there a better way? If one string is a permutation of another string then they must one common metric. What is that? Both strings must have same <em>character frequencies</em>, if one is permutation of another. Which data structure should be used to store frequencies?</p>
+
+<p>There are two ways to check if two strings have the same character frequency.</p>
+
+<ul>
+<li>hashcode</li>
+</ul>
+
+<p>We will hit it in a method sort of like encryptic algorithm. We will predefined a private key, and calculate each substring. If any substring has the same encrypted code, then they have the same characters without taking order into consideration.</p>
+<pre><code class="cpp">/**
+ * ex&gt; private key:  a: 2,  b: 77, c: 193, o: 1001
+ *     s1: ab  =&gt;  1 * 2 + 1 * b = 79
+ *     s2: aabacooc:  aa(4), ab(79), ba(79), ac(195), co(1194), oo(2002), oc(1194)
+ */</code></pre>
+
+<p>By comparing encrypted code, we are able to check if two strings have the same character frequency.</p>
+<pre><code class="cpp">/**
+ *     How to calcualte encrypted code of substrings efficiently?
+ *     s2: a  a  b  a  c  o  o  c
+ *         ^     ^
+ *        begin end (code = 4)
+ *
+ */</code></pre>
+
+<p>As window slides from left to right, we only need subtract the value of the frist character and add the value of the last character. In such way we are able to avoid repeating calculations.</p>
+<pre><code class="cpp">bool checkInclusion_sol4(string s1, string s2) {
+    if (s2.size() &lt; s1.size()) return false;
+
+    unordered_map&lt;char, int&gt; privateKey = {
+        {&apos;a&apos;, 2}, {&apos;b&apos;, 77}, {&apos;c&apos;, 56}, {&apos;d&apos;, 101}, {&apos;e&apos;, 89}, {&apos;f&apos;, 54},
+        {&apos;g&apos;, 171}, {&apos;h&apos;, 133}, {&apos;i&apos;, 179}, {&apos;j&apos;, 203}, {&apos;k&apos;, 301}, {&apos;l&apos;, 111},
+        {&apos;m&apos;, 511}, {&apos;n&apos;, 607}, {&apos;o&apos;, 1021}, {&apos;p&apos;, 1891}, {&apos;q&apos;, 1099}, {&apos;r&apos;, 1999},
+        {&apos;s&apos;, 2117}, {&apos;t&apos;, 2738}, {&apos;u&apos;, 2919}, {&apos;v&apos;, 3113}, {&apos;w&apos;, 3573}, {&apos;x&apos;, 4011},
+        {&apos;y&apos;, 4193}, {&apos;z&apos;, 5111}
+    };
+
+    int code_s1 = 0;
+    for (char ch : s1) {
+        code_s1 += privateKey[ch];
+    }
+
+    int begin = 0;
+    int end = s1.size();
+    int code_s2 = 0;
+    for (int i = begin; i &lt; end; i++) {
+        code_s2 += privateKey[s2[i]];
+    }
+    while (end &lt;= s2.size()) {
+        if (code_s2 == code_s1) {
+            return true;
+        }
+
+        code_s2 -= privateKey[s2[begin]];
+        begin++;
+        code_s2 += privateKey[s2[end]];
+        end++;
+    }
+
+    return false;
+}</code></pre>
+
+<ul>
+<li>map (vector to simulate)</li>
+</ul>
+
+<p>Solution 5 will use hashmap (or vector) to record the frequency of characters in the window. The idea is similar to that above. Also, we will use <code>numOfMatch</code> to count the number of characters whose frequency matches in both strings.</p>
+<pre><code class="cpp">bool checkInclusion_sol5(string s1, string s2) {
+    if (s2.size() &lt; s1.size()) return false;
+
+    const int SIZE_OF_CHARACTERS = 26;
+    vector&lt;int&gt; s1map(SIZE_OF_CHARACTERS);
+    vector&lt;int&gt; s2map(SIZE_OF_CHARACTERS);
+    for (int i = 0; i &lt; s1.size(); i++) {
+        s1map[s1[i] - &apos;a&apos;]++;
+        s2map[s2[i] - &apos;a&apos;]++;
+    }
+
+    int numOfMatch = 0;
+    for (int i = 0; i &lt; SIZE_OF_CHARACTERS; i++) {
+        if (s1map[i] == s2map[i]) {
+            numOfMatch++;
+        }
+    }
+
+    // TODO: slide window and update numOfMatch
+    int begin = 0;
+    int end = s1.size();
+    while (end &lt;= s2.size()) {
+        if (numOfMatch == SIZE_OF_CHARACTERS) {
+            return true;
+        }
+        // TODO: dequeue (en-window)
+        if (s1map[s2[begin] - &apos;a&apos;] == s2map[s2[begin] - &apos;a&apos;]) {
+            // if character is match before
+            numOfMatch--;
+        }
+        else {
+            if (s1map[s2[begin] - &apos;a&apos;] == s2map[s2[begin] - &apos;a&apos;] - 1) {
+                // whether match if begin character subtract 1, that&apos;s what will happen.
+                numOfMatch++;
+            }
+        }
+        s2map[s2[begin] - &apos;a&apos;]--;
+        begin++;
+        // TODO: enqueue (de-window)
+        if (s1map[s2[end] - &apos;a&apos;] == s2map[s2[end] - &apos;a&apos;]) {
+            // if character is match before
+            numOfMatch--;
+        }
+        else {
+            if (s1map[s2[end] - &apos;a&apos;] == s2map[s2[end] - &apos;a&apos;] + 1) {
+                // whether match if end character add 1.
+                numOfMatch++;
+            }
+        }
+        s2map[s2[end] - &apos;a&apos;]++;
+        end++;
+    }
+
+    return false;
+}</code></pre>
+
+<p>Tricks:</p>
+
+<ul>
+<li>map: when key is able to be mapped as consecutive integer, we are able to use vector to simulate a map.</li>
+<li>recursion: queue can be used to simulate &#8216;BFS&#8217; recursion, and stack used to simulate &#8216;DFS&#8217;.</li>
+<li>Standard Template Library (STL): learn to how to utilize some useful function in STL, such as <code>sort(it_begin, it_end)</code>.</li>
+</ul>
+
+</section>
+</section>
+<section	id="bfsanddfs">
+<h2>BFS and DFS</h2>
+
+<section	id="floodfill">
+<h3>Flood Fill</h3>
+
+<blockquote>
+<p>An image is represented by an <code>m x n</code> integer grid image where <code>image[i][j]</code> represents the pixel value of the image.<br/>
+You are also given three integers <code>sr</code>, <code>sc</code>, and <code>newColor</code>. You should perform a flood fill on the image starting from the pixel <code>image[sr][sc]</code>.<br/>
+To perform a flood fill, consider the starting pixel, plus any pixels connected 4-directionally to the starting pixel of the same color as the starting pixel, plus any pixels connected 4-directionally to those pixels (also with the same color), and so on. Replace the color of all of the aforementioned pixels with <code>newColor</code>.<br/>
+Return the modified image after performing the flood fill. </p>
+
+<p>Constrains: m == image.length. n == image[i].length. 1 &lt;= m, n &lt;= 50. 0 &lt;= image[i][j], newColor &lt; 216. 0 &lt;= sr &lt; m. 0 &lt;= sc &lt; n.</p>
+</blockquote>
+
+<p>The aim to put the answer for this problem here is to show how to use <code>queue</code> to simulate BFS.</p>
+
+<ul>
+<li>Recursion</li>
+</ul>
+<pre><code class="cpp">void floodFillHelper1(vector&lt; vector&lt;int&gt; &gt;&amp; image, vector&lt; vector&lt;int&gt; &gt;&amp; visited,
+                      int sr, int sc, int&amp; sourceVal, int&amp; newColor) {
+    if ((sr &gt;= 0) &amp;&amp; (sr &lt; image.size()) &amp;&amp;
+        (sc &gt;= 0) &amp;&amp; (sc &lt; image[0].size()) &amp;&amp;
+        (image[sr][sc] == sourceVal) &amp;&amp;
+        (visited[sr][sc] == 0)) {
+        image[sr][sc] = newColor;
+        visited[sr][sc] = 1;
+
+        floodFillHelper1(image, visited, sr - 1, sc, sourceVal, newColor); // up
+        floodFillHelper1(image, visited, sr + 1, sc, sourceVal, newColor); // down
+        floodFillHelper1(image, visited, sr, sc - 1, sourceVal, newColor); // left
+        floodFillHelper1(image, visited, sr, sc + 1, sourceVal, newColor); // right
+    }
+}
+
+vector&lt; vector&lt;int&gt; &gt; floodFill_sol1(vector&lt; vector&lt;int&gt; &gt;&amp; image, int sr, int sc, int newColor) {
+    int sourceVal = image[sr][sc];
+    int newVal = newColor;
+    if (sourceVal == newVal) return image;
+    vector&lt; vector&lt;int&gt; &gt; visited(image.size(), vector&lt;int&gt;(image[0].size(), 0));
+
+    floodFillHelper1(image, visited, sr, sc, sourceVal, newVal);
+
+    return image;
+}</code></pre>
+
+<ul>
+<li>Queue Simulation</li>
+</ul>
+<pre><code class="cpp">vector&lt;vector&lt;int&gt;&gt; floodFill_sol2(vector&lt;vector&lt;int&gt;&gt;&amp; image,
+                                   int sr, int sc, int newColor) {
+    class QueueState {
+    public:
+        int sr; int sc;
+        QueueState(int sr, int sc) {
+            this-&gt;sr = sr;
+            this-&gt;sc = sc;
+        }
+    };
+
+    int sourceVal = image[sr][sc];
+    if (sourceVal == newColor) return image;
+    vector&lt; vector&lt;int&gt; &gt; visited(image.size(), vector&lt;int&gt;(image[0].size(), 0));
+
+    queue&lt;QueueState&gt; buffer;
+    buffer.push(QueueState(sr, sc));
+    while (!buffer.empty()) {
+        QueueState cur = buffer.front();
+        buffer.pop();
+        if ((cur.sr &gt;= 0) &amp;&amp; (cur.sr &lt; image.size()) &amp;&amp;
+            (cur.sc &gt;= 0) &amp;&amp; (cur.sc &lt; image[0].size()) &amp;&amp;
+            (image[cur.sr][cur.sc] == sourceVal) &amp;&amp;
+            (visited[cur.sr][cur.sc] == 0)) {
+                image[cur.sr][cur.sc] = newColor;
+                visited[cur.sr][cur.sc] = 1;
+
+                buffer.push(QueueState(cur.sr + 1, cur.sc));
+                buffer.push(QueueState(cur.sr - 1, cur.sc));
+                buffer.push(QueueState(cur.sr, cur.sc - 1));
+                buffer.push(QueueState(cur.sr, cur.sc + 1));
+            }
+    }
+    return image;
+}</code></pre>
+
+<p>Using <code>queue</code> instead of recursion brings many benefits, among which the most obvious one is we do not need to pass &#8216;global&#8217; variables, improving resulting performance.</p>
+
+<p>Tricks:</p>
+
+<ul>
+<li>How to initialize vector of vector: <code>vector&lt; vector&lt;int&gt; &gt; visited(image.size(), vector&lt;int&gt;(image[0].size(), 0))</code></li>
+<li>Treat two dimensional vector as a vector of vector: row number = <code>image.size()</code>, col number = <code>image[0].size()</code>.</li>
+</ul>
+
+</section>
+<section	id="maxareaofisland">
+<h3>Max Area of Island</h3>
+
+<blockquote>
+<p>You are given an m x n binary matrix grid. An island is a group of 1&#8217;s (representing land) connected 4-directionally (horizontal or vertical.) You may assume all four edges of the grid are surrounded by water.<br/>
+The area of an island is the number of cells with a value 1 in the island.<br/>
+Return the maximum area of an island in grid. If there is no island, return 0. </p>
+
+<p>Constrains: m == grid.length. n == grid[i].length. 1 &lt;= m, n &lt;= 50. <code>grid[i][j]</code> is either 0 or 1</p>
+</blockquote>
+
+<p>Imagine we are a band of people who are going to travel all over the world. We are trying to find new island. What should we do?</p>
+
+<ol>
+<li>Traverse from a starting point in raster order.</li>
+<li>If I step on to a new island (find a new 1). Then I will explore on the island and tag all the area I have left my steps. Record the area of the island. (DFS or BFS)</li>
+<li>Go back to where I step on to the island, and start my sea travel until find a new island.</li>
+</ol>
+
+<p>If I have gone to all the area of the world, then there you go. We got the maximum area of island.</p>
+<pre><code class="cpp">void exploreIsland(vector&lt; vector&lt;int&gt; &gt;&amp; grid, vector&lt; vector&lt;int&gt; &gt;&amp; visited, int row, int col, int&amp; area) {
+    if ((row &gt;= 0) &amp;&amp; (row &lt; grid.size()) &amp;&amp;
+        (col &gt;= 0) &amp;&amp; (col &lt; grid[0].size()) &amp;&amp;
+        (grid[row][col] == 1) &amp;&amp; (visited[row][col] == 0)) {
+        visited[row][col] = 1;
+        area++;
+        exploreIsland(grid, visited, row - 1, col, area);
+        exploreIsland(grid, visited, row + 1, col, area);
+        exploreIsland(grid, visited, row, col - 1, area);
+        exploreIsland(grid, visited, row, col + 1, area);
+    }
+}
+
+int maxAreaOfIsland_sol1(vector&lt; vector&lt;int&gt; &gt;&amp; grid) {
+    int maxIsland = 0;
+    vector&lt; vector&lt;int&gt; &gt; visited(grid.size(), vector&lt;int&gt;(grid[0].size(), 0));
+    // TODO: start to travel
+    for (int i = 0; i &lt; grid.size(); i++) {
+        for (int j = 0; j &lt; grid[0].size(); j++) {
+            if ((grid[i][j] == 1) &amp;&amp; (visited[i][j] == 0)) {
+                int area = 0;
+                exploreIsland(grid, visited, i, j, area);
+                if (area &gt; maxIsland) {
+                    maxIsland = area;
+                }
+            }
+        }
+    }
+
+    return maxIsland;
+}</code></pre>
+
+<p>Tricks:</p>
+
+<ul>
+<li><code>visited[]</code> in case of deadlock.</li>
+</ul>
+
+</section>
+<section	id="mergetrees">
+<h3>Merge Trees</h3>
+
+<blockquote>
+<p>You are given two binary trees root1 and root2. </p>
+
+<p>Imagine that when you put one of them to cover the other, some nodes of the two trees are overlapped while the others are not. You need to merge the two trees into a new binary tree. The merge rule is that if two nodes overlap, then sum node values up as the new value of the merged node. Otherwise, the NOT null node will be used as the node of the new tree. </p>
+
+<p>Return the merged tree. </p>
+
+<p>Constrains: The number of nodes in both trees is in the range [0, 2000]. &#8211;10<sup>4</sup> &lt;= Node.val &lt;= 10<sup>4</sup>.</p>
+</blockquote>
+
+<p>The key to solve problem is how to traverse two trees in parallel.</p>
+
+<ul>
+<li>if root1 is nullptr, then then combined subtree will be replaced by root2, and vice versa.</li>
+<li>if root1 and root2 both are non-nullptr, then add values up and traverse concurrently left and right subtrees.</li>
+</ul>
+<pre><code class="cpp">TreeNode* mergeTrees_sol2(TreeNode* root1, TreeNode* root2) {
+    if (root1 == nullptr) {
+        return root2;
+    }
+    if (root2 == nullptr) {
+        return root1;
+    }
+
+    root1-&gt;val += root2-&gt;val;
+    root1-&gt;left = mergeTrees_sol2(root1-&gt;left, root2-&gt;left);
+    root1-&gt;right = mergeTrees_sol2(root1-&gt;right, root2-&gt;right);
+
+    return root1;
+}</code></pre>
+
+<p>Tricks:</p>
+
+<ul>
+<li>The following algorithm for constructing tree from the result of traverse in level order only WORKS for COMPLETE binary tree.</li>
+</ul>
+<pre><code class="cpp">TreeNode* constructTreeInLevelOrder(TreeNode* root, const vector&lt;int&gt;&amp; res, int i) {
+    static int NULL_VAL = 10001;
+    // TODO: if there is possible node, then update node.
+    if ((i &lt; res.size()) &amp;&amp; (res[i] != NULL_VAL)) {
+        root = new TreeNode(res[i]);
+        root-&gt;left = constructTreeInLevelOrder(root-&gt;left, res, 2 * i + 1);
+        root-&gt;right = constructTreeInLevelOrder(root-&gt;right, res, 2 * i + 2);
+    }
+
+    return root;
+}</code></pre>
+
+</section>
+<section	id="connecttree">
+<h3>Connect Tree</h3>
+
+<blockquote>
+<p>You are given a perfect binary tree where all leaves are on the same level, and every parent has two children. The binary tree has the following definition.<br/>
+Populate each next pointer to point to its next right node. If there is no next right node, the next pointer should be set to NULL.<br/>
+Initially, all next pointers are set to NULL.</p>
+</blockquote>
+<pre><code class="cpp">struct Node {
+  int val;
+  Node *left;
+  Node *right;
+  Node *next;
+}</code></pre>
+
+<blockquote>
+<p>Constrains: The number of nodes in the tree is in the range [0, 212 - 1]. &#8211;1000 &lt;= Node.val &lt;= 1000.</p>
+</blockquote>
+
+<p>There are two ways to solve the problem.</p>
+
+<ul>
+<li>BFS</li>
+</ul>
+<pre><code>Node* connect_sol2(Node* root) {
+    class QueueNode {
+    public:
+        int level;
+        Node* node;
+
+        QueueNode(int level, Node* node) : level(level), node(node) {}
+    };
+
+    queue&lt;QueueNode&gt; que;
+    if (root == nullptr) return root;
+    que.push(QueueNode(0, root));
+    while (!que.empty()) {
+        QueueNode cur = que.front();
+        que.pop();
+        QueueNode next = que.front();
+        if (cur.level == next.level) {
+            cur.node-&gt;next = next.node;
+        }
+        if (cur.node-&gt;left != nullptr) {
+            que.push(QueueNode(cur.level + 1, cur.node-&gt;left));
+        }
+        if (cur.node-&gt;right != nullptr) {
+            que.push(QueueNode(cur.level + 1, cur.node-&gt;right));
+        }
+    }
+
+    return root;
+}</code></pre>
+
+<ul>
+<li>Recursion: connect subtrees</li>
+</ul>
+
+<p>The key here is that we need to connect the right edge of left subtree to the left edge of right subtree.</p>
+<pre><code class="cpp">Node* connect_sol1(Node* root) {
+    if ((root != nullptr) &amp;&amp; (root-&gt;left != nullptr)) {
+        // TODO: connect my left subtree&apos;s right edge to my right subtree&apos;s left edge
+        Node* leftSubTree = root-&gt;left;
+        Node* rightSubTree = root-&gt;right;
+        while ((leftSubTree != nullptr) &amp;&amp;
+               (rightSubTree != nullptr)) {
+            leftSubTree-&gt;next = rightSubTree;
+            leftSubTree = leftSubTree-&gt;right;
+            rightSubTree = rightSubTree-&gt;left;
+        }
+
+        root-&gt;left = connect_sol1(root-&gt;left);
+        root-&gt;right = connect_sol1(root-&gt;right);
+    }
+
+    return root;
+}</code></pre>
+
+<p>Tricks:</p>
+
+<ul>
+<li>Think of tree problems from different perspectives, both node and subtree. From node, we consider the connection between levels. We take into consideration recursion from subtree perspective.</li>
+</ul>
+
+</section>
+<section	id="updatematrix">
+<h3>Update Matrix</h3>
+
+<blockquote>
+<p>Given an m x n binary matrix mat, return the distance of the nearest 0 for each cell. </p>
+
+<p>The distance between two adjacent cells is 1. </p>
+
+<p>Constrains: m == mat.length. n == mat[i].length. 1 &lt;= m, n &lt;= 10<sup>4</sup>. 1 &lt;= m * n &lt;= 10<sup>4</sup>. mat[i][j] is either 0 or 1. There is at least one 0 in mat.</p>
+</blockquote>
+
+<p>There are two ways to solve the problem:</p>
+
+<ul>
+<li>BFS and Greedy Algorithm</li>
+</ul>
+
+<p>Use a queue to store cells that can be used to update their neighbors, sort of like Dijkstra Algorithm.</p>
+<pre><code class="cpp">vector&lt; vector&lt;int&gt; &gt; updateMatrix_sol2(vector&lt; vector&lt;int&gt; &gt;&amp; mat) {
+    class QueueState {
+    public:
+        int i;
+        int j;
+        QueueState(int row, int col) : i(row), j(col) {};
+    };
+    queue&lt;QueueState&gt; que;
+    for (int i = 0; i &lt; mat.size(); i++) {
+        for (int j = 0; j &lt; mat[0].size(); j++) {
+            if (mat[i][j] == 0) {
+                que.push(QueueState(i, j));
+            }
+            else {
+                mat[i][j] = INT_MAX;
+            }
+        }
+    }
+
+    int shorter = 0;
+    while (!que.empty()) {
+        QueueState cur = que.front();
+        que.pop();
+        // TODO: try to update my neighbors
+        shorter = mat[cur.i][cur.j] + 1;
+        if ((cur.i + 1 &lt; mat.size()) &amp;&amp; (shorter &lt; mat[cur.i+1][cur.j])) {
+            mat[cur.i+1][cur.j] = shorter;
+            que.push(QueueState(cur.i+1, cur.j));
+        }
+        if ((cur.i - 1 &gt;= 0) &amp;&amp; (shorter &lt; mat[cur.i-1][cur.j])) {
+            mat[cur.i-1][cur.j] = shorter;
+            que.push(QueueState(cur.i-1, cur.j));
+        }
+        if ((cur.j + 1 &lt; mat[0].size()) &amp;&amp; (shorter &lt; mat[cur.i][cur.j+1])) {
+            mat[cur.i][cur.j+1] = shorter;
+            que.push(QueueState(cur.i, cur.j+1));
+        }
+        if ((cur.j - 1 &gt;= 0) &amp;&amp; (shorter &lt; mat[cur.i][cur.j-1])) {
+            mat[cur.i][cur.j-1] = shorter;
+            que.push(QueueState(cur.i, cur.j-1));
+        }
+    }
+
+    return mat;
+}</code></pre>
+
+<ul>
+<li>Dynamic Programming</li>
+</ul>
+
+<p>One important fact: the shortest path to 0 will hit two possibles</p>
+
+<ul>
+<li><code>mat[i][j]</code> is 0 itself.</li>
+<li><code>mat[i][j]</code> has a shortest path passing one of its 4-dimentional neighbors. Thereby, <code>dist[i][j] = min(d[i][j], d[i-1][j] + 1, d[i][j-1] + 1, d[i+1][j] + 1, d[i-1][j] +1)</code>.</li>
+</ul>
+
+<p>And one property: left-top dependency and right-bottom dependency.</p>
+<pre><code class="cpp">vector&lt; vector&lt;int&gt; &gt; updateMatrix_sol3(vector&lt; vector&lt;int&gt; &gt;&amp; mat) {
+    int rows = mat.size();
+    int cols = mat[0].size();
+    if (rows == 0) return mat;
+    int MAX_VAL = 10001;
+    vector&lt; vector&lt;int&gt; &gt; dist(rows, vector&lt;int&gt;(cols, MAX_VAL));
+
+    // TODO: check for left and top
+    for (int i = 0; i &lt; rows; i++) {
+        for (int j = 0; j &lt; cols; j++) {
+            if (mat[i][j] == 0) {
+                dist[i][j] = 0;
+            }
+            else {
+                if (i &gt; 0) {
+                    dist[i][j] = min(dist[i][j], dist[i-1][j] + 1);
+                }
+                if (j &gt; 0) {
+                    dist[i][j] = min(dist[i][j], dist[i][j-1] + 1);
+                }
+            }
+        }
+    }
+
+    // TODO: check for right and bottom
+    for (int i = rows - 1; i &gt;= 0; i--) {
+        for (int j = cols - 1; j &gt;= 0; j--) {
+            if (i + 1 &lt; rows) {
+                dist[i][j] = min(dist[i][j], dist[i+1][j] + 1);
+            }
+            if (j + 1 &lt; cols) {
+                dist[i][j] = min(dist[i][j], dist[i][j+1] + 1);
+            }
+        }
+    }
+
+    return dist;
+}</code></pre>
+
+<p>Tricks:</p>
+
+<ul>
+<li>Making use of surrounding information.</li>
+</ul>
+
+</section>
+</section>
+<section	id="recursionandbacktracking">
+<h2>Recursion and Backtracking</h2>
+
+<section	id="reverselinklist">
+<h3>Reverse LinkList</h3>
+
+<blockquote>
+<p>Given the head of a singly linked list, reverse the list, and return the reversed list. </p>
+
+<p>Constrains: The number of nodes in the list is the range [0, 5000]. &#8211;5000 &lt;= Node.val &lt;= 5000.</p>
+</blockquote>
+
+<p>The purpose of this problem is to give us an intuition on how recursion is used to solve problem. Keep in mind that it includes two stages, go down deeply and back up.</p>
+
+<p>Recursion has a function sort of like &#8220;Hey, let me take a break, and do things after me first.&#8221;. Figure out what the return value means in the recursion process.</p>
+<pre><code class="cpp">ListNode* reverseList_sol3(ListNode* head) {
+    if ((head == nullptr) || (head-&gt;next == nullptr)) {
+        return head;
+    }
+
+    // TODO: reverse the rest
+    ListNode* newHead = reverseList_sol3(head-&gt;next);
+
+    // TODO: reverse myself
+    ListNode* nextNode = head-&gt;next;
+    nextNode-&gt;next = head;
+    head-&gt;next = nullptr;
+
+    return newHead;
+}</code></pre>
+
+</section>
+<section	id="mergetwosortedlinklist">
+<h3>Merge Two Sorted LinkList</h3>
+
+<blockquote>
+<p>Merge two sorted linked lists and return it as a sorted list. The list should be made by splicing together the nodes of the first two lists. </p>
+
+<p>Constrains: The number of nodes in both lists is in the range [0, 50]. &#8211;100 &lt;= Node.val &lt;= 100. Both l1 and l2 are sorted in non-decreasing order.</p>
+</blockquote>
+
+<p>The aim of the problem is to show how clean the recursion algorithm is and how to use it to solve problem recursively that has similar structure.</p>
+<pre><code class="cpp">ListNode* mergeTwoLists_sol2(ListNode* l1, ListNode* l2) {
+    if (l1 == nullptr) return l2;
+    if (l2 == nullptr) return l1;
+
+    if (l1-&gt;val &lt;= l2-&gt;val) {
+        return new ListNode(l1-&gt;val, mergeTwoLists_sol2(l1-&gt;next, l2));
+    }
+    else {
+        return new ListNode(l2-&gt;val, mergeTwoLists_sol2(l1, l2-&gt;next));
+    }
+}</code></pre>
+
+</section>
+<section	id="combination">
+<h3>Combination</h3>
+
+<blockquote>
+<p>Given two integers n and k, return all possible combinations of k numbers out of the range [1, n]. </p>
+
+<p>Constrains: 1 &lt;= n &lt;= 20. 1 &lt;= k &lt;= n.</p>
+</blockquote>
+<pre><code class="cpp">void combineHelper(int n, int k, vector&lt;int&gt;&amp; selected, vector&lt; vector&lt;int&gt; &gt;&amp; result) {
+    if (n &lt; k) return;
+    if (k == 0) {
+        result.push_back(selected);
+        return;
+    }
+
+    // TODO: choose and unchoose
+    // not choose
+    combineHelper(n - 1, k, selected, result);
+    // choose
+    selected.push_back(n);
+    combineHelper(n - 1, k - 1, selected, result);
+    selected.pop_back();
+}</code></pre>
+
+</section>
+<section	id="permutation">
+<h3>Permutation</h3>
+
+<blockquote>
+<p>Given an array nums of distinct integers, return all the possible permutations. You can return the answer in any order. </p>
+
+<p>1 &lt;= nums.length &lt;= 6. &#8211;10 &lt;= nums[i] &lt;= 10. All the integers of nums are unique.</p>
+</blockquote>
+<pre><code class="cpp">void permuteHelper(vector&lt;int&gt;&amp; choices, vector&lt;int&gt;&amp; selected,
+                   vector&lt; vector&lt;int&gt; &gt;&amp; result) {
+    if (choices.empty()) {
+        result.push_back(selected);
+        return;
+    }
+
+    int selectedNum = 0;
+    for (int i = 0; i &lt; choices.size(); i++) {
+        // choose
+        selectedNum = choices[i];
+        choices.erase(choices.begin() + i);
+        selected.push_back(selectedNum);
+        permuteHelper(choices, selected, result);
+        // unchoose
+        choices.insert(choices.begin() + i, selectedNum);
+        selected.pop_back();
+    }
+}</code></pre>
+
+</section>
+<section	id="lettercasepermutation">
+<h3>Letter Case Permutation</h3>
+
+<blockquote>
+<p>Given a string s, we can transform every letter individually to be lowercase or uppercase to create another string. </p>
+
+<p>Return a list of all possible strings we could create. </p>
+
+<p>s will be a string with length between 1 and 12. s will consist only of letters or digits.</p>
+</blockquote>
+
+<p>Combinations, permutations and its variant like this problem are paradigm for this kind of problem. Notice that we have to keep some environment variable unchanged in same level of recursion, meaning <code>choose</code> and restore environment by <code>unchoose</code>.</p>
+<pre><code class="cpp">void letterCasePermutationHelper(string&amp; s, string&amp; soFar, vector&lt;string&gt;&amp; result) {
+    if (s.length() == 0) {
+        result.push_back(soFar);
+        return;
+    }
+
+    char cur = s[0];
+    s = s.substr(1);
+    if (isdigit(cur)) {
+        soFar.push_back(cur);
+        letterCasePermutationHelper(s, soFar, result);
+        soFar.pop_back();
+    }
+    else {
+        // current character is not digit, two choises: toupper or tolower
+        // choose to upper
+        soFar.push_back(toupper(cur));
+        letterCasePermutationHelper(s, soFar, result);
+        soFar.pop_back();
+        // choose to lower
+        soFar.push_back(tolower(cur));
+        letterCasePermutationHelper(s, soFar, result);
+        soFar.pop_back();
+    }
+    s.insert(s.begin(), cur);
+    return;
+}</code></pre>
+
+<p>Tricks:</p>
+
+<ul>
+<li><code>vector.erase(iter)</code>: delete v[1] is same as <code>v.erase(iter + 1)</code>.</li>
+<li><code>string.substr(start, number)</code>: s.str(1) means get rid of the first character from the string.</li>
+</ul>
+
+</section>
+</section>
+<section	id="dynamicprogramming">
+<h2>Dynamic Programming</h2>
+
+<section	id="climbingstairs">
+<h3>Climbing Stairs</h3>
+
+<blockquote>
+<p>You are climbing a staircase. It takes n steps to reach the top. Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top? </p>
+
+<p>Constrains: 1 &lt;= n &lt;= 45</p>
+</blockquote>
+
+<p>At first glance, it is a decision problem, which can be solved recursively. f(n) = f(n&#8211;1) + f(n&#8211;2), where f is defined as the number of distinct ways that I can climb to the top.</p>
+
+<p>Base case:</p>
+
+<ul>
+<li>if n equals 1, then there is 1 way (f(2) = f(1) + f(0)). (definition)</li>
+<li>if n equals 1, then there is 1 way to do that.</li>
+</ul>
+
+<p>Recursion:</p>
+
+<ul>
+<li>the number of ways to the top of n stairs is equal to that of n&#8211;1 stairs with 1 step forward plus that of n&#8211;2 stairs with 2 step forward.</li>
+</ul>
+<pre><code class="cpp">int climbStairsHelper(int n, unordered_map&lt;int, int&gt;&amp; buffer) {
+    if ((n == 0) || (n == 1)) return 1;
+
+    if (buffer.find(n) != buffer.end()) {
+        return buffer[n];
+    }
+    else {
+        int fn = climbStairsHelper(n - 1, buffer) + climbStairsHelper(n - 2, buffer);
+        buffer[n] = fn;
+        return fn;
+    }
+}</code></pre>
+
+<p>From the perspective from bottom to top, we are able to solve problem in a different way, which is known as dynamic programming.</p>
+<pre><code class="bash"> f(0) = 1;
+ f(1) = 1;
+ f(2) = f(1) + f(0);
+ f(3) = f(2) + f(1);
+        ^      ^   KNOWN
+ ...
+ f(n) = f(n-1) + f(n-2)</code></pre>
+
+<p>Alas, that&#8217;s Fibonacci sequence!</p>
+<pre><code class="cpp">int climbStairs_sol2(int n) {
+    const int MAX_SIZE = 50;
+    vector&lt;int&gt; f(MAX_SIZE, 0);
+    f[0] = f[1] = 1;
+    for (int i = 2; i &lt; MAX_SIZE; i++) {
+        f[i] = f[i-1] + f[i-2];
+    }
+
+    return f[n];
+}</code></pre>
+
+</section>
+<section	id="houserobber">
+<h3>House Robber</h3>
+
+<blockquote>
+<p>You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, the only constraint stopping you from robbing each of them is that adjacent houses have security systems connected and it will automatically contact the police if two adjacent houses were broken into on the same night. </p>
+
+<p>Given an integer array nums representing the amount of money of each house, return the maximum amount of money you can rob tonight without alerting the police. </p>
+
+<p>Constrains: 1 &lt;= nums.length &lt;= 100. 0 &lt;= nums[i] &lt;= 400.</p>
+</blockquote>
+
+<p>As always, decision problem in general can be solved by recursion. But the time complexity of recursion is O(N!), which is undesirable.</p>
+
+<p>But if we use a buffer to cache intermediate calculation, the complexity will be O(N).</p>
+<pre><code class="cpp">int robHelper(vector&lt;int&gt;&amp; money, vector&lt;int&gt;&amp; houses, unordered_map&lt;string, int&gt; buffer) {
+    if (houses.size() == 0) return 0;
+    if (houses.size() == 1) return money[houses[0]];
+
+    string bufferKey = vec2string(houses);
+    if (buffer.find(bufferKey) != buffer.end()) {
+        return buffer[bufferKey];
+    }
+    else {
+        // TODO: backup for restore after backtracking
+        int moneyFromHouse = money[0];
+        int houseID = houses[0];
+        int moneyOfNeighbor = money[1];
+        int houseIDofNeighbor = houses[1];
+        // TODO: choose
+        // do not rob
+        money.erase(money.begin()); // get rid of the first house
+        houses.erase(houses.begin());
+        int notRob = robHelper(money, houses, buffer);
+        money.erase(money.begin()); // get rid of the neighbor of the first house
+        // rob
+        houses.erase(houses.begin());
+        int justRob = robHelper(money, houses, buffer) + moneyFromHouse;
+        // unchoose
+        money.insert(money.begin(), moneyOfNeighbor);
+        money.insert(money.begin(), moneyFromHouse);
+        houses.insert(houses.begin(), houseIDofNeighbor);
+        houses.insert(houses.begin(), houseID);
+
+        // TODO: cache result
+        string bufferKey = vec2string(houses);
+        buffer[bufferKey] = max(notRob, justRob);
+        return buffer[bufferKey];
+    }
+}</code></pre>
+
+<p>Yet how to abstract the problem is very important. Can we make it easier? Do we have to record all solutions to every cases as last algorithm does? Of course NOT.</p>
+
+<p>We are able to define function robFrom(i) as the maximum profit when robbing from i-th house to the end.</p>
+
+<p>Then we get <code>robFrom(i)= max(robFrom(i+1), robFrom(i+2) + nums(i))</code>.</p>
+
+<p>Then what&#8217;s the base case according to our definition? We have to find 2 since <code>i+2</code> in the formula above.</p>
+
+<ul>
+<li>start from the last house, which mean there is only one house. <code>robFrom(n-1) = nums[n-1]</code></li>
+<li>start from the end of street, that is no house. <code>robFrom(n) = 0</code></li>
+</ul>
+
+<p>Now it&#8217;s the power of dynamic programming.</p>
+<pre><code class="cpp">int rob_sol3(vector&lt;int&gt;&amp; nums) {
+    if (nums.size() == 0) return 0;
+    int n = nums.size();
+    vector&lt;int&gt; startFrom(n + 1, 0);
+    startFrom[n] = 0;
+    startFrom[n-1] = nums[n-1];
+    for (int i = n-2; i &gt;= 0; i--){
+        startFrom[i] = max(startFrom[i+1], startFrom[i+2] + nums[i]);
+    }
+
+    return startFrom[0];
+ }</code></pre>
+
+<p>Trick:</p>
+
+<ul>
+<li>Good abstraction is VERY important.</li>
+</ul>
+
+</section>
+<section	id="triangle">
+<h3>Triangle</h3>
+
+<blockquote>
+<p>Given a triangle array, return the minimum path sum from top to bottom. </p>
+
+<p>For each step, you may move to an adjacent number of the row below. More formally, if you are on index i on the current row, you may move to either index i or index i + 1 on the next row. </p>
+
+<p>1 &lt;= triangle.length &lt;= 200. triangle[0].length == 1. triangle[i].length == triangle[i - 1].length + 1. &#8211;104 &lt;= <code>triangle[i][j]</code> &lt;= 104.</p>
+</blockquote>
+
+<p>Again, the best way to solve decision problem, if possible, is dynamic programming.</p>
+<pre><code class="cpp">minPath(cur) = min {
+    minPath(cur-&gt;left) + pathFrom(cur-&gt;left),
+    minPath(cur-&gt;right) + pathFrom(cur-&gt;right)
+}</code></pre>
+<pre><code class="cpp">int minimumTotal(vector&lt; vector&lt;int&gt; &gt;&amp; triangle) {
+    if (triangle.size() == 0) return 0;
+
+    vector&lt; vector&lt;int&gt; &gt; val = triangle;
+
+    // TODO: initialize base case
+    int bottom = triangle.size() - 1;
+    for (int i = 0; i &lt; triangle[bottom].size(); i++) {
+        triangle[bottom][i] = 0;
+    }
+
+    // TODO: rendering from bottom to top
+    for (int row = triangle.size() - 2; row &gt;= 0; row--) {
+        for (int col = 0; col &lt; triangle[row].size(); col++) {
+            int leftPath = triangle[row+1][col] + val[row+1][col];
+            int rightPath = triangle[row+1][col+1] + val[row+1][col+1];
+            triangle[row][col] = min(leftPath, rightPath);
+        }
+    }
+
+    return triangle[0][0] + val[0][0];
+}</code></pre>
+
+</section>
+</section>
+<section	id="bitwisemanipulation">
+<h2>Bitwise Manipulation</h2>
+
+<section	id="poweroftwo">
+<h3>Power of Two</h3>
+
+<blockquote>
+<p>Given an integer n, return true if it is a power of two. Otherwise, return false. </p>
+
+<p>An integer n is a power of two, if there exists an integer x such that n == 2<sup>x</sup>. </p>
+
+<p>Constrains: &#8211;2<sup>31</sup> &lt;= n &lt;= 2<sup>31</sup> - 1.</p>
+</blockquote>
+
+<p>The problem can be solved recursively, but today we will solve by bitwise manipulation.</p>
+
+<p>Notice that <code>x = n &amp; (-n)</code>, then <code>x</code> and <code>n</code> has only one one-bit in common.</p>
+<pre><code class="bash">ex&gt;  13:   01101
+    -13: &amp; 10011
+    ------------
+      x:   00001</code></pre>
+
+<p>For power of 2 number <code>n = n &amp; (-n)</code>.</p>
+<pre><code class="bash">ex&gt;  8:   01000
+    -8: &amp; 11000
+    -----------
+     x:   01000 == n</code></pre>
+
+<p>So we get an important property of power of 2 number, <code>n = n &amp; (-n)</code>.</p>
+<pre><code class="cpp">bool isPowerOfTwo_sol3(int n) {
+    if (n == 0) return false;
+    long x = n;
+    return (x &amp; -x) == x;
+}</code></pre>
+
+<p>Tricks:</p>
+
+<ul>
+<li><code>n == n &amp; (-n)</code> for power of two numbers.</li>
+</ul>
+
+</section>
+<section	id="hammingweight">
+<h3>Hamming Weight</h3>
+
+<blockquote>
+<p>Write a function that takes an unsigned integer and returns the number of &#8216;1&#8217; bits it has (also known as the Hamming weight). </p>
+
+<p>Constrains: The input must be a binary string of length 32.</p>
+</blockquote>
+
+<p>There are two ways to do that.</p>
+
+<ul>
+<li>Mask: initialize mask to be <code>1(0000000001)</code>, and check one by one bit.</li>
+</ul>
+<pre><code class="cpp">int hammingWeight_sol1(uint32_t n) {
+    uint32_t mask = 1;
+    int count = 0;
+    for (int i = 0; i &lt; 32; i++) {
+        if ((n &amp; mask) != 0) {
+            count++;
+        }
+        mask &lt;&lt;= 1;
+    }
+
+    return count;
+}</code></pre>
+
+<ul>
+<li>Use <code>n &amp; (n - 1)</code>: will flip the least significant 1-bit to be 0. Flip n until <code>n == 0</code>.</li>
+</ul>
+<pre><code class="cpp">int hammingWeight_sol3(u_int32_t n) {
+    int count = 0;
+    while (n != 0) {
+        count++;
+        n = (n &amp; (n-1));
+    }
+
+    return count;
+}</code></pre>
+
+<p>Tricks:</p>
+
+<ul>
+<li><code>n &amp; (n - 1)</code> can be used to flip the least significant 1-bit.</li>
+</ul>
+
+</section>
+<section	id="reversebits">
+<h3>Reverse Bits</h3>
+
+<blockquote>
+<p>Reverse bits of a given 32 bits unsigned integer. </p>
+
+<p>Constrains: The input must be a binary string of length 32.</p>
+</blockquote>
+
+<p>There are two interesting ways among many solutions for the problem.</p>
+
+<ul>
+<li>Mask: shift one bit a time</li>
+</ul>
+<pre><code class="bash"># keep mask unchanged, move input
+  ex&gt;  input: 00000010100101000001111010011100
+                                             ^
+        mask: 00000000000000000000000000000001
+         ret: 00000000000000000000000000000000
+              *
+  round 1: move the least significant bit to the leftmost  &lt;&lt; 31
+  round 2:
+       input: 00000001010010100000111101001110(0)
+                                             ^
+        mask: 00000000000000000000000000000001
+         ret: 00000000000000000000000000000000
+              **</code></pre>
+<pre><code class="cpp">uint32_t reverseBits_sol1(uint32_t n) {
+    uint32_t mask = 1; // ....0001
+    int shift = 31;
+    uint32_t ret = 0;
+    // TODO: keep mask unchange, and move n
+    while (n != 0) {
+        ret += (n &amp; mask) &lt;&lt; shift;
+        n &gt;&gt;= 1;
+        shift--;
+    }
+
+    return ret;
+}</code></pre>
+
+<ul>
+<li>Divide and Conquer MANUALLY</li>
+</ul>
+<pre><code class="bash">  ex&gt; input: 0000001010010100 0001111010011100
+             **************** ^^^^^^^^^^^^^^^^
+                  B0 &lt;-----------&gt; B1
+
+             0001111010011100 0000001010010100
+             ********^^^^^^^^ ********^^^^^^^^
+               B0       B1       B0      B1
+
+             ......</code></pre>
+<pre><code class="cpp">uint32_t reverseBits_sol2(uint32_t n) {
+    n = (n &gt;&gt; 16 | n &lt;&lt; 16);
+    n = (((n &amp; 0xff00ff00) &gt;&gt; 8) | ((n &amp; 0x00ff00ff) &lt;&lt; 8));
+    n = (((n &amp; 0xf0f0f0f0) &gt;&gt; 4) | ((n &amp; 0x0f0f0f0f) &lt;&lt; 4));
+    n = (((n &amp; 0xcccccccc) &gt;&gt; 2) | ((n &amp; 0x33333333) &lt;&lt; 2));
+    n = (((n &amp; 0xaaaaaaaa) &gt;&gt; 1) | ((n &amp; 0x55555555) &lt;&lt; 1));
+
+    return n;
+}</code></pre>
+
+</section>
+<section	id="singlenumber">
+<h3>Single Number</h3>
+
+<blockquote>
+<p>Given a non-empty array of integers nums, every element appears twice except for one. Find that single one. </p>
+
+<p>You must implement a solution with a linear runtime complexity and use only constant extra space. </p>
+
+<p>Constrains: 1 &lt;= nums.length &lt;= 3 * 104. &#8211;3 * 104 &lt;= nums[i] &lt;= 3 * 104. Each element in the array appears twice except for one element which appears only once.</p>
+</blockquote>
+
+<p>Notice that <code>N xor N == 0</code> and <code>N xor 0 = N</code>. With the help of that, we are able to detect numbers occurring for even number of times.</p>
+<pre><code class="cpp">int singleNumber_sol2(vector&lt;int&gt;&amp; nums) {
+    int ret = 0;
+    for (int&amp; num : nums) {
+        ret = ret ^ num;
+    }
+
+    return ret;
+}</code></pre>
+
+<blockquote>
+<p>Given an integer array nums where every element appears three times except for one, which appears exactly once. Find the single element and return it. </p>
+
+<p>You must implement a solution with a linear runtime complexity and use only constant extra space. </p>
+
+<p>1 &lt;= nums.length &lt;= 3 * 104. &#8211;231 &lt;= nums[i] &lt;= 231 - 1. Each element in nums appears exactly three times except for one element which appears once.</p>
+</blockquote>
+
+<p>How about if all numbers appear for three times except one number?</p>
+
+<p><code>seen_once</code> and <code>seen_twice</code> in fact can be seen as two maps, which will save numbers in its binary format. Let&#8217;s say we have nums: a, a, b, a</p>
+
+<ul>
+<li>(a): first time to see a, so we squash &#8216;a&#8217; into <code>seen_once</code> map by <code>seen_once XOR a</code></li>
+<li>(a): secend time to see a, we will remove &#8216;a&#8217; from <code>seen_once</code> and save it in <code>seen_twice</code>.</li>
+<li>(b): first time to see b, so we squash &#8216;b&#8217; into <code>seen_once</code> map by <code>seen_once XOR b</code></li>
+<li>(a): third time to see a, we will remove it from <code>seen_once</code> and <code>seen_twice</code>.</li>
+</ul>
+<pre><code class="bash">  seen_once = ~seen_twice &amp; (seen_once ^ x);
+              |---------| if it is seen in seen_twice, then reset me.
+                          otherwise, keep my result.
+
+  seen_twice = ~seen_once &amp; (seen_twice ^ x);
+               |--------| if it is seen in seen_once, then reset me.
+                          otherwise, keep my result.</code></pre>
+
+<p>The algorithm can solve problems such as every number occurs <code>3 * n</code> times except one number.</p>
+<pre><code class="cpp">    int seen_once = 0;
+    int seen_twice = 0;
+    for (int i = 0; i &lt; nums.size(); i++) {
+        seen_once = (~seen_twice) &amp; (seen_once ^ nums[i]);
+        seen_twice = (~seen_once) &amp; (seen_twice ^ nums[i]);
+    }
+
+    return seen_once;</code></pre>
+
+<blockquote>
+<p>Given an integer array nums, in which exactly two elements appear only once and all the other elements appear exactly twice. Find the two elements that appear only once. You can return the answer in any order. </p>
+
+<p>You must write an algorithm that runs in linear runtime complexity and uses only constant extra space. </p>
+
+<p>Constrains: 2 &lt;= nums.length &lt;= 3 * 104. &#8211;231 &lt;= nums[i] &lt;= 231 - 1. Each integer in nums will appear twice, only two integers will appear once.</p>
+</blockquote>
+
+<p>How about there are two numbsers occuring once and other numbers for even numbers?</p>
+
+<p>To solve the problem in a constant space is a bit tricky but could be done with the help of two bitmasks. </p>
+
+<p>XOR: &#8216;x XOR y&#8217; indiciates the difference between x and y. </p>
+
+<p>Can we use the same method in singleNumberi? Could we extract x and y directly from this bitmask? No. Though we could use this bitmask as a marker to separate x and y.</p>
+<pre><code class="bash"> ex&gt; nums = { x, y, a, a }
+                   x = 0001
+                   y = 0010
+                   a = ????
+                   a = ????
+             bitmask = 0011 (x XOR y)
+  bitmask &amp; -bitmask = 0001 (rightmost 1-bit)</code></pre>
+
+<p>Let&#8217;s do bitmask &amp; (-bitmask) to isolate the rightmost 1-bit, which is different between x and y. There are two cases:</p>
+
+<ul>
+<li>1-bit for x, and 0-bit for y.</li>
+<li>1-bit for y, and 0-bit for x.</li>
+</ul>
+
+<p>Let&#8217;s say it&#8217;s the first case. There is a very important fact: when just looking this bit of a numbers in &#8216;nums&#8217;, only x and other numbers except y will map to this bit as 1. So we are able to distinguish y from other numbers that map to rightmost bit as 1.</p>
+<pre><code class="cpp">vector&lt;int&gt; singleNumberiii_sol2(vector&lt;int&gt;&amp; nums) {
+    int bitmask = 0;
+    for (auto&amp;&amp; num : nums) {
+        bitmask ^= num; // the difference of x and y
+    }
+
+    int rightmostBit = bitmask &amp; -bitmask;
+    // TODO: find rightmost bit sequence
+    int xBitmast = 0;
+    for (auto&amp;&amp; num : nums) {
+        // assuming: 1-bit for x, and 0-bit for y.
+        if ((num &amp; rightmostBit) == rightmostBit) {
+            xBitmast ^= num;
+        }
+    }
+    int x = xBitmast;
+    int y = x ^ bitmask;
+
+    return {x, y};
+}</code></pre>
+
+<p>Tricks:</p>
+
+<ul>
+<li><code>~a &amp; a == 0</code> and <code>~0 &amp; a == a</code>.</li>
+<li><code>a xor a == 0</code> and <code>0 xor a == a</code>.</li>
+<li><code>a &amp; -a</code> get the rightmost 1-bit.</li>
+</ul>
+
+</section>
+</section>
+<p><EndMarkdown></p>
