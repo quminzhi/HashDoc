@@ -1,0 +1,1082 @@
+{% load static %}
+
+<!-- Insert title here -->
+
+<h1 id="linklist">LinkList</h1>
+
+<h2 id="tableofcontents">Table of Contents</h2>
+
+<ul>
+<li><a href="#singlylinkedlist">Singly Linked List</a></li>
+<li><a href="#relatedproblems">Related Problems</a>
+
+<ul>
+<li><a href="#cycledetectioni">Cycle Detection I</a></li>
+<li><a href="#cycledetectionii">Cycle Detection II</a></li>
+<li><a href="#intersectionoftwolinklists">Intersection of Two LinkLists</a></li>
+<li><a href="#removenthnodefromend">Remove Nth Node From End</a></li>
+<li><a href="#twopointersummary">Two Pointer Summary</a></li>
+<li><a href="#reverselinkedlist">Reverse Linked List</a></li>
+<li><a href="#removeelements">Remove Elements</a></li>
+<li><a href="#oddandevenlist">Odd and Even List</a></li>
+<li><a href="#palindromelinkedlist">Palindrome Linked List</a></li>
+<li><a href="#problemssummary">Problems Summary</a></li>
+</ul></li>
+<li><a href="#doublylinkedlist">Doubly Linked List</a></li>
+<li><a href="#summary">Summary</a></li>
+<li><a href="#problemsii">Problems II</a>
+
+<ul>
+<li><a href="#mergetwosortedlist">Merge Two Sorted List</a></li>
+<li><a href="#addtwonumbers">Add Two Numbers</a></li>
+</ul></li>
+</ul>
+
+<p><TableEndMark></p>
+<!-- DO NOT ADD EndOfTable MANUALLY -->
+
+<section	id="singlylinkedlist">
+<h2>Singly Linked List</h2>
+
+<p>LinkList to data structure is sort of like &#8220;hello world&#8221; to C. In this section, we will discuss some topics about link list.</p>
+<pre><code class="cpp">#ifndef LINKLIST_H
+#define LINKLIST_H
+
+class LinkList
+{
+public:
+    LinkList();
+
+    bool isEmpty() const;
+    int get(int index) const;
+
+    void addAtHead(int val);
+    void addAtTail(int val);
+    void addAtIndex(int index, int val);
+    void deleteHead();
+    void deleteAtIndex(int index);
+
+private:
+    typedef struct Node {
+        int val = 0;
+        struct Node* next = nullptr;
+    } Node;
+
+    Node* head = nullptr;
+};
+
+#endif // LINKLIST_H</code></pre>
+<pre><code class="cpp">#include &quot;linklist.h&quot;
+#include &lt;assert.h&gt;
+#include &quot;testing/SimpleTest.h&quot;
+
+LinkList::LinkList() : head(nullptr) {}
+
+bool LinkList::isEmpty() const {
+    return (head == nullptr);
+}
+
+int LinkList::get(int index) const {
+    assert(!isEmpty());
+    int i = 0;
+    Node* p = head;
+    while (p != nullptr) {
+        if (i == index) {
+            return p-&gt;val;
+        }
+        p = p-&gt;next;
+        i++;
+    }
+
+    return -1;
+}
+
+void LinkList::addAtHead(int val) {
+    Node* node = new Node();
+    node-&gt;val = val;
+
+    if (head != nullptr) { // in case that head == nullptr
+        node-&gt;next = head-&gt;next;
+    }
+    head = node;
+}
+
+void LinkList::addAtTail(int val) {
+    Node* node = new Node();
+    node-&gt;val = val;
+
+    Node* p = head;
+    if (p == nullptr) {
+        addAtHead(val);
+    }
+    else {
+        while (p-&gt;next != nullptr) {
+            p = p-&gt;next;
+        }
+        p-&gt;next = node;
+    }
+}
+
+void LinkList::addAtIndex(int index, int val) {
+    // corner cases:
+    if (index == 0) addAtHead(val);
+
+    Node* node = new Node();
+    node-&gt;val = val;
+
+    // TODO: find (index-1)th node
+    Node* p = head;
+    int cnt = 0;
+    while (p != nullptr) {
+        if (cnt == (index - 1)) {
+            break;
+        }
+        p = p-&gt;next;
+        cnt++;
+    }
+
+    if (p != nullptr) {
+        node-&gt;next = p-&gt;next;
+        p-&gt;next = node;
+    }
+
+    // overflow: index is out of range of link list
+}
+
+void LinkList::deleteHead() {
+    assert(!isEmpty());
+    Node* del = head;
+    head = head-&gt;next;
+
+    delete del;
+}
+
+void LinkList::deleteAtIndex(int index) {
+    assert(!isEmpty());
+    if (index == 0) deleteHead();
+
+    // TODO: locate the node before delete node, i.e. index-1
+    Node* pre = head;
+    int cnt = 0;
+
+    while (pre != nullptr) {
+        if (cnt == (index - 1)) {
+            break;
+        }
+        pre = pre-&gt;next;
+        cnt++;
+    }
+
+    assert(pre != nullptr); // if not, overflow: index is out of range
+    Node* del = pre-&gt;next;
+    pre-&gt;next = del-&gt;next;
+
+    delete del;
+}
+
+/* ****************************** *
+ *          UNIT TEST
+ * ****************************** */
+PROVIDED_TEST(&quot;Test for LinkList&quot;) {
+    LinkList list;
+    list.addAtHead(1);
+    list.addAtTail(3);
+    list.addAtIndex(1, 2);
+    EXPECT_EQUAL(list.get(0), 1);
+    EXPECT_EQUAL(list.get(1), 2);
+    EXPECT_EQUAL(list.get(2), 3);
+    list.deleteAtIndex(1);
+    EXPECT_EQUAL(list.get(1), 3);
+}</code></pre>
+
+<p>Link list is the first data structure where we have to dynamically manage our limited memory. Be afraid, be very afraid of implicit bugs like memory leakage, and segment fault.</p>
+
+</section>
+<section	id="relatedproblems">
+<h2>Related Problems</h2>
+
+<section	id="cycledetectioni">
+<h3>Cycle Detection I</h3>
+
+<blockquote>
+<p>Given head, the head of a linked list, determine if the linked list has a cycle in it.<br/>
+There is a cycle in a linked list if there is some node in the list that can be reached again by continuously following the next pointer. Internally, pos is used to denote the index of the node that tail&#8217;s next pointer is connected to. Note that pos is not passed as a parameter.<br/>
+Return true if there is a cycle in the linked list. Otherwise, return false.<br/>
+Constrains: The number of the nodes in the list is in the range [0, 10<sup>4</sup>]. &#8211;10<sup>5</sup> &lt;= Node.val &lt;= 10<sup>5</sup>.</p>
+</blockquote>
+
+<p>There are two ways to solve the problem: </p>
+
+<ul>
+<li>Use a hashset to record the address of visited nodes. If recorded node is visited again, then cycle exists.</li>
+</ul>
+<pre><code class="cpp">bool hasCycle_sol1(Node* head) {
+    Set&lt;Node*&gt; addresses;
+    Node* p = head;
+    while (p != nullptr) {
+        if (addresses.contains(p)) {
+            return true;
+        }
+        addresses.add(p);
+        p = p-&gt;next;
+    }
+
+    return false;
+}</code></pre>
+
+<ul>
+<li>Assuming there arfe two players running on the list, one is faster and the other is slower.
+
+<ul>
+<li>cricle does not exist: faster will reach out the end sooner.</li>
+<li>circle exists: they will meet somewhere.</li>
+</ul></li>
+</ul>
+<pre><code class="cpp">bool hasCycle_sol2(Node* head) {
+    if (head == nullptr) return false;    // no node
+
+    Node* faster = head-&gt;next;
+    if (faster == nullptr) return false;  // one node without circle
+    Node* slower = head;
+    while (slower != faster) {
+        // jump two steps, so we have to check two possible nodes
+        if ((faster == nullptr) || (faster-&gt;next == nullptr)) {
+            return false;
+        }
+        faster = faster-&gt;next-&gt;next;
+        slower = slower-&gt;next;
+    }
+    return true;
+}</code></pre>
+
+<p>Tricks:</p>
+
+<ul>
+<li>Sol2: faster move forward by 2 steps, so we have to check two possible nodes to see if either of them is the end node.</li>
+</ul>
+
+</section>
+<section	id="cycledetectionii">
+<h3>Cycle Detection II</h3>
+
+<blockquote>
+<p>Given the head of a linked list, return the node where the cycle begins. If there is no cycle, return null.<br/>
+There is a cycle in a linked list if there is some node in the list that can be reached again by continuously following the next pointer. Internally, pos is used to denote the index of the node that tail&#8217;s next pointer is connected to (0-indexed). It is &#8211;1 if there is no cycle. Note that pos is not passed as a parameter.<br/>
+Constrains: The number of the nodes in the list is in the range [0, 10<sup>4</sup>]. 10<sup>5</sup> &lt;= Node.val &lt;= 10<sup>5</sup>. pos is &#8211;1 or a valid index in the linked-list.</p>
+</blockquote>
+
+<p>There are also two ways to solve the problem which corresponding to the solution above. Notice that half of the problem has been solved by the solution to last problem, the other half is how to locate entrance node.</p>
+
+<p>The solution with hashmap is pretty straightforward. But is there any possible to solve the problem based on the second solution?</p>
+<pre><code class="cpp">/**
+ *          |&lt;--- L1 ---&gt;|&lt;--- L2 ---&gt;|
+ * List:     1     2     (3)     4     5     6
+ *                        ^       Loop       |
+ *                        |__________________|
+ *
+ * Faster player: hare advances 2 steps each time
+ * Slower player: tortoise advances 1 steps each time
+ */</code></pre>
+
+<p>Assumed: node 3 is the entrance of the loop. faster hare and slower tortoise meet at node 5. hare advance 2 steps every time, and tortoise 1 step. The loop has length of C, and the hare has run around for N times starting from intersection node (5).</p>
+
+<p>What can we get from them:</p>
+
+<ul>
+<li>total distance of the tortoise: L1 + L2</li>
+<li>total distance of the hare: L1 + L2 + C * N</li>
+<li>the total distance of hare is twice as that of tortoise: 2 * (L1 + L2) = L1 + L2 + C * N =&gt; L1 = C * (N - 1) + C - L2
+
+<ul>
+<li>when N = 0, L1 = -L2 (impossible)</li>
+<li>N = 1, L1 = C - L2 =&gt; L1 means: head to entrance, C - L2 means: intersection node to entrance. Great!</li>
+<li>N = 2, L1 = 2 * C - L2 == C - L2 (since its a loop!), got same conclusion.</li>
+</ul></li>
+</ul>
+
+<p>So we could use two pointers, one start from head, one from intersection node. According to the conclusion above, they will eventually meet at entrance node.</p>
+<pre><code class="cpp">int detectCycle_sol2(Node* head) {
+    if (head == nullptr) return -1;    // no node
+
+    Node* hare = head-&gt;next;
+    if (hare == nullptr) return -1;  // one node without circle
+
+    Node* tortoise = head;
+    while (tortoise != hare) {
+        // jump two steps, so we have to check two possible nodes
+        if ((hare == nullptr) || (hare-&gt;next == nullptr)) {
+            return -1;
+        }
+        hare = hare-&gt;next-&gt;next;
+        tortoise = tortoise-&gt;next;
+    }
+
+    int steps = 0;
+    Node* p1 = head;
+    Node* p2 = hare;
+    while (p1 != p2) {
+        steps++;
+        p1 = p1-&gt;next;
+        p2 = p2-&gt;next;
+    }
+
+    return steps;
+}</code></pre>
+
+<p>Tricks:</p>
+
+<ul>
+<li>The power of math. OrZ</li>
+</ul>
+
+</section>
+<section	id="intersectionoftwolinklists">
+<h3>Intersection of Two LinkLists</h3>
+
+<blockquote>
+<p>Given the heads of two singly linked-lists headA and headB, return the node at which the two lists intersect. If the two linked lists have no intersection at all, return null.</p>
+</blockquote>
+
+<p>This problem has a very intriguing solution.</p>
+<pre><code class="cpp">/**
+ *            a
+ * listA: ---------|
+ *                 |--------------
+ * listB:     -----|      c
+ *              b
+ * Say a is the length of part exclusive for listA, b is the length of part exclusive for
+ * listB, and c the length of common part.
+ */</code></pre>
+
+<p><code>pA</code> will start from the beginning of a -&gt; c -&gt; b (come to the begin of c), <code>pB</code> will start from the beginning of b -&gt; c -&gt; a (come to the begin of c). And finally they will meet at the beginning of c. Great!</p>
+<pre><code class="cpp">Node* getIntersectionNode_sol4(Node* headA, Node* headB) {
+    Node* pA = headA;
+    Node* pB = headB;
+    while (pA != pB) {
+        pA = (pA == nullptr) ? headB : pA-&gt;next;
+        pB = (pB == nullptr) ? headA : pB-&gt;next;
+    }
+
+    return pA;
+}</code></pre>
+
+<p>Notice: if listA and listB have no common node, pA will go a and b, and pB will go b and a. Particularly, at the same time when they finish the first iteration they will both become nullptr, which will end while loop.</p>
+
+</section>
+<section	id="removenthnodefromend">
+<h3>Remove Nth Node From End</h3>
+
+<blockquote>
+<p>Given the head of a linked list, remove the nth node from the end of the list and return its head.</p>
+</blockquote>
+
+<p>Two pointers, the &#8216;del&#8217; points to n&#8217;th node from &#8216;end&#8217;. &#8216;pre&#8217; points to the previous node of &#8216;del&#8217;.</p>
+<pre><code class="cpp">/**
+ * @brief removeNthFromEnd
+ * @param head
+ * @param n
+ * @return
+ */
+Node* removeNthFromEnd(Node* head, int n) {
+    if (head == nullptr) return head;
+
+    Node* del = nullptr;
+    Node* pre = nullptr;
+    Node* end = head;
+    int cnt = 1;
+    while (true) {
+        if (cnt == n) {
+            del = head;
+        }
+        if (end-&gt;next != nullptr) {
+            cnt++;
+            end = end-&gt;next;
+            if (del != nullptr) {
+                // &apos;del&apos; has been initialized
+                pre = del;
+                del = del-&gt;next;
+            }
+        }
+        else {
+            break;
+        }
+    }
+
+    if (del != nullptr) {
+        // if &apos;del&apos; is validated
+        if (pre == nullptr) {
+            // &apos;del&apos; is head
+            head = del-&gt;next;
+        }
+        else {
+            pre-&gt;next = del-&gt;next;
+        }
+    }
+
+    return head;
+}</code></pre>
+
+<p>Tricks:</p>
+
+<ul>
+<li>Corner cases.</li>
+</ul>
+
+</section>
+<section	id="twopointersummary">
+<h3>Two Pointer Summary</h3>
+
+<p>It is similar to what we have learned in an array. But it can be trickier and error-prone. There are several things you should pay attention:</p>
+
+<ul>
+<li>Always examine if the node is null before you call the next field.</li>
+<li>Carefully define the end conditions of your loop.</li>
+</ul>
+
+<p>Analyze other problems by yourself to improve your analysis skill. Don&#8217;t forget to take different conditions into consideration. If it is hard to analyze for all situations, consider the worst one.</p>
+
+</section>
+<section	id="reverselinkedlist">
+<h3>Reverse Linked List</h3>
+
+<blockquote>
+<p>Given the head of a singly linked list, reverse the list, and return the reversed list.</p>
+</blockquote>
+
+<p>We provide two ways to reverse linked list, recursion and iteration.</p>
+
+<ul>
+<li>Recursion</li>
+</ul>
+
+<p>Reverse list is to reverse left nodes following current node and make the next following node point to current node.</p>
+<pre><code class="bash"># 1 -&gt; ... -&gt; ...
+# 1 &lt;- ...</code></pre>
+<pre><code class="cpp">Node* reverseListHelper(Node*&amp; head, Node* node) {
+    if (node-&gt;next == nullptr) {
+        // the last node
+        // change the next of the first node to be nullptr
+        head-&gt;next = nullptr;
+        head = node;
+        return node;
+    }
+
+    Node* next = reverseListHelper(head, node-&gt;next);
+    next-&gt;next = node;
+    return node;
+}
+
+/**
+ * @brief reverseList
+ * @param head
+ * @return the reverse of linked list.
+ * The first solution is to solve it recursively.
+ */
+Node* reverseList_sol1(Node* head) {
+    if (head == nullptr) return head;
+    reverseListHelper(head, head);
+    return head;
+}</code></pre>
+
+<ul>
+<li>Iteration</li>
+</ul>
+<pre><code class="cpp">/**
+ * @brief reverseList_sol2
+ * @param head
+ * @return
+ * Solution 2 uses another way to construct reversed linked list.
+ * ex&gt; 1 -&gt; 2 -&gt; 3 -&gt; 4
+ *     ^
+ *    head
+ * 1st: move 2 to the left of head
+ *     2 -&gt; 1 -&gt; 3 -&gt; 4
+ *          ^
+ *         head
+ * 2nd: move 3 to the leftmost index of head
+ *     3 -&gt; 2 -&gt; 1 -&gt; 4
+ *               ^
+ *              head
+ * 3rd: move 4 to the leftmost index of head
+ *     4 -&gt; 3 -&gt; 2 -&gt; 1
+ *                    ^
+ *                   head
+ *     ^
+ *    new head
+ */
+Node* reverseList_sol2(Node* head) {
+    if (head == nullptr) return head;
+    Node* newHead = head;
+    while (head-&gt;next != nullptr) {
+        Node* next = head-&gt;next;
+        head-&gt;next = next-&gt;next;
+        next-&gt;next = newHead;
+        newHead = next;
+    }
+    head = nullptr;
+
+    return newHead;
+}</code></pre>
+
+</section>
+<section	id="removeelements">
+<h3>Remove Elements</h3>
+
+<blockquote>
+<p>Given the head of a linked list and an integer val, remove all the nodes of the linked list that has <code>Node.val == val</code>, and return the new head.</p>
+</blockquote>
+
+<p>Two pointers method.</p>
+<pre><code class="cpp">/**
+ * @brief removeElements
+ * @param head
+ * @param val
+ * @return
+ * Two pointers: pre and cur.
+ */
+Node* removeElements(Node* head, int val) {
+    Node* cur = head;
+    Node* pre = nullptr;
+    while (cur != nullptr) {
+        if (cur-&gt;val == val) {
+            // !!!: delete cur: pre does not need to proceed
+            if (pre == nullptr) {
+                // node to delete is the first element
+                head = head-&gt;next;
+                cur = head;
+            }
+            else {
+                pre-&gt;next = cur-&gt;next;
+                cur = cur-&gt;next;
+            }
+        }
+        else {
+            pre = cur;
+            cur = cur-&gt;next;
+        }
+    }
+    return head;
+}</code></pre>
+
+</section>
+<section	id="oddandevenlist">
+<h3>Odd and Even List</h3>
+
+<blockquote>
+<p>Given the head of a singly linked list, group all the nodes with odd indices together followed by the nodes with even indices, and return the reordered list. </p>
+
+<p>The first node is considered odd, and the second node is even, and so on. </p>
+
+<p>Note that the relative order inside both the even and odd groups should remain as it was in the input. </p>
+
+<p>You must solve the problem in O(1) extra space complexity and O(n) time complexity.</p>
+</blockquote>
+
+<p>The idea is constructing two list: odd list and even list on original list.</p>
+<pre><code class="cpp">/**
+ * @brief oddEvenList
+ * @param head
+ * @return
+ * The solution must be in O(1) space complexity and O(N) time complexity.
+ * The idea is constructing two list: odd list and even list on original list.
+ */
+Node* oddEvenList(Node* head) {
+    // 0 or 1 element
+    if ((head == nullptr) || (head-&gt;next == nullptr)) {
+        return head;
+    }
+
+    Node* head_odd = head;
+    Node* head_even = head-&gt;next;
+    Node* p_odd = head_odd;
+    Node* p_even = head_even;
+    while ((p_odd != nullptr) &amp;&amp; (p_even != nullptr)) {
+        if (p_odd-&gt;next != nullptr) {
+            p_odd-&gt;next = p_odd-&gt;next-&gt;next;
+            p_odd = p_odd-&gt;next;
+        }
+        if (p_even-&gt;next != nullptr) {
+            p_even-&gt;next = p_even-&gt;next-&gt;next;
+            p_even = p_even-&gt;next;
+        }
+    }
+    p_odd = head_odd;
+    while (p_odd-&gt;next != nullptr) {
+        p_odd = p_odd-&gt;next;
+    }
+    p_odd-&gt;next = head_even;
+
+    return head_odd;
+}</code></pre>
+
+<p>Tricks:</p>
+
+<ul>
+<li>Check if pointer is null before dereference.</li>
+</ul>
+
+</section>
+<section	id="palindromelinkedlist">
+<h3>Palindrome Linked List</h3>
+
+<blockquote>
+<p>Given the head of a singly linked list, return true if it is a palindrome.</p>
+</blockquote>
+
+<p>The challenge of this problem is to come up with an algorithm in O(1) extra space. The algorithm contains three steps:</p>
+
+<ul>
+<li>find middle and end node.</li>
+<li>reverse the right half list.</li>
+<li>traverse left and right half to check if it is a palindrome linked list.</li>
+</ul>
+<pre><code class="cpp">bool isPalindrome(Node* head) {
+    if (head == nullptr) return head;
+
+    // TODO: find middle and end nodes
+    Node* mid = head; // one step a time
+    Node* end = head; // two steps a time
+    while ((end-&gt;next != nullptr) &amp;&amp; (end-&gt;next-&gt;next != nullptr)) {
+        end = end-&gt;next-&gt;next;
+        mid = mid-&gt;next;
+    }
+    if (end-&gt;next != nullptr) {
+        // for even length
+        end = end-&gt;next;
+    }
+
+    // TODO: reverse the right half (mid-&gt;next point to the head of right half)
+    Node* right_head = mid-&gt;next;
+    Node* new_head = mid-&gt;next;
+    while ((right_head != nullptr) &amp;&amp; (right_head-&gt;next != nullptr)) {
+        Node* move = right_head-&gt;next;
+        right_head-&gt;next = move-&gt;next;
+        move-&gt;next = new_head;
+        new_head = move;
+    }
+    mid-&gt;next = new_head;
+
+    // TODO: traverse the left and right half
+    Node* left = head;
+    Node* right = new_head;
+    while (right != nullptr) {
+        if (left-&gt;val != right-&gt;val) {
+            return false;
+        }
+        left = left-&gt;next;
+        right = right-&gt;next;
+    }
+
+    return true;
+}</code></pre>
+
+<p>Tricks:</p>
+
+<ul>
+<li>Reverse part of the linked list.</li>
+</ul>
+
+</section>
+<section	id="problemssummary">
+<h3>Problems Summary</h3>
+
+<p>We have provided several exercises for you. You might have noticed the similarities between them. Here we provide some tips for you:</p>
+
+<ul>
+<li>Going through some test cases will save you time.</li>
+<li>Feel free to use several pointers at the same time.</li>
+<li>In many cases, you need to track the previous node of the current node.</li>
+</ul>
+
+</section>
+</section>
+<section	id="doublylinkedlist">
+<h2>Doubly Linked List</h2>
+<pre><code class="cpp">// linkedlist.h
+#ifndef DOUBLYLINKEDLIST_H
+#define DOUBLYLINKEDLIST_H
+
+class ListNode {
+public:
+    int val;
+    ListNode* pre;
+    ListNode* next;
+
+    ListNode()
+        : val(0), pre(nullptr), next(nullptr) {}
+    ListNode(int _val)
+        : val(_val), pre(nullptr), next(nullptr) {}
+};
+
+class DoublyLinkedList
+{
+public:
+    DoublyLinkedList()
+        : head(nullptr), size(0) {}
+
+    bool isEmpty();
+
+    int get(int index);
+    void addAtHead(int val);
+    void addAtTail(int val);
+    void addAtIndex(int index, int val);
+    void deleteAtIndex(int index);
+
+    ~DoublyLinkedList() {
+        clear();
+    }
+
+    ListNode* head;
+    int size;
+
+private:
+    void clear();
+};
+
+#endif // DOUBLYLINKEDLIST_H</code></pre>
+<pre><code class="cpp">// linkedlist.cpp
+#include &quot;doublylinkedlist.h&quot;
+#include &lt;assert.h&gt;
+#include &lt;testing/SimpleTest.h&gt;
+
+int DoublyLinkedList::get(int index) {
+    assert((index &gt;= 0) &amp;&amp; (index &lt; size));
+    int cnt = 0;
+    ListNode* p = head;
+    while (p != nullptr) {
+        if (cnt == index) {
+            return p-&gt;val;
+        }
+        p = p-&gt;next;
+        cnt++;
+    }
+
+    return -1;
+}
+
+
+void DoublyLinkedList::addAtHead(int val) {
+    ListNode* node = new ListNode(val);
+    if (size == 0) {
+        // no element
+        head = node;
+    }
+    else {
+        // at least one element
+        node-&gt;next = head;
+        head-&gt;pre = node;
+        head = node;
+    }
+
+    size++;
+}
+
+void DoublyLinkedList::addAtTail(int val) {
+    ListNode* node = new ListNode(val);
+    if (size == 0) {
+        head = node;
+    }
+    else {
+        ListNode* last = head; // find the last node
+        while (last-&gt;next != nullptr) {
+            last = last-&gt;next;
+        }
+        node-&gt;pre = last;
+        last-&gt;next = node;
+    }
+
+    size++;
+}
+
+void DoublyLinkedList::addAtIndex(int index, int val) {
+    assert((index &gt;= 0) &amp;&amp; (index &lt;= size)); // !!!: &lt;= size
+    if (index == 0) {
+        addAtHead(val);
+        return;
+    }
+    if (index == size) {
+        addAtTail(val);
+        return;
+    }
+
+    ListNode* node = new ListNode(val);
+    int cnt = 0;
+    ListNode* cur = head;
+    ListNode* pre = nullptr;
+    while ((cur-&gt;next != nullptr) &amp;&amp; (cnt != index)) {
+        pre = cur;
+        cur = cur-&gt;next;
+        cnt++;
+    }
+
+    // TODO: insert
+    node-&gt;pre = pre;
+    node-&gt;next = cur;
+    if (pre != nullptr) {
+        pre-&gt;next = node;
+    }
+    cur-&gt;pre = node;
+
+    size++;
+}
+
+void DoublyLinkedList::deleteAtIndex(int index) {
+    assert(size &gt; 0);
+    assert((index &gt;= 0) &amp;&amp; (index &lt; size));
+    if (index == 0) {
+        ListNode* next = head-&gt;next;
+        if (next != nullptr) {
+            next-&gt;pre = nullptr;
+        }
+        ListNode* del = head;
+        head = next;
+
+        delete del;
+    }
+    else {
+        int cnt = 0;
+        ListNode* cur = head;
+        ListNode* pre = nullptr;
+        while ((cur-&gt;next != nullptr) &amp;&amp; (cnt != index)) {
+            pre = cur;
+            cur = cur-&gt;next;
+            cnt++;
+        }
+        ListNode* del = cur;
+        if (pre != nullptr) {
+            pre-&gt;next = del-&gt;next;
+        }
+        if (del-&gt;next != nullptr) {
+            del-&gt;next-&gt;pre = pre;
+        }
+
+        delete del;
+    }
+
+    size--;
+}
+
+bool DoublyLinkedList::isEmpty() {
+    return (size == 0);
+}
+
+void DoublyLinkedList::clear() {
+    while (!isEmpty()) {
+        deleteAtIndex(0);
+    }
+}
+
+/* ****************************** *
+ *          UNIT TEST
+ * ****************************** */
+PROVIDED_TEST(&quot;test for sol1:&quot;) {
+    DoublyLinkedList list;
+    list.addAtHead(3);
+    list.addAtHead(2);
+    list.addAtHead(1);
+    EXPECT_EQUAL(list.size, 3);
+    list.addAtIndex(1, 5);
+    EXPECT_EQUAL(list.get(1), 5);
+    list.addAtTail(4);
+    EXPECT_EQUAL(list.get(4), 4);
+    list.deleteAtIndex(4);
+    EXPECT_EQUAL(list.size, 4);
+}</code></pre>
+
+</section>
+<section	id="summary">
+<h2>Summary</h2>
+
+<p>Let&#8217;s briefly review the performance of the singly linked list and doubly linked list.</p>
+
+<p>They are similar in many operations:</p>
+
+<ul>
+<li>Both of them are not able to access the data at a random position in constant time.</li>
+<li>Both of them can add a new node after given node or at the beginning of the list in O(1) time.</li>
+<li>Both of them can delete the first node in O(1) time.</li>
+</ul>
+
+<p>But it is a little different to delete a given node (including the last node).</p>
+
+<ul>
+<li>In a singly linked list, it is not able to get the previous node of a given node so we have to spend O(N) time to find out the previous node before deleting the given node.</li>
+<li>In a doubly-linked list, it will be much easier because we can get the previous node with the &#8220;prev&#8221; reference field. So we can delete a given node in O(1) time.</li>
+</ul>
+
+</section>
+<section	id="problemsii">
+<h2>Problems II</h2>
+
+<section	id="mergetwosortedlist">
+<h3>Merge Two Sorted List</h3>
+
+<blockquote>
+<p>You are given the heads of two sorted linked lists list1 and list2. </p>
+
+<p>Merge the two lists in a one sorted list. The list should be made by splicing together the nodes of the first two lists. </p>
+
+<p>Return the head of the merged linked list.</p>
+</blockquote>
+
+<p>The in-place algorithm is as follows.</p>
+<pre><code class="cpp">ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
+    if (list1 == nullptr) return list2;
+    if (list2 == nullptr) return list1;
+
+    ListNode* p1 = list1;
+    ListNode* pre_to_p1 = nullptr;
+    ListNode* p2 = list2;
+    while ((p1 != nullptr) &amp;&amp; (p2 != nullptr)) {
+        if (p1-&gt;val &lt; p2-&gt;val) {
+            pre_to_p1 = p1;
+            p1 = p1-&gt;next;
+        }
+        else {
+            ListNode* move = p2;
+            p2 = p2-&gt;next;
+            if (pre_to_p1 == nullptr) {
+                // insert at head
+                list1 = move;
+                move-&gt;next = p1;
+                pre_to_p1 = move;
+            }
+            else {
+                pre_to_p1-&gt;next = move;
+                move-&gt;next = p1;
+                pre_to_p1 = move;
+            }
+        }
+    }
+
+    ListNode* end_list1 = pre_to_p1;
+    if (p2 != nullptr) {
+        // concatenate left of list2 to the end of p1
+        end_list1-&gt;next = p2;
+    }
+
+    return list1;
+}</code></pre>
+
+</section>
+<section	id="addtwonumbers">
+<h3>Add Two Numbers</h3>
+
+<blockquote>
+<p>You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order, and each of their nodes contains a single digit. Add the two numbers and return the sum as a linked list. </p>
+
+<p>You may assume the two numbers do not contain any leading zero, except the number 0 itself.</p>
+</blockquote>
+
+<p>The basic idea is to simulate digit addition. Take care of the carry.</p>
+<pre><code class="cpp">/**
+ * @brief addTwoNumbers
+ * @param l1
+ * @param l2
+ * @return
+ * The basic idea is to simulate bit addition.
+ * ex&gt; l1: 1 -&gt; 2 -&gt; 3
+ *     l2: 2 -&gt; 3 -&gt; 4 -&gt; 1
+ *     --------------------
+ *         3 -&gt; 5 -&gt; 7 -&gt; 1
+ * How to solve carry bit?
+ * ex&gt; l1: 9 -&gt; 9 -&gt; 9
+ *     l2: 1
+ *     ---------------
+ *         0 -&gt; 0 -&gt; 0 -&gt; 1
+ * carry:  1    1    1
+ */
+ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+    if (l1 == nullptr) return l2;
+    if (l2 == nullptr) return l1;
+    ListNode* result = nullptr;
+    int carry = 0;
+    ListNode* p1 = l1;
+    ListNode* p2 = l2;
+    ListNode* p = result;
+
+    // TODO: solve common digits
+    while ((p1 != nullptr) &amp;&amp; (p2 != nullptr)) {
+        int val = (p1-&gt;val + p2-&gt;val + carry) % 10;
+        carry = (p1-&gt;val + p2-&gt;val + carry) / 10;
+        ListNode* node = new ListNode(val);
+        if (p == nullptr) {
+            result = node;
+        }
+        else {
+            p-&gt;next = node;
+        }
+        p = node;
+
+        p1 = p1-&gt;next;
+        p2 = p2-&gt;next;
+    }
+
+    // TODO: solve rest digits with carry 9999 + 99 = 10098
+    while (p1 != nullptr) {
+        int val = (p1-&gt;val + carry) % 10;
+        carry = (p1-&gt;val + carry) / 10;
+        ListNode* node = new ListNode(val);
+        if (p == nullptr) {
+            result = node;
+        }
+        else {
+            p-&gt;next = node;
+        }
+        p = node;
+
+        p1 = p1-&gt;next;
+    }
+
+    while (p2 != nullptr) {
+        int val = (p2-&gt;val + carry) % 10;
+        carry = (p2-&gt;val + carry) / 10;
+        ListNode* node = new ListNode(val);
+        if (p == nullptr) {
+            result = node;
+        }
+        else {
+            p-&gt;next = node;
+        }
+        p = node;
+
+        p2 = p2-&gt;next;
+    }
+
+    // TODO: solve carry for the most significant bit. 99 + 1 =&gt; 100
+    if (carry == 1) {
+        ListNode* node = new ListNode(1);
+        if (p == nullptr) {
+            result = node;
+        }
+        else {
+            p-&gt;next = node;
+        }
+        p = node;
+    }
+
+    return result;
+}
+
+/* ****************************** *
+ *          UNIT TEST
+ * ****************************** */
+PROVIDED_TEST(&quot;test for sol1:&quot;) {
+    ListNode* node = new ListNode(9);
+    ListNode* l1 = node;
+    ListNode* node1 = new ListNode(9);
+    l1-&gt;next = node1;
+    ListNode* node2 = new ListNode(1);
+    ListNode* l2 = node2;
+    EXPECT_EQUAL(addTwoNumbers(l1, l2)-&gt;val, 0);
+}</code></pre>
+
+<p>Tricks:</p>
+
+<ul>
+<li>Take care of carry.</li>
+</ul>
+
+</section>
+</section>
+<p><EndMarkdown></p>

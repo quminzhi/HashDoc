@@ -1,0 +1,3984 @@
+{% load static %}
+
+<!-- Insert title here -->
+
+<h1 id="dynamicprogramming">Dynamic Programming</h1>
+
+<h2 id="tableofcontents">Table of Contents</h2>
+
+<ul>
+<li><a href="#logic">Logic</a></li>
+<li><a href="#knapsackproblems">Knapsack Problems</a>
+
+<ul>
+<li><a href="#0-1knapsack">0&#8211;1 Knapsack</a></li>
+<li><a href="#completeknapsack">Complete Knapsack</a></li>
+<li><a href="#limitedknapsack">Limited Knapsack</a></li>
+<li><a href="#optimizationforlimitedknapsack">Optimization for Limited Knapsack</a></li>
+<li><a href="#groupedknapsack">Grouped Knapsack</a></li>
+<li><a href="#mixedknapsack">Mixed Knapsack</a></li>
+<li><a href="#knapsackwithtracking">Knapsack with Tracking</a></li>
+<li><a href="#countingoptimalplan">Counting Optimal Plan</a></li>
+</ul></li>
+<li><a href="#lineardp">Linear DP</a>
+
+<ul>
+<li><a href="#longestnon-descendingsubsequence">Longest Non-descending Subsequence</a></li>
+<li><a href="#longestcommonsubsequence">Longest Common Subsequence</a></li>
+<li><a href="#editdistance">Edit Distance</a></li>
+<li><a href="#mergingstones">Merging Stones</a></li>
+</ul></li>
+<li><a href="#countdynamicprogramming">Count Dynamic Programming</a>
+
+<ul>
+<li><a href="#integerdivision">Integer Division</a></li>
+</ul></li>
+<li><a href="#statedynamicprogramming">State Dynamic Programming</a>
+
+<ul>
+<li><a href="#fillingmatrix">Filling Matrix</a></li>
+<li><a href="#shortesthamiltondistance">Shortest Hamilton Distance</a></li>
+</ul></li>
+<li><a href="#tree-likedynamicprogramming">Tree-like Dynamic Programming</a></li>
+<li><a href="#heuristicdynamicprogramming">Heuristic Dynamic Programming</a>
+
+<ul>
+<li><a href="#skating">Skating</a></li>
+</ul></li>
+<li><a href="#relatedproblems">Related Problems</a>
+
+<ul>
+<li><a href="#houserobber">House Robber</a></li>
+<li><a href="#mincostclimbingstairs">Min Cost Climbing Stairs</a></li>
+<li><a href="#n-thtribonaccinumber">N-th Tribonacci Number</a></li>
+<li><a href="#deleteandearn">Delete and Earn</a></li>
+<li><a href="#maximumscorefromperformingmultiplicationoperations">Maximum Score from Performing Multiplication Operations</a></li>
+<li><a href="#minimalsquare">Minimal Square</a></li>
+<li><a href="#minimumdifficultyofajobschedule">Minimum Difficulty of a Job Schedule</a></li>
+<li><a href="#coinchange">Coin Change</a></li>
+<li><a href="#wordbreak">Word Break</a></li>
+<li><a href="#longestincreasingsubsequence">Longest Increasing Subsequence</a></li>
+<li><a href="#besttimetobuyandsellstockiv">Best Time to Buy and Sell Stock IV</a></li>
+<li><a href="#besttimetobuyandsellstockwithcooldown">Best Time to Buy and Sell Stock with Cooldown</a></li>
+<li><a href="#mincostclimbingstairsii">Min Cost Climbing Stairs II</a></li>
+<li><a href="#paintfence">Paint Fence</a></li>
+<li><a href="#coinchangeii">Coin Change II</a></li>
+<li><a href="#decodeways">Decode Ways</a></li>
+<li><a href="#maximumsubarray">Maximum Subarray</a></li>
+<li><a href="#besttimetobuyandsellstock">Best Time to Buy and Sell Stock</a></li>
+<li><a href="#maximumsumcircularsubarray">Maximum Sum Circular Subarray</a></li>
+<li><a href="#uniquepaths">Unique Paths</a></li>
+<li><a href="#uniquepathii">Unique Path II</a></li>
+<li><a href="#maxlengthofbinarynumber">Max Length of Binary Number</a></li>
+<li><a href="#minimumpathsum">Minimum Path Sum</a></li>
+<li><a href="#minimumfallingpathsum">Minimum Falling Path Sum</a></li>
+<li><a href="#besttimetobuyandsellstockwithtransactionfee">Best Time to Buy and Sell Stock with Transaction Fee</a></li>
+<li><a href="#painthouse">Paint House</a></li>
+<li><a href="#painthouseii">Paint House II</a></li>
+<li><a href="#painthouseiii">Paint House III</a></li>
+<li><a href="#countvowelspermutation">Count Vowels Permutation</a></li>
+<li><a href="#maximumlengthofrepeatedsubarray">Maximum Length of Repeated Subarray</a></li>
+<li><a href="#numberofdicerollswithtargetsum">Number of Dice Rolls With Target Sum</a></li>
+<li><a href="#dominoandtrominotiling">Domino and Tromino Tiling</a></li>
+<li><a href="#minimumcostfortickets">Minimum Cost For Tickets</a></li>
+<li><a href="#interleavingstring">Interleaving String</a></li>
+</ul></li>
+</ul>
+
+<p><TableEndMark></p>
+<!-- DO NOT ADD EndOfTable MANUALLY -->
+
+<section	id="logic">
+<h2>Logic</h2>
+
+<ul>
+<li>How to represent a problem? (state representation)</li>
+<li>What&#8217;s the meaning of value mapped from <code>f</code>? (property, e.g. <code>max</code>, <code>min</code> etc.)</li>
+<li>How to divide the problem into sub-problems? How they contribute to the problem? (deduction formula)</li>
+</ul>
+
+</section>
+<section	id="knapsackproblems">
+<h2>Knapsack Problems</h2>
+
+<section	id="0-1knapsack">
+<h3>0&#8211;1 Knapsack</h3>
+
+<blockquote>
+<p>Given a number of items with values and weights, and the weight that a knapsack can afford, return the maximum value that we can get.</p>
+</blockquote>
+
+<p>This is a generic problem for dynamic programming, where each item can be chosen only one time (choose) or zero time (not choose).</p>
+
+<ul>
+<li>2-d implementation</li>
+</ul>
+<pre><code class="cpp">/**
+ * @brief This is a naive implementation of 01 knapsack problem.
+ *
+ * Note that f should define a problem set.
+ *
+ * Define f[i][j], where i means selecting from first i items.
+ *                       j means available space.
+ *
+ * The property of the problem set can be max, min, or something.
+ *
+ * The deduction formula is:
+ *
+ * f[i][j] = max(
+ *      f[i-1][j] (do not select ith item),
+ *      f[i-1][j - w[i]] + v[i], if j - w[i] &gt; 0 (select ith item)
+ * )
+ *
+ * Note the relationship between the expression on the left and right.
+ * 1. f[i] only relies on f[i-1], meaning the level before it. (it implies that f can be
+ * reduced to a 1-d array), which will be implemented later.
+ * 2. f[j] only relies on f[j], or f[j - w[i]] if w[i] &gt; j, meaning possible elements
+ * before j.
+ *
+ * @param weights
+ * @param values
+ * @param total
+ * @return int
+ */
+int ZeroOneKnapsack(vector&lt;int&gt; weights, vector&lt;int&gt; values, int total) {
+    vector&lt;vector&lt;int&gt; &gt; f(weights.size(), vector&lt;int&gt;(total, 0));
+
+    // initialize the boundary, when i == 0
+    for (int j = 0; j &lt;= total; j++) {
+        f[0][j] = weights[0] &lt;= j ? values[0] : 0;
+    }
+
+    // deduct
+    for (int i = 1; i &lt; weights.size(); i++) {
+        for (int j = 0; j &lt;= total; j++) {
+            f[i][j] = f[i - 1][j];   // not choose
+            if (weights[i] &lt;= j) {
+                f[i][j] = max(f[i][j], f[i - 1][j - weights[i]] + values[i]);   // choose
+            }
+        }
+    }
+
+    // 0-indexed: the index of the first item is 0
+    return f[weights.size() - 1][total];
+}</code></pre>
+
+<ul>
+<li>1-d implementation</li>
+</ul>
+
+<p>Can we save memory space? yes if we only care about the solution to a specific problem. In this problem, we only care about <code>f[i][j]</code>, where <code>i</code> is the number of items we are processing and <code>j</code> is available space, but do not care about <code>f[i-1][j]]</code> or anything else. So we can use a technique called rolling array, which only stores the solution of <code>f[j]</code> on ith level.</p>
+<pre><code class="cpp">/**
+ * @brief to reduce memory space, we use rolling array to solve the problem iteratively.
+ * 
+ * Note the relationship between the expression on the left and right.
+ * 1. f[i] only relies on f[i-1], meaning the level before it. (it implies that f can be
+ * reduced to a 1-d array), which will be implemented later.
+ * 2. f[j] only relies on f[j], or f[j - w[i]] if w[i] &gt; j, meaning possible elements
+ * before j.
+ * 
+ * Observations above ensures that we can use rolling array to solve the problem.
+ * 
+ * @param weights 
+ * @param values 
+ * @param total 
+ * @return int 
+ */
+int ZeroOneKnapsackII(vector&lt;int&gt; weights, vector&lt;int&gt; values, int total) {
+    // vector&lt;vector&lt;int&gt; &gt; f(weights.size(), vector&lt;int&gt;(total, 0));
+    vector&lt;int&gt; f(total, 0);
+
+    // initialize the boundary, when i == 0
+    for (int j = 0; j &lt;= total; j++) {
+        f[j] = weights[0] &lt;= j ? values[0] : 0;
+    }
+
+    // deduct
+    for (int i = 1; i &lt; weights.size(); i++) {
+        // why from total to 0? observation 2
+        for (int j = total; j &gt; 0; j--) {
+            // on ith level
+            // f[j] on the right side is the value on i-1 level
+            f[j] = f[j];   // not choose
+            if (weights[i] &lt;= j) {
+                // f[j - weights[i]] is the value on i-1 level
+                // given observation 2
+                f[j] = max(f[j], f[j - weights[i]] + values[i]);   // choose
+            }
+        }
+    }
+
+    // 0-indexed: the index of the first item is 0
+    return f[total];
+}</code></pre>
+
+</section>
+<section	id="completeknapsack">
+<h3>Complete Knapsack</h3>
+
+<blockquote>
+<p>Following up 0&#8211;1 knapsack problem, what if each item can be selected as much as you want? return the maximum value we can get.</p>
+</blockquote>
+
+<p>The representation and deduction formula for complete knapsack is similar to 01 knapsack.</p>
+
+<ul>
+<li>Define <code>f[i][j]</code>, where <code>i</code> means selecting from first <code>i</code> items and <code>j</code> means available space.</li>
+<li>The deduction formula is:</li>
+</ul>
+<pre><code class="text">f[i][j] = max(
+    f[i-1][j - k * w[i]] + k * v[i], if j - k * w[i] &gt; 0 (select ith item for k times)
+)</code></pre>
+
+<ul>
+<li>2-d implementation <code>O(N^3)</code></li>
+</ul>
+<pre><code class="cpp">/**
+ * @brief each item can be selected as many times as you want.
+ * 
+ * For the implementation below, initialization part and deduction part can be incorporated
+ * into one loop.
+ * 
+ * @param weights 
+ * @param values 
+ * @param total 
+ * @return int 
+ */
+int CompleteKnapsack(vector&lt;int&gt; weights, vector&lt;int&gt; values, int total) {
+    vector&lt; vector&lt;int&gt; &gt; f(weights.size(), vector&lt;int&gt;(total, 0));
+    // initialize boundary
+    for (int j = weights[0]; j &lt; total; j++) {
+        f[0][j] = j / weights[0] * values[0]; // pick as many as possible
+    }
+
+    // deduction
+    for (int i = 1; i &lt; weights.size(); i++) {
+        for (int j = 0; j &lt;= total; j++) {
+            int maxVal = 0;
+            for (int k = 0; k &lt;= j / weights[i]; k++) {
+                maxVal = max(maxVal, f[i-1][j - k * weights[i]] + k * values[i]);
+            }
+            f[i][j] = maxVal;
+        }
+    }
+
+    return f[weights.size()-1][total];
+}</code></pre>
+
+<ul>
+<li>2-d implementation <code>O(N^2)</code></li>
+</ul>
+
+<p>Let&#8217;s see two deduction from the formula</p>
+<pre><code class="text">f[i][j] = max(
+    f[i-1][j - k * w[i]] + k * v[i], if j - k * w[i] &gt; 0 (select ith item for k times)
+)</code></pre>
+
+<p>Expand <code>f[i][j]</code> and <code>f[i][j - w]</code>, where <code>w</code> is the weight of ith item and <code>v</code> is corresponding value.</p>
+<pre><code class="text">f[i][j]   = max( f[i-1][j], f[i-1][j-w] + v, f[i-1][j-2w] + 2v, f[i-1][j-3w] + 3v,...)
+f[i][j-w] = max(            f[i-1][j-w],     f[i-1][j-2w] + v,  f[i-1][j-3w] + 2v,...)
+                            ^                ^                  ^
+                            a lot of repeated calculations</code></pre>
+
+<p>So we can derive a new deduction formula: <code>f[i][j] = max(f[i-1][j], f[i][j-w] + v)</code>, which means the maximum of first <code>i</code> items with available weight of <code>j</code> can be derived from two sub-problems instead of <code>k</code> sub-problems.</p>
+
+<ul>
+<li><code>f[i-1][j]</code> means ith item has been chosen 0 times (no pick).</li>
+<li><code>f[i][j-v] + w</code> means ith item has been chosen m times, and we proceed to choose ith item again.</li>
+</ul>
+
+<p>Key idea: examine the CLOSEST representation as much as possible.</p>
+<pre><code class="cpp">/**
+ * @brief Simplified deduction formula:
+ * 
+ * f[i][j] = max(f[i-1][j], f[i][j-w] + v)
+ * 
+ * @param weights 
+ * @param values 
+ * @param total 
+ * @return int 
+ */
+int CompleteKnapsackII(vector&lt;int&gt; weights, vector&lt;int&gt; values, int total) {
+    vector&lt; vector&lt;int&gt; &gt; f(weights.size(), vector&lt;int&gt;(total, 0));
+    // initialize boundary
+    for (int j = weights[0]; j &lt; total; j++) {
+        f[0][j] = j / weights[0] * values[0]; // pick as many as possible
+    }
+
+    // deduction
+    for (int i = 1; i &lt; weights.size(); i++) {
+        for (int j = 0; j &lt;= total; j++) {
+            f[i][j] = f[i-1][j];
+            if (weights[i] &lt;= j) {
+                f[i][j] = max(f[i][j], f[i][j-weights[i]] + values[i]);
+            }
+        }
+    }
+
+    return f[weights.size()-1][total];
+}</code></pre>
+
+<ul>
+<li>1-d implementation</li>
+</ul>
+
+<p>Again, for deduction formula: <code>f[i][j] = max(f[i-1][j], f[i][j-w] + v)</code>, two observation are: 1. <code>f[i][j]</code> relies on the <code>i-1</code> level. 2. <code>f[i][j]</code> relied on <code>f[i][j-w]</code> which occurs before <code>f[i][j]</code>.</p>
+<pre><code class="text">Case 1: scan from right to left
+rolling array: f[i-1][0], f[i-1][1], f[i-1][2], ..., f[i-1][total]
+                                     &lt;--- j goes from end to begin
+
+               f[i-1][0], f[i-1][1], ...f[i-1][k], 
+                                          f[i][k], f[i][k+1], ..., f[i][total]
+                                               ^
+                      at i-1th level   &lt;---   j      at ith level
+
+Case 2: scan from left to right
+rolling array: f[i-1][0], f[i-1][1], f[i-1][2], ..., f[i-1][total]
+               j goes from begin to end ---&gt;
+
+                                  f[i-1][k], f[i-1][k+1], ..., f[i-1][total]
+               f[i][0], f[i][1], ...f[i][k],
+                                         ^
+                   at ith level   &lt;---   j      at i-1th level</code></pre>
+
+<p>In zero-one knapsack <code>f[i][j] = f[i-1][j-m*w]</code>, meaning it relies on the j before it on the i&#8211;1th level (<strong>last level</strong>). In this case we need to save the value of <code>f[i-1][k]</code>, where <code>k &lt; j</code>. Thereby we have to scan from right to left (case 1).</p>
+
+<p>For complete knapsack <code>f[i][j] = f[i][j-w] + v</code>, meaning it relies on the j before it on the ith level (<strong>same level</strong>). We have to update the value before <code>j</code> first. Therefore, we scan from left to right.</p>
+<pre><code class="cpp">int CompleteKnapsackIII(vector&lt;int&gt; weights, vector&lt;int&gt; values, int total) {
+    vector&lt;int&gt; f(total, 0);
+    // initialize boundary
+    for (int j = weights[0]; j &lt; total; j++) {
+        f[j] = j / weights[0] * values[0]; // pick as many as possible
+    }
+
+    // deduction:
+    for (int i = 1; i &lt; weights.size(); i++) {
+        // for (int j = total; j &gt;= 0; j--) {
+        for (int j = weights[i]; j &gt;= total; j++) {
+            // f[j] = f[j]; // can be simplified
+            // if (weights[i] &lt;= j) // incorporate into loop condition
+            f[j] = max(f[j], f[j-weights[i]] + values[i]);
+        }
+    }
+
+    return f[total];
+}</code></pre>
+
+</section>
+<section	id="limitedknapsack">
+<h3>Limited Knapsack</h3>
+
+<blockquote>
+<p>Following up complete knapsack problem, what if each item can be selected at most <code>limit[i]</code> times? return the maximum value we can get.</p>
+</blockquote>
+
+<p>The naive implementation of limited knapsack is similar to complete knapsack.</p>
+<pre><code class="cpp">/**
+ * @brief The deduction formula is:
+ *
+ * f[i][j] = max(f[i-1][j - k * w[i]] + k * v[i]), where k is in [0, min(s[i], k / w[i])]
+ *
+ * @param weights
+ * @param values
+ * @param limits
+ * @param total
+ * @return int
+ */
+int LimitedKnapsack(vector&lt;int&gt; weights, vector&lt;int&gt; values, vector&lt;int&gt; limits,
+                    int total) {
+    vector&lt;vector&lt;int&gt; &gt; f(weights.size(), vector&lt;int&gt;(total, 0));
+    // boundary
+    for (int j = 0; j &lt;= total; j++) {
+        f[0][j] = values[0] * min(limits[0], j / weights[0]);
+    }
+
+    // deduction
+    for (int i = 1; i &lt; weights.size(); i++) {
+        for (int j = 0; j &lt;= total; j++) {
+            int maxVal = 0;
+            int kMax = min(limits[i], j / weights[i]);
+            for (int k = 0; k &lt;= kMax; k++) {
+                maxVal = max(maxVal, f[i - 1][j - k * weights[i]] + k * values[i]);
+            }
+            f[i][j] = maxVal;
+        }
+    }
+
+    return f[weights.size() - 1][total];
+}</code></pre>
+
+<ul>
+<li>1-d implementation</li>
+</ul>
+<pre><code class="cpp">int LimitedKnapsackII(vector&lt;int&gt; weights, vector&lt;int&gt; values, vector&lt;int&gt; limits,
+                    int total) {
+    vector&lt;int&gt; f(total, 0);
+    // boundary
+    for (int j = 0; j &lt;= total; j++) {
+        f[j] = values[0] * min(limits[0], j / weights[0]);
+    }
+
+    // deduction
+    for (int i = 1; i &lt; weights.size(); i++) {
+        for (int j = total; j &gt;= 0; j--) {
+            int maxVal = 0;
+            int kMax = min(limits[i], j / weights[i]);
+            for (int k = 0; k &lt;= kMax; k++) {
+                maxVal = max(maxVal, f[j - k * weights[i]] + k * values[i]);
+            }
+            f[j] = maxVal;
+        }
+    }
+
+    return f[total];
+}</code></pre>
+
+<p>Question: can we optimize <code>f[i][j]</code> with <code>f[i][j-w] + v</code> as we did in complete knapsack?</p>
+<pre><code class="text">f[i][j]   = max(f[i-1][j], f[i-1][j-w] + v, f[i-1][j-2w] + 2v, ..., f[i-1][j-sw] + sv)
+f[i][j-w] = max(           f[i-1][j-w],     f[i-1][j-2w] + v,  ..., f[i-1][j-sw] + (s-1)v, f[i-1][j-(s+1)w] + sv)</code></pre>
+
+<p>we have an additional item <code>f[i-1][j-(s+1)w] + sv</code>, which can be seen as <code>f[i-1][j-w - sw] + sv</code>. Given <code>f[i][j-w]</code> we cannot get <code>f[i][j]</code>, meaning <code>f[i][j] != max(f[i-1][j], f[i][j-w] + v)</code>.</p>
+
+</section>
+<section	id="optimizationforlimitedknapsack">
+<h3>Optimization for Limited Knapsack</h3>
+
+<p>Notice that the time complexity of limited knapsack above is <code>O(N * M * S)</code>, where <code>N</code> is the size of items, <code>M</code> is total weight of knapsack, and <code>S</code> is the maximum number of limits (<code>max(limits[i])</code>).</p>
+
+<p>In this section, we will introduce a classic optimization which is called <strong>binary bit optimization</strong>. We will concentrate on optimizing <code>S</code> to <code>log(S)</code>.</p>
+<pre><code class="text">f[i][j] = max(f[i-1][j], f[i-1][j-w] + v, f[i-1][j-2w] + 2v, ..., f[i-1][j-sw] + sv)</code></pre>
+
+<p>Considered the formula above, do we need to enumerate all <code>s</code> elements? The answer is no. we can use binary bit to represent <code>[0...s]</code>. And each representation can be seen as a new and unique item. Then the limited knapsack problem is transferred to 0&#8211;1 knapsack problem, where the number of items is <code>N * log(S)</code> and the total weight is <code>M</code>.</p>
+<pre><code class="text">f[i][j] = max(f[i][j], f[i][j-w[i]] + v[i]), where i is in the range of `[0, Nlog(S)]` and j is in the range of `[0, M]`</code></pre>
+
+<p>To explain further, why <code>[0...s]</code> can be represented in bit and the problem becomes a 0&#8211;1 knapsack problem?</p>
+
+<ul>
+<li>how to use bit to simulate <code>[0...s]</code></li>
+</ul>
+
+<p>Notice that k-bit number can be used to represent numbers in the range of [0, 2<sup>k</sup> - 1]</p>
+<pre><code class="text">ex&gt; 0000 0000 (8 bits) can represents 0 ~ 2^8 - 1 (2^8 - 1 = 2^0 + 2^1 + ... + 2^7)
+
+so, with k bits we can represent [0, 2^k - 1].
+
+when 2^k - 1 &lt; s &lt; 2^(k+1) - 1, we can represent s with k-bits and a decimal number C.
+
+       2^k           C (C &lt; 2^k - 1)
+|----------------|--------|
+0            2^k - 1      s
+
+ex&gt; say s = 200, k = 7, and C = s + 1 - 2^k = 200 + 1 - 128 = 73
+
+0000 000 (7 bits) + C</code></pre>
+
+<p>So <code>s == C + 2^k - 1</code>, where <code>k</code> is bit length and <code>C</code> is an offset. We can get <code>k = floor(log(s))</code> and <code>C = s + 1 - 2^k</code>.</p>
+
+<ul>
+<li>How&#8217;s it connected to 0&#8211;1 knapsack?</li>
+</ul>
+
+<p>With example of <code>s = 200</code>, we can break the ith item down into 7 new items and an offset 73. By selecting or not selecting (binary 0 or 1) new item, we can simulate the limit <code>s</code> (<code>limits[i]</code>). So ith item becomes <code>log(limits[i])</code> new items and we got roughly N * log(S) new items, and all of them are unique and can be selected only once.</p>
+
+<p>The idea above can be justified with a simple example:</p>
+<pre><code class="text">limited knapsack: 
+we have only one item with value 2 and weight 3 and this item can be selected at most 3 times. Return the maximum value when we have a knapsack of weight 5.
+
+      weight  value  limit   (knapsack = 5)
+item1   3       2      5
+
+How can this problem be transferred to 0-1 knapsack? The counterpart problem for limited knapsack is as follow,
+
+0-1 knapsack counterpart:
+       weight  value  limit    2-bit  &lt;== log2(5)
+item1  3(3*1)  2(2*1)   1      (2^0)
+item2  6(3*2)  4(2*2)   1      (2^1)   2-bit binary has range of [0...2^2-1]
+item3   3*c     2*c     1      c=2     c = 5 - (2^k - 1), where k = 2
+
+The problem above is a 0-1 problem. Notice all choices of 3 items (in 0-1 knapsack) === limited choice of 1 item (limited knapsack) </code></pre>
+<pre><code class="cpp">/**
+ * @brief bit optimization (reduce time complexity to O(N * M * log(S)))
+ *
+ * @param weights
+ * @param values
+ * @param limits
+ * @param total
+ * @return int
+ */
+int LimitedKnapsackIII(vector&lt;int&gt; weights, vector&lt;int&gt; values, vector&lt;int&gt; limits,
+                       int total) {
+    vector&lt;int&gt; newWeights;
+    vector&lt;int&gt; newValues;
+
+    // construct new items
+    for (int i = 0; i &lt; weights.size(); i++) {
+        int k = 1;   // notice k is not bit but weight on that bit, 2^0
+        while (k &lt;= limits[i]) {
+            newWeights.push_back(k * weights[i]);
+            newValues.push_back(k * values[i]);
+            // one way to calculate bit = floor(log2(limits[i]))
+            // limits[i] = 2^0 + 2^1 + 2^2 + ... + 2^(k-1) + C
+            limits[i] -= k;
+            k = k &lt;&lt; 1;
+        }
+
+        // now limits[i] becomes C
+        if (limits[i] &gt;= 0) {
+            newWeights.push_back(limits[i] * weights[i]);
+            newValues.push_back(limits[i] * values[i]);
+        }
+    }
+
+    // zero-one knapsack
+    vector&lt;vector&lt;int&gt; &gt; f(newWeights.size(), vector&lt;int&gt;(total + 1, 0));
+
+    for (int j = 0; j &lt;= total; j++) {
+        f[0][j] = newWeights[0] &lt;= j ? newValues[0] : 0;
+    }
+
+    for (int i = 1; i &lt; newWeights.size(); i++) {
+        for (int j = 0; j &lt;= total; j++) {
+            f[i][j] = f[i - 1][j];
+            if (newWeights[i] &lt;= j) {
+                f[i][j] = max(f[i][j], f[i - 1][j - newWeights[i]] + newValues[i]);
+            }
+        }
+    }
+
+    return f[newWeights.size() - 1][total];
+}</code></pre>
+
+</section>
+<section	id="groupedknapsack">
+<h3>Grouped Knapsack</h3>
+
+<blockquote>
+<p>Given N groups of items, we are allowed to select only one or (zero) item from a group. Give a total weight of knapsack, return the maximum value.</p>
+</blockquote>
+
+<p>Define <code>f</code> as <code>f[i][j]</code>, where <code>i</code> means select from first <code>i</code> <strong>groups</strong> and <code>j</code> means available weight.</p>
+
+<p>How to derive deduction formula?</p>
+
+<p><code>f[i][j]</code> consists of <code>f[i-1][j]</code> (select 0 item from ith group), <code>f[i-1][j-w[i][0]] + v[i][0]</code> (select the first item from ith group), &#8230;, <code>f[i-1][j-w[i][last] + v[i][last]</code>. Of course, <code>j - w[i][k] &gt;= 0</code>.</p>
+
+<ul>
+<li>2-d implementation</li>
+</ul>
+<pre><code class="cpp">/**
+ * @brief the naive implementation of group knapsack
+ * 
+ * f[i][j] = max(f[i-1][j], f[i-1][j-w[i][k]] + v[i][k]), where k is in the range of items
+ * of ith group, and `j-w[i][k]` &gt;= 0.
+ * 
+ * @param items: vector of { groupId, weight, value }
+ * @param total 
+ * @return int 
+ */
+int GroupKnapsack(vector&lt; vector&lt;int&gt; &gt; items, int total) {
+    // aggregate by group
+    vector&lt;int&gt; groups(items.size(), 0);
+    for (int i = 0; i &lt; items.size(); i++) {
+        groups[items[i][0]]++;
+    }
+    // truncate from end
+    int end = groups.size() - 1; // the index of last group
+    for (; end &gt;= 0 &amp;&amp; groups[end] != 0; end--) {}
+    groups.resize(end);
+    // index the index of the first item in each group with prefix
+    // the first item of ith group in items is items[prefix[i] + 0]
+    vector&lt;int&gt; prefix(groups.size(), 0);
+    for (int i = 1; i &lt; groups.size(); i++) {
+        prefix[i] = groups[i-1] + prefix[i-1];
+    }
+
+    vector&lt; vector&lt;int&gt; &gt; f(groups.size(), vector&lt;int&gt;(total+1, 0));
+    for (int j = 0; j &lt;= total; j++) {
+        for (int k = prefix[0]; k &lt; prefix[0] + groups[0]; k++) {
+            if (items[k][1] &lt;= j) {
+                f[0][j] = max(f[0][j], 0 + items[k][2]);
+            }
+        }
+    }
+
+    for (int i = 1; i &lt; groups.size(); i++) {
+        for (int j = 0; j &lt;= total; j++) {
+            for (int k = prefix[i]; k &lt; prefix[i] + groups[i]; k++) {
+                f[i][j] = f[i-1][j]; // no pick
+                if (items[k][1] &lt;= j) {
+                    f[i][j] = max(f[i][j], f[i-1][j - items[k][1]] + items[k][2]);
+                }
+            }
+        }
+    }
+
+    return f[groups.size()-1][total];
+}</code></pre>
+
+<ul>
+<li>1-d implementation (similar to 0&#8211;1 knapsack)</li>
+</ul>
+<pre><code class="cpp">int GroupKnapsackII(vector&lt;vector&lt;int&gt; &gt; items, int total) {
+    // aggregate by group
+    vector&lt;int&gt; groups(items.size(), 0);
+    for (int i = 0; i &lt; items.size(); i++) {
+        groups[items[i][0]]++;
+    }
+    // truncate from end
+    int end = groups.size() - 1;   // the index of last group
+    for (; end &gt;= 0 &amp;&amp; groups[end] != 0; end--) {
+    }
+    groups.resize(end);
+    // mapping: index the index of the first item in each group with prefix
+    // the first item of ith group in items is items[prefix[i] + 0]
+    vector&lt;int&gt; prefix(groups.size(), 0);
+    for (int i = 1; i &lt; groups.size(); i++) {
+        prefix[i] = groups[i - 1] + prefix[i - 1];
+    }
+
+    vector&lt;int&gt; f(total + 1, 0);
+    for (int j = 0; j &lt;= total; j++) {
+        for (int k = prefix[0]; k &lt; prefix[0] + groups[0]; k++) {
+            if (items[k][1] &lt;= j) {
+                f[j] = max(f[j], 0 + items[k][2]);
+            }
+        }
+    }
+
+    for (int i = 1; i &lt; groups.size(); i++) {
+        for (int j = total; j &gt;= 0; j--) {
+            // find max in ith group
+            for (int k = prefix[i]; k &lt; prefix[i] + groups[i]; k++) {
+                f[j] = f[j];   // no pick
+                if (items[k][1] &lt;= j) {
+                    f[j] = max(f[j], f[j - items[k][1]] + items[k][2]);
+                }
+            }
+        }
+    }
+
+    return f[total];
+}</code></pre>
+
+</section>
+<section	id="mixedknapsack">
+<h3>Mixed Knapsack</h3>
+
+<blockquote>
+<p>We have different kind items to be chosen, some can be chosen at most one time, some <code>m</code> times, and some unlimited. Return the maximum value we can get given a weight constraint.</p>
+</blockquote>
+
+<p>The basic idea is converting limited item to 0&#8211;1 item (bit optimization) and deduct in two cases, one for 0&#8211;1 knapsack and the other for unlimited knapsack.</p>
+<pre><code class="cpp">class Item {
+    int kind; // -1 for 0-1, 0 for unlimited, positive number for limited item.
+    int weight;
+    int value;
+}</code></pre>
+
+<ul>
+<li>1-d implementation</li>
+</ul>
+<pre><code class="cpp">/**
+ * @brief The basic idea is converting limited item to 0-1 item (bit optimization) and
+ * deduct in two cases.
+ *
+ * 1. when ith item is 0-1 item,
+ *     2-d f[i][j] = max(f[i-1][j], f[i-1][j-w[i]] + v[i]) if w[i] &lt;= j.
+ *  or 1-d formula (scan from end): f[j] = max(f[j&apos;], f[j&apos;-w[i]] + v[i] if w[i] &lt;= j&apos;).
+ *                                               ^ rolling array
+ * 2. when ith item is unlimited item,
+ *     2-d f[i][j] = max(f[i-1][j], f[i][j-w[i]] + v[i]) if w[i] &lt;= j.
+ *  or 1-d formula (scan from begin): f[j] = max(f[j&apos;], f[j&apos; - w[i]] + v[i] if w[i] &lt;=
+ * j&apos;).
+ * 
+ * ex&gt; each i (row) is independent
+ *    i\j 0 1 2 ... 200
+ *    0 ----  0-1  ----
+ *    1 ----  0-1  ----
+ *    2 ---- unlmt ----
+ *   ...
+ *   10 ----  0-1  ----
+ * 
+ * @param items
+ * @param total
+ * @return int
+ */
+int MixedKnapsack(vector&lt;Item&gt; items, int total) {
+    vector&lt;Item&gt; newItems;
+    for (int i = 0; i &lt; items.size(); i++) {
+        if (items[i].kind &gt; 0) {
+            // convert limited item to 0-1 item
+            for (int k = 1; k &lt;= items[i].limit; k &lt;&lt; 1) {
+                newItems.push_back(Item(-1, k * items[i].weight, k * items[i].value, 1));
+                items[i].limit -= k;
+            }
+            if (items[i].limit &gt; 0) {
+                int offset = items[i].limit;
+                newItems.push_back(
+                    Item(-1, offset * items[i].weight, offset * items[i].value, 1));
+            }
+        } else {
+            newItems.push_back(items[i]);
+        }
+    }
+
+    vector&lt;int&gt; f(total + 1, 0);
+    // conditional deduction
+    for (int i = 0; i &lt; newItems.size(); i++) {
+        if (newItems[i].kind == -1) {
+            // 0-1
+            for (int j = total; j &gt;= newItems[i].weight; j--) {
+                f[j] = max(f[j], f[j - newItems[i].weight] + newItems[i].value);
+            }
+        } else {
+            // unlimited
+            for (int j = newItems[i].weight; j &lt;= total; j++) {
+                f[j] = max(f[j], f[j - newItems[i].weight] + newItems[i].value);
+            }
+        }
+    }
+
+    return f[total];
+}</code></pre>
+
+</section>
+<section	id="knapsackwithtracking">
+<h3>Knapsack with Tracking</h3>
+
+<p>Here we will track and return the optimal choice. Take 0&#8211;1 knapsack as an example.</p>
+
+<p>The basic idea is to back track from <code>f[i][j]</code>. Notice that we cannot use 1-d implementation which dumps (overwrites) info of <code>f[0...i-1][j]</code>. So we will track the path in 2-d implementation.</p>
+
+<p>Imagine starting from <code>f[i][j]</code>, what&#8217;s the path that ends with <code>f[i][j]</code> and what it means? There are two paths to <code>f[i][j]</code>:</p>
+
+<ul>
+<li><code>f[i-1][j]</code> =&gt; <code>f[i][j]</code>, do not select ith item.</li>
+<li><code>f[i-1][j - w] + v</code> =&gt; <code>f[i][j]</code>, select ith item.</li>
+</ul>
+<pre><code class="cpp">if (f[i][j] == f[i-1][j]) {
+    // nothing to do
+} else {
+    // f[i][j] == f[i-1][j-w] + v
+    chosen.push_back(i);
+}</code></pre>
+
+<p>Notice <code>chosen</code> is in reverse order and we need reverse it for the output.</p>
+<pre><code class="cpp">/**
+ * @brief track the path of the optimal plan
+ *
+ * @param weights
+ * @param values
+ * @param total
+ * @return vector&lt;int&gt;
+ */
+vector&lt;int&gt; ZeroOneKnapsackWithTracking(vector&lt;int&gt; weights, vector&lt;int&gt; values,
+                                        int total) {
+    vector&lt;vector&lt;int&gt; &gt; f(weights.size(), vector&lt;int&gt;(total+1, 0));
+    
+    // init boundary
+    for (int j = weights[0]; j &lt;= total; j++) {
+        f[0][j] = values[0];
+    }
+
+    // deduction
+    for (int i = 1; i &lt; weights.size(); i++) {
+        for (int j = 0; j &lt;= total; j++) {
+            f[i][j] = f[i-1][j];
+            if (weights[i] &lt;= j) {
+                f[i][j] = max(f[i][j], f[i-1][j - weights[i]] + values[i]);
+            }
+        }
+    }
+
+    // backtrack
+    vector&lt;int&gt; chosen;
+    int j = total;
+    for (int i = weights.size() - 1; i &gt; 0; i--) {
+        if (f[i][j] == f[i-1][j - weights[i]] + values[i]) {
+            chosen.push_back(i);
+            j = j - weights[i];
+        }
+    }
+    if (f[0][j] != 0) chosen.push_back(0); // boundary
+
+    reverse(chosen.begin(), chosen.end());
+
+    return chosen;
+}</code></pre>
+
+</section>
+<section	id="countingoptimalplan">
+<h3>Counting Optimal Plan</h3>
+
+<p>We will count the number of all optimal choices.</p>
+
+<p>First we have to figure out the difference and correlation between two problems.</p>
+
+<ul>
+<li>0&#8211;1 knapsack requires the total of chosen items must less than or equal to given &#8216;total&#8217;.</li>
+<li>0&#8211;1 knapsack requires the total of chosen items must be exactly given &#8216;total&#8217;.</li>
+</ul>
+
+<p>Definition of <code>f</code> for two problems has totally different meaning.</p>
+
+<ul>
+<li>In the first case, <code>f[i][j]</code> means selecting from first <code>i</code> items and the total weight of chosen items should be less than or equal to <code>j</code>.</li>
+<li>In the other, <code>f[i][j]</code> means selecting from first <code>i</code> items and the total weight of chosen items should be exactly <code>j</code>.</li>
+</ul>
+
+<p>But These two problems have the same deduction formula:</p>
+<pre><code class="text">f[i][j] = max(f[i-1][j], f[i-1][j-w] + v if w &lt;= j)
+or
+f[j] = max(f[j], f[j-w] + v if w &lt;= j) with a rolling array scanning from end to begin</code></pre>
+
+<p>The ONLY difference goes down to the initialization although there is only subtle difference.</p>
+<pre><code class="cpp">// case 1: &lt;= j
+// initialize the boundary, when i == 0
+    for (int j = 0; j &lt;= total; j++) {
+        f[j] = weights[0] &lt;= j ? values[0] : 0;
+    }
+
+// case 2: == j
+// initialize the boundary, when i == 0
+    for (int j = weights[0]; j &lt;= total; j++) {
+        f[j] = -INT_MAX; // can not be chosen
+    }
+    f[0] = 0;
+    f[weights[0]] = values[0];</code></pre>
+
+<p>We use a trick in case 2 where all <code>f[j]</code> have been set to <code>-INT_MAX</code>, which means they cannot be the answer for <code>f[j]</code>. There are only two answers for <code>f[j]</code> when <code>i == 0</code>, <code>f[0] = 0</code> and <code>f[weights[0]] = values[0]</code> which meets our definition.</p>
+
+<p>One thing worth being underscored is <strong>the optimal value is not necessarily</strong> <code>f[total]</code>, it could be <code>f[total - n]</code>, where <code>0 &lt;= n &lt;= total</code>.</p>
+
+<p>Say if we want to find the max value for the second case:</p>
+<pre><code class="cpp">int maxVal = 0;
+for (int j = 0; j &lt;= total; j++) {
+    maxVal = max(maxVal, f[j]);
+}</code></pre>
+
+<p>Now go back to count the optimal plan.</p>
+<pre><code class="cpp">/**
+ * @brief f[j] and g[j] means the total weight must be &apos;j&apos;, rather than &apos;&lt;= j&apos; as we did
+ * before.
+ * 
+ * f[j] means optimal plan of choosing best value from first ith items and total weight
+ * of chosen items MUST be equal to &apos;j&apos;.
+ * 
+ * @param weights 
+ * @param values 
+ * @param total 
+ * @return int 
+ */
+int TotalNumberOfZeroOneKnapsack(vector&lt;int&gt; weights, vector&lt;int&gt; values,
+                                        int total) {
+    vector&lt;int&gt; f(total + 1, 0);
+    vector&lt;int&gt; g(total + 1, 0); // record number of optimal plans given j
+    
+    // initialize the boundary, when i == 0
+    for (int j = weights[0]; j &lt;= total; j++) {
+        f[j] = -INT_MAX; // can not be chosen
+    }
+    f[0] = 0; g[0] = 0; // not choose
+    f[weights[0]] = values[0]; g[weights[0]] = 1; // choose
+
+    for (int i = 1; i &lt; weights.size(); i++) {
+        for (int j = total; j &gt;= weights[i]; j--) {
+            // cannot overwriting since we have to record number of plans
+            int t = max(f[j], f[j - weights[i]] + values[i]);
+            int sum = 0;
+            // total plans comes from two possible states
+            if (t == f[j]) sum += f[j];
+            if (t == f[j - weights[i]] + values[i]) sum += f[j - weights[i]];
+            f[j] = t;
+            g[j] = sum;
+        }
+    }
+
+    // find optimal result
+    int maxVal = 0;
+    for (int j = 0; j &lt;= total; j++) {
+        maxVal = max(maxVal, f[j]);
+    }
+    int sum = 0;
+    // count all paths for optimal result
+    for (int j = 0; j &lt;= total; j++) {
+        if (f[j] == maxVal) {
+            sum += g[j];
+        }
+    }
+
+    return sum;
+}</code></pre>
+
+</section>
+</section>
+<section	id="lineardp">
+<h2>Linear DP</h2>
+
+<section	id="longestnon-descendingsubsequence">
+<h3>Longest Non-descending Subsequence</h3>
+
+<blockquote>
+<p>return the maximum length of non-descending subsequence.</p>
+</blockquote>
+
+<p><code>f[i]</code> means max length of non-descending subsequence of the first ith subsequence.</p>
+
+<p>For ith element, maximum length of ith is maximum of all max length of the state before i, i.e. <code>f[i] = max(f[j] if i &lt; j or f[j] + 1 if i &gt;= j), where 0 &lt;= j &lt; i</code>.</p>
+<pre><code class="cpp">/**
+ * @brief f[i] = max(f[j] if i &lt; j or f[j] + 1 if i &gt;= j), where 0 &lt;= j &lt; i
+ * 
+ * O(N^2)
+ * 
+ * @param s
+ * @return int
+ */
+int MaxLengthOfNonDescendingSubsequence(string s) {
+    vector&lt;int&gt; f(s.size(), 0);
+    f[0] = 1;
+    for (int i = 1; i &lt; s.size(); i++) {
+        for (int j = 0; j &lt; i; j++) {
+            if (s[i] &gt;= s[j]) {
+                f[i] = max(f[i], f[j] + 1);
+            }
+        }
+    }
+
+    return f[s.size() - 1];
+}</code></pre>
+
+<ul>
+<li>Code with backtracking:</li>
+</ul>
+<pre><code class="cpp">/**
+ * @brief track max subsequence
+ * 
+ * @param s
+ * @return int
+ */
+string MaxLengthOfNonDescendingSubsequenceII(string s) {
+    vector&lt;int&gt; f(s.size(), 0);
+    vector&lt;int&gt; pre(s.size(), 0);
+    f[0] = 1;
+
+    for (int i = 1; i &lt; s.size(); i++) {
+        for (int j = 0; j &lt; i; j++) {
+            if (s[i] &gt;= s[j]) {
+                f[i] = max(f[i], f[j] + 1);
+                pre[i] = j;
+            }
+        }
+    }
+
+    // backtrack
+    string result;
+    int k = s.size() - 1;
+    for (int i = 0, len = f[s.size() - 1]; i &lt; len; i++) {
+        result.push_back(s[k]);
+        k = pre[k];
+    }
+    reverse(result.begin(), result.end());
+
+    return result;
+}</code></pre>
+
+<ul>
+<li>Optimization (Greedy Algorithm)</li>
+</ul>
+
+<p>Let&#8217;s see the problem from the perspective of length. <code>f[i]</code> is defined as the minimum of the last number of longest non-descending sequence with length <code>i</code>.</p>
+
+<p>Why is it defined like that? One observation is the best choice for current number <code>nums[i]</code> to concatenate the longest sequence before it has two properties:</p>
+
+<ul>
+<li>length of longest sequence is as long as possible</li>
+<li>the last number of the sequence should be as small as possible if there are multiple sequences with the same length. In other words, we can dump all sequence with the same length but the last number being greater than the minimum one. This explains why <code>f</code> is a mapping from <code>len</code> to <code>min(last number)</code></li>
+</ul>
+<pre><code class="text">len  1  1  2  2  3
+ex&gt;  2  1  3  2  4  7  6  8  9
+        solved      ^   unsolved
+                   ptr
+then f[0] = 0
+     f[1] = min(2, 1) = 1 (len == 1)
+     f[2] = min(3, 2) = 2 (len == 2)
+     f[3] = min(4)    = 4 (len == 3)
+     ...</code></pre>
+
+<p>One important property of <code>f[i]</code> is it is non-descending. It can be proved with contradiction. Say if <code>f[i+1] &lt; f[i]</code>, it means we can find a subsequence in <code>f[i+1]</code> <strong>with the length of <code>i</code></strong>, and <strong>the last number</strong> of this subsequence is less than or equal to <code>f[i+1]</code>, which means <strong>less than</strong> <code>f[i]</code>. This is a contradiction to our definition, which tells us <code>f[i]</code> should be the minimum number of the last number in all sequence with length <code>i</code>.</p>
+
+<p>Therefore, our algorithm is:</p>
+
+<ul>
+<li>find the first number less than or equal to <code>nums[i]</code> from the end, say <code>f[m]</code>. It means it is the best choice for <code>nums[i]</code> to concatenate. (binary search: log(N))</li>
+<li>update <code>f[m+1]</code> with <code>nums[i]</code>, since <code>nums[i] &lt; f[m+1]</code> (if not, <code>f[m+1]</code> will be the best choice to concatenate).</li>
+</ul>
+<pre><code class="cpp">/**
+ * @brief f[i] is the minimum last number of the sequence with the same length
+ * 
+ * @param s 
+ * @return int 
+ */
+int MaxLengthOfNonDescendingSubsequenceIII(string s) {
+    vector&lt;int&gt; f(s.size() + 1, INT_MAX);   // the last number of subsequence with length i
+    f[0] = 0;
+
+    int len = 0;   // track solved range
+    for (int i = 0; i &lt; s.size(); i++) {
+        // binary search the last one less than or equal to s[i]
+        int left = 0, right = len;
+        while (left &lt; right) {
+            int mid = left + ((right - left) &gt;&gt; 1) + 1;
+            if (f[mid] &lt;= s[i]) {
+                left = mid;
+            } else {
+                right = mid - 1;
+            }
+        }
+
+        len = max(len, left + 1);
+        f[left + 1] = s[i];
+    }
+
+    return len;
+}</code></pre>
+
+</section>
+<section	id="longestcommonsubsequence">
+<h3>Longest Common Subsequence</h3>
+
+<blockquote>
+<p>return the longest common subsequence of two strings.</p>
+</blockquote>
+
+<p>Define <code>f[i][j]</code> as the maximum length of longest common subsequences of <code>sl[1...i]</code> and <code>sr[1...j]</code> (1-indexed).</p>
+
+<p>How to solve <code>f[i][j]</code>?</p>
+
+<ul>
+<li>if <code>sl[i] == sr[j]</code>, then <code>f[i][j] = f[i-1][j-1] + 1</code>.</li>
+<li>if <code>sl[i] != sr[j]</code>, there are three cases:
+
+<ul>
+<li><code>sl[i]</code> may contribute to <code>f[i-1][j-1]</code> when <code>i-1</code> move 1 step forward. If so, <code>f[i][j-1] = f[i-1][j-1] + 1</code> and <code>f[i][j-1] = f[i-1][j-1]</code> otherwise. But we do not care about if <code>sl[i]</code> contributes to <code>f[i][j-1]</code>, it will be handled when calculating <code>f[i][j-1]</code>. So we can safely say here <code>f[i][j] = f[i][j-1]</code>.</li>
+<li>same to <code>sr[j]</code>, <code>f[i][j] = f[i-1]f[j]</code>.</li>
+<li>also <code>f[i][j] = f[i-1][j-1]</code> assuming that <code>sl[i]</code> and <code>sr[j]</code> have no contribution to <code>f[i-1][j-1]</code>.</li>
+</ul></li>
+</ul>
+
+<p>The relationship among them could be diagramed as follows:</p>
+<pre><code class="text">    f[i-1][j-1]: (longest common sequence of sl[1...i-1] and sr[1...j-1])
+                  |                |               |
+               +0 or +1         +0 or +1           |
+     sl[i]        |                |       sr[j]   |
+              f[i][j-1]        f[i-1][j]           | +1  sl[i] == sr[j]
+                  |----------------|               |
+                          |                        |
+max(f[i][j-1], f[i-1][j]) |                        |
+                          |------------------------| 
+                       f[i][j]</code></pre>
+
+<p>As you can see, <code>f[i][j]</code> can be greater than <code>f[i-1][j-1]</code> by 1 at most. One thing to note is <code>sl[i]</code> and <code>sr[j]</code> must have no contribution to <code>f[i][j-1]</code> or <code>f[i-1][j]</code> when <code>sl[i] == sr[j]</code> where these two character together serve as a common character for two subsequences.</p>
+<pre><code class="text">ex&gt;   sl = &quot;adbc&quot;  sr = &quot;abec&quot;
+
+Output of f:
+    0 1 1 1 
+    0 1 1 1 
+    0 1 2 2 
+    0 1 2 3
+
+Note: the difference of f[i][j], f[i-1][j], f[i][j-1], f[i-1][j-1] is at most 1!</code></pre>
+<pre><code class="cpp">/**
+ * @brief f[i][j] = max(f[i-1][j], f[i][j-1], f[i-1][j-1] if sl[i] == sr[j])
+ *
+ * @param sl
+ * @param sr
+ * @return int
+ */
+int LongestCommonSubsequence(string sl, string sr) {
+    vector&lt;vector&lt;int&gt; &gt; f(sl.size() + 1, vector&lt;int&gt;(sr.size() + 1, 0));
+
+    // without initializing boundary (1-indexed)
+    for (int i = 1; i &lt;= sl.size(); i++) {
+        for (int j = 1; j &lt;= sr.size(); j++) {
+            f[i][j] = max(f[i-1][j], f[i][j-1]);
+            if (sl[i] == sr[j]) {
+                f[i][j] = max(f[i][j], f[i-1][j-1] + 1);
+            }
+        }
+    }
+
+    return f[sl.size()][sr.size()];
+}</code></pre>
+
+<p>Tricks:</p>
+
+<ul>
+<li>1-indexed is better in most cases in dynamic programming since we can save our mind from solving boundary case.</li>
+</ul>
+
+</section>
+<section	id="editdistance">
+<h3>Edit Distance</h3>
+
+<blockquote>
+<p>Given two strings, and three kinds of operations: <code>delete</code>, <code>add</code>, and <code>replace</code>. Return the minimum number of operations converting <code>sl</code> to <code>sr</code>.</p>
+</blockquote>
+
+<p>The definition is similar to that of longest common subsequence. We define <code>f[i][j]</code> as the minimum number of operations that converts <code>sl[1...i]</code> to sr<code>[1...j]</code>.</p>
+
+<p><code>f[i][j]</code> can be divided into three sub problems:</p>
+
+<ul>
+<li><code>delete</code> operation: delete <code>sl[i]</code>, <code>f[i][j] = f[i-1]f[j] + 1</code> where <code>f[i-1][j]</code> means the minimum number of operations that converts <code>sl[1...i-1]</code> to <code>sr[1...j]</code>. Given that <code>sl[1...1-i]</code> and <code>sr[1...j]</code> have matched, we are going to delete <code>sl[i]</code>.</li>
+<li><code>add</code> operation: add <code>sl[i]</code>, <code>f[i][j] = f[i]f[j-1] + 1</code> where <code>f[i][j-1]</code> means the minimum number of operations that converts <code>sl[1...i]</code> to <code>sr[1...j-1]</code>. Similarly, given that <code>sl[1...i]</code> and <code>sr[1...j-1]</code> have matched, we need to add <code>sl[i]</code> (new-added <code>sl[i]</code> should be <code>sr[j]</code>) to match <code>sl[1...i]</code> and <code>sr[1...j]</code>.</li>
+<li><code>replace</code> operation: comes from <code>f[i-1][j-1]</code> where <code>sl[1...i-1]</code> and <code>sr[1...j-1]</code> are already matched.
+
+<ul>
+<li>when <code>sl[i] == sr[j]</code>, nothing to do. <code>f[i][j] == f[i-1][j-1]</code>.</li>
+<li>when <code>sl[i] != sr[j]</code>, we need to replace <code>sl[i]</code> with <code>sr[j]</code> to match, where <code>f[i][j] = f[i-1][j-1]</code>.</li>
+</ul></li>
+</ul>
+<pre><code class="cpp">/**
+ * @brief f[i][j] means the minimum number of operations that converts sl[1...i] to 
+ * sr[1...j].
+ * 
+ * f[i][j] = f[i-1][j] + 1 (del);
+ * f[i][j] = f[i][j-1] + 1 (add);
+ * f[i][j] = f[i-1][j-1] + 1 if sl[i] != sr[j]
+ *      or = f[i-1][j-1]     if sl[i] == sr[j]
+ * 
+ * @param sl 
+ * @param sr 
+ * @return int 
+ */
+int MinEditDistance(string sl, string sr) {
+    vector&lt; vector&lt;int&gt; &gt; f(sl.size() + 1, vector&lt;int&gt;(sr.size() + 1, 0));
+    
+    // 1-indexed: initialize boundary
+    for (int i = 0; i &lt;= sl.size(); i++) {
+        f[i][0] = i; // del
+    }
+    for (int j = 0; j &lt;= sr.size(); j++) {
+        f[0][j] = j; // del
+    }
+
+    // deduction
+    for (int i = 1; i &lt;= sl.size(); i++) {
+        for (int j = 1; j &lt;= sr.size(); j++) {
+            f[i][j] = f[i-1][j] + 1;
+            f[i][j] = min(f[i][j], f[i][j-1] + 1);
+            if (sl[i] != sr[j]) {
+                f[i][j] = min(f[i][j], f[i-1][j-1] + 1);
+            } else {
+                f[i][j] = min(f[i][j], f[i-1][j-1]);
+            }
+        }
+    }
+
+    return f[sl.size()][sr.size()];
+}</code></pre>
+
+</section>
+<section	id="mergingstones">
+<h3>Merging Stones</h3>
+
+<blockquote>
+<p>Given a piles of stones, each of them has a weight. We need to merge them into one pile. We are only allowed to merge two adjacent piles each time and the cost is weight sum of two piles to be merged. Return the minimum cost to merge stones.</p>
+</blockquote>
+
+<ul>
+<li>Priority Queue</li>
+</ul>
+
+<p>The first solution is by priority queue (min heap). The time complexity is O(3N*log(N)) (for each merge, we need pop two elements and push sum of them, each pop and push incurs the update of heap O(log(N))).</p>
+
+<p>But the constraint of &#8216;adjacent&#8217; make it hard to solve with priority queue.</p>
+
+<ul>
+<li>Dynamic Programming</li>
+</ul>
+
+<p><code>f[i][j]</code> is defined as the minimum cost of merging <code>stones[i...j]</code>. <code>f[i][j]</code> can be divided into <code>f[i][j] = min(f[i][k] + f[k+1][j] + cost of merging, where k is in the range of [i, j]</code>). The cost of merging can be solved with <code>prefix</code>, which is <code>prefix[j+1] - prefix[i]</code>. Note sum of <code>a[i]</code> to <code>a[j]</code> is <code>prefix[j+1] - prefix[i]</code>.</p>
+<pre><code class="cpp">/**
+ * @brief f[i][j] is the minimum cost of combine stones[i...j].
+ *
+ * f[i][j] = min(f[i][k] + f[k+1][j] + prefix[j+1] - prefix[i]),
+ * Note prefix is 0-indexed.
+ *
+ * @param stones
+ * @return int
+ */
+int MergeStones(vector&lt;int&gt; stones) {
+    vector&lt;int&gt; prefix(stones.size() + 1, 0);
+    for (int i = 1; i &lt;= prefix.size(); i++) {
+        prefix[i] = prefix[i - 1] + stones[i - 1];
+    }
+
+    vector&lt;vector&lt;int&gt; &gt; f(stones.size(), vector&lt;int&gt;(stones.size(), INT_MAX));
+    // initialize boundary: len == 1
+    for (int i = 0; i &lt; stones.size(); i++) {
+        f[i][i] = 0;
+    }
+
+    // deduction, from shortest length to longer
+     for (int len = 2; len &lt;= stones.size(); len++) {
+        // enumerate all ranges with length os len, [i, i + len - 1]
+        for (int i = 0; i + len - 1 &lt; stones.size(); i++) {
+            int j = i + len - 1;
+            f[i][j] = INT_MAX;
+            for (int k = i; k &lt; j; k++) {
+                // enumerate division
+                f[i][j] = min(f[i][j], f[i][k] + f[k + 1][j] + prefix[j+1] - prefix[i]);
+            }
+        }
+    }
+
+    return f[0][stones.size() - 1];
+}</code></pre>
+
+<p>Tricks:</p>
+
+<ul>
+<li>Range deduction</li>
+</ul>
+
+</section>
+</section>
+<section	id="countdynamicprogramming">
+<h2>Count Dynamic Programming</h2>
+
+<section	id="integerdivision">
+<h3>Integer Division</h3>
+
+<blockquote>
+<p>Given an integer <code>N</code>, return the number of divisions. <code>N = A1 + A2 + ... + An</code>, where <code>A1 &gt;= A2 &gt;= ... &gt;= An</code>. </p>
+
+<p>Say, <code>N</code> = 5, we have 7 ways to divide it: </p>
+
+<ul>
+<li>5 = 5</li>
+<li>5 = 4 + 1</li>
+<li>5 = 3 + 1 + 1</li>
+<li>5 = 2 + 1 + 1 + 1</li>
+<li>5 = 1 + 1 + 1 + 1 + 1</li>
+<li>5 = 3 + 2</li>
+<li>5 = 2 + 2 + 1</li>
+</ul>
+</blockquote>
+
+<p>The basic idea is that it can be solved as we did in complete knapsacks.</p>
+
+<p>Define <code>f[i][j]</code> as the total number of choosing from first <code>i</code> integers, and the total number is <code>j</code>.</p>
+
+<ul>
+<li><code>f[i][j] = sum(f[i-1][j], f[i-1][j - a[i]], f[i-2][j - 2*a[i]], ..., f[i-k][j - k*a[i]])</code>, where <code>a[1] = 1, a[2] = 2, ..., a[k] = k</code>. Note <code>a[i] == i</code>, so it can be simplified as <code>f[i][j] = sum(f[i-1][j], f[i-1][j - i], f[i-2][j - 2*i], ..., f[i-k][j - k*i])</code></li>
+</ul>
+
+<p>The time complexity is O(N<sup>2</sup> * logN). Why we have <code>logN</code>? For k of each loop, <code>k = N / a[i]</code>. <code>N / 1 + N / 2 + N / 3 + ... + N / N = N * (1 + 1/2 + 1/3 + ... + 1/N) = theta(log)</code>, where <code>1 + 1/2 + 1/3 + ... + 1/N</code> is Harmonic series <code>H(N)</code> and <code>H(N) &gt;= 1 + logN / 2</code></p>
+
+<p>Also, we can optimize deduction formula as we did in complete knapsacks.</p>
+
+<ul>
+<li><code>f[i][j] = sum(f[i-1][j], f[i][j - i])</code>.</li>
+</ul>
+<pre><code class="cpp">/**
+ * @brief return the number of divisions
+ * f[i][j] = sum(f[i-1][j], f[i][j - i])
+ * @param n 
+ * @return int 
+ */
+int IntegerDivision(int n) {
+    vector&lt; vector&lt;int&gt; &gt; f(n+1, vector&lt;int&gt;(n+1, 0)); // 1-indexed
+    for (int i = 0; i &lt;= n; i++) {
+        f[i][0] = 1;
+    }
+    
+    for (int i = 1; i &lt;= n; i++) {
+        for (int j = 1; j &lt;= n; j++) {
+            f[i][j] = f[i-1][j];
+            if (i &lt;= j) {
+                f[i][j] += f[i][j-i];
+            }
+        }
+    }
+
+    return f[n][n];
+}</code></pre>
+
+<ul>
+<li>1-d implementation</li>
+</ul>
+<pre><code class="cpp">int IntegerDivisionII(int n) {
+    vector&lt;int&gt; f(n+1, 0);
+    f[0] = 1;
+    for (int i = 1; i &lt;= n; i++) {
+        for (int j = i; j &lt;= n; j++) {
+            f[j] = f[j] + f[j-i];
+        }
+    }
+
+    return f[n];
+}</code></pre>
+
+<p>Let&#8217;s think of the problem from the division perspective. Define <code>f[i][j]</code> as all the division plans that have j numbers in it and sum of j numbers is i.</p>
+
+<p>Then set <code>f[i][j]</code> can be divided into two subsets:</p>
+
+<ul>
+<li>The plans that have 1 in them. ex&gt; <code>plan = [1, ..., k]</code> and <code>len(plan) = j</code>.</li>
+<li>The plans whose minimum is greater than 1. ex&gt; <code>plan = [2, ..., k]</code> and <code>len(plan) = j</code>.</li>
+</ul>
+
+<p>The question is how two subsets are related to <code>f[i][j]</code>?</p>
+
+<ul>
+<li>For the plans with 1 in them. We can subtract 1 from them and we got <code>f[i][j] (with 1 in each plan) = f[i-1][j-1]</code>. (the length of each plan is decreased by 1 and total as well).</li>
+<li>For the plans without 1 in them. We will subtract 1 from all numbers of each plan (the length of each plan will not change, but the total will be smaller). Then we got <code>f[i-j][j]</code>.</li>
+</ul>
+
+<p>Therefore, we got <code>f[i][j] = f[i-1][j-1] + f[i-j][j]</code>.</p>
+<pre><code class="cpp">/**
+ * @brief f[i][j] = f[i-1][j-1] + f[i-j][j]
+ * 
+ * @param n 
+ * @return int 
+ */
+int IntegerDivisionIII(int n) {
+    vector&lt; vector&lt;int&gt; &gt; f(n+1, vector&lt;int&gt;(n+1, 0));
+
+    // boundary: n has only one plan whose length is 1
+    for (int i = 1; i &lt;= n; i++) {
+        f[i][1] = 1;
+    }
+
+    for (int i = 1; i &lt;= n; i++) {
+        // j cannot be greater than i, since if we all choose 1, the max len is n
+        for (int j = 2; j &lt;= i; j++) {
+            f[i][j] = f[i-1][j-1] + f[i-j][j];
+        }
+    }
+
+    int sum = 0;
+    for (int j = 1; j &lt;= n; j++) {
+        sum += f[n][j];
+    }
+
+    return sum;
+}</code></pre>
+
+</section>
+</section>
+<section	id="statedynamicprogramming">
+<h2>State Dynamic Programming</h2>
+
+<section	id="fillingmatrix">
+<h3>Filling Matrix</h3>
+
+<blockquote>
+<p>Given an <code>N*M</code> matrix and return how many different ways to fill out the matrix with <code>1*2</code> and <code>2*1</code> blocks.</p>
+</blockquote>
+
+<p>This is a classic problem of dynamic programming. The start point to work it out is to figure out the relationship between two adjacent sub problems.</p>
+
+<p>Since there are two kinds of blocks, so we are able to consider the placement of one kind and fill out the rest place with the other ones.</p>
+
+<p>Say we just consider <code>1*2</code> blocks. Define <code>f[i][j]</code> to be the number of ways to fill out first <code>i</code> columns of the matrix and the state of <code>i-1</code>th column is <code>j</code>.</p>
+
+<p><strong>State</strong> here is a binary number used to indicate the status of <code>i</code>th column. If there is a block go through from <code>i-1</code> to <code>i</code> (or bit is used to indicate if that location of i&#8211;1 col is placed a 1*2 block), then that bit will be set to 1.</p>
+<pre><code class="text">               (i)         (j)
+row\col   0  1  2  3  4
+       0  ?  ----           1
+       1  ?                 0
+       2  ?  ----           1
+       3  ?                 0
+       4  ?                 0
+when i == 2, i-1 == 1, the status j is 10100</code></pre>
+
+<p>Then what&#8217;s the relationship between <code>i</code> and <code>i-1</code>.</p>
+<pre><code class="text">                (i-1) (i)       (k1) (k2)
+row\col   0  1    2    3    4
+       0  ?  ------   (x)        1    0
+       1  ?       ------         0    1
+       2  ?  ------              0    0
+       3  ?                      0    0
+       4  ?                      0    0</code></pre>
+
+<p>We use k to enumerate all possible ways of putting <code>1*2</code> blocks on <code>i</code>th column. As shown in the diagram above, <code>k = 100000</code> is a bad choice, since on the first row <code>i-1</code> has placed a block there for some <code>f[i-1][j]</code>. However <code>k = 01000</code> seems a feasible placement. So, we can check if current placement is feasible by evaluating <code>j &amp; k == 0</code> (the bit on both side cannot be 1 simultaneously).</p>
+
+<p>There is another constraint in this problem. Since all the rest cells will be placed with <code>2*1</code> blocks. After placing with <code>k</code>, the length of consecutive blank cells must be even. That is <code>j | k</code> cannot have consecutive 0s with odd size.</p>
+<pre><code class="cpp">/**
+ * @brief return the number of possible plans to fill out the matrix
+ *
+ * f[i][j] is the number of ways to fill out first i columns of the matrix and the state
+ * of i-1th column is j.
+ *
+ * 1. Enumerate all states and check if it is legal by checking if it has consecutive 0s
+ * with odd size, noting that the maximum number of state is 2^n-1 ((1 &lt;&lt; n) - 1), say we
+ * have 2 rows, the state will be [00, 01, 11].
+ * 
+ * f[i][j] = sum(f[i-1][k]) where transition from k to j is valid.
+ * 
+ * @param n: row number of matrix
+ * @param m: col number of matrix
+ * @return int
+ */
+int BlockFilling(int n, int m) {
+    const int max_state = 1 &lt;&lt; n;
+    vector&lt;vector&lt;long long&gt; &gt; f(m + 1, vector&lt;long long&gt;(max_state, 0));
+    vector&lt;bool&gt; isValidState(max_state, true);
+    vector&lt;vector&lt;bool&gt; &gt; isValidTrans(max_state, vector&lt;bool&gt;(max_state, false));
+
+    // preprocessing states
+    // 1. find all valid states, meaning no consecutive 0s with odd size.
+    for (int state = 0; state &lt; max_state; state++) {
+        int cnt0 = 0;
+        for (int mask = 0x01; mask &lt; max_state; mask = mask &lt;&lt; 1) {
+            if ((mask &amp; state) == mask) {
+                // current bit is 1
+                if (cnt0 &amp; 1) {
+                    // if length is odd
+                    isValidState[state] = false;
+                    break;
+                }
+            } else {
+                // current bit is 0
+                cnt0++;
+            }
+        }
+        // for states ending with 0, process the last sequence of 0s
+        if (cnt0 &amp; 1) {
+            isValidState[state] = false;
+        }
+    }
+
+    // 2. find all valid transition. (k &amp; j == 0)
+    for (int dst = 0; dst &lt; max_state; dst++) { // state of ith col
+        for (int src = 0; src &lt; max_state; src++) { // state of i-1th col
+            if ((src &amp; dst) == 0 &amp;&amp; isValidState[src | dst]) {
+                // src &amp; dst == 0 means it cannot be 1 on the same bit of two binary numbers
+                // src | dst explains the state of i-1 after inserting i&apos;th plan (dst)
+                isValidTrans[src][dst] = true;
+            }
+        }
+    }
+
+    // means the first-1 (imagined) column cannot be placed 1*2 block. From the perspective
+    // of the 1st col, there is no 1*2 block end on the first column (which is the starting
+    // state).
+    f[0][0] = 1; // state of 0-1 is 0x0000
+    // deduction
+    for (int i = 1; i &lt;= m; i++) {
+        // j enumerates possible states of i-1
+        for (int j = 0; j &lt; max_state; j++) {
+            // k enumerates possible states of i-2
+            for (int k = 0; k &lt; max_state; k++) {
+                if (isValidTrans[k][j]) {
+                    f[i][j] += f[i-1][k];
+                }
+            }
+        }
+    }
+
+    // which means the last column cannot be placed 1*2 block
+    return f[m][0];
+}</code></pre>
+
+</section>
+<section	id="shortesthamiltondistance">
+<h3>Shortest Hamilton Distance</h3>
+
+<blockquote>
+<p>Given a non-directed graph, calculate the shortest Hamilton distance from 0 to vertex n&#8211;1. Hamilton path requires the path covers all vertexes in the graph and each vertex can only be visited one time.</p>
+</blockquote>
+
+<p>Different from another classic problem, known as shortest path from an origin, which can be solved with Dijkstra&#8217;s algorithm. But this problem is a non-directed graph rather than directed.</p>
+
+<p>Define <code>f[i][j]</code> is the minimum path from origin (0) to vertex <code>j</code> and go through the vertexes in <code>i</code>, which is a binary state. Say we have 4 vertex, then <code>i</code> is a 4-bit binary number to describe covered vertexes <strong>including the last vertex, destination</strong>.</p>
+
+<p>A hamilton problem can be represented with <code>f[i][j]</code>. for example,</p>
+<pre><code class="text">vertexes: 0,  1,  2,  3,  4
+
+f[11111, 1]: means the shortest hamilton path from 0 to 1.
+f[11111, 2]: means the shortest hamilton path from 0 to 2.
+...
+f[11111, 4]: means the shortest hamilton path from 0 to 4, which is our problem.
+
+Also, we can use f[i][j] to represent sub problems:
+f[00001, 0]: means the shortest hamilton path from 0 to 0.
+      ^ zero vertex bit
+f[00011, 1]: means the shortest hamilton path from 0 to 1 in the sub graph (0, 1)
+...
+f[00101, 2]: means the shortest hamilton path from 0 to 2 in the sub graph (0, 2)
+f[11001, 4]: means the shortest hamilton path from 0 to 4 in the sub graph (0, 3, 4)</code></pre>
+
+<p>So, a valid state should cover the start point and end point as shown above. <code>f[10001, 2]</code> is an invalid state since it represents the shortest hamilton path from 0 to 2 in the sub graph (0, 4), which is impossible.</p>
+
+<p>Deduction: say our problem is <code>f[11111, 4]</code>. Which sub problem contributes the solution to <code>f[11111, 4]</code>? If 2 and 3 are directly connected with 4, then <code>f[11111, 4]</code> is the minimum of</p>
+
+<ul>
+<li><code>f[01111, 2] + w[2, 4]</code>, shortest Hamilton path from 0 to 2 in sub graph (0, 1, 2, 3) (4 must be excluded!)</li>
+<li><code>f[01111, 3] + w[3, 4]</code>, shortest Hamilton path from 0 to 3 in sub graph (0, 1, 2, 3) (4 must be excluded!)</li>
+</ul>
+
+<p>Deduction: what we care about is what&#8217;s the vertexes directly connected to <code>j</code>. Say that point is <code>k</code>, then according to the definition of Hamilton distance, <code>f[i][j] = f[i'][k] + cost[k][j]</code> and <code>k</code> must be in the state and <code>j</code> cannot be in the state.</p>
+<pre><code class="cpp">/**
+ * @brief return the shortest path from vertex 0 to the last vertex
+ *
+ * f[i][j] = f[i&apos;][k] + cost[k][j], f[i&apos;][k] == f[i-k][k] if k is in i or f[i+k][k] if k
+ * is not in i.
+ *
+ * i is a binary number representing state and j is the number of the last vertex.
+ *
+ * @param graph
+ * @return vector&lt;int&gt;
+ */
+int ShortestHamiltonPath(vector&lt;vector&lt;int&gt; &gt; graph) {
+    // [0, 2^size - 1], [0, 11...11] (a set of size-bit binary numbers)
+    int max_state = 1 &lt;&lt; graph.size();
+    vector&lt;vector&lt;int&gt; &gt; f(max_state, vector&lt;int&gt;(graph.size(), 1e5));   // 0-based
+
+    // initialization
+    f[1][0] = graph[0][0];   // reach vertex 0 starting from vertex 0
+
+    // deduction
+    int start_mask = 0x1;
+    for (int state = 1; state &lt; max_state; state++) {
+        if (state &amp; start_mask) {   // state must include start point
+            for (int j = 0; j &lt; graph.size(); j++) {
+                if (state &gt;&gt; j &amp; 1) {
+                    for (int k = 0; k &lt; graph.size(); k++) {
+                        if ((state - (1 &lt;&lt; j)) &gt;&gt; k &amp; 1) {
+                            f[state][j] =
+                                min(f[state][j], f[state - (1 &lt;&lt; j)][k] + graph[k][j]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // f[1111111][last vertex]
+    return f[max_state - 1][graph.size() - 1];
+}</code></pre>
+
+<p>Tricks:</p>
+
+<ul>
+<li>Check if ith bit is 1: <code>state &gt;&gt; i &amp; 1</code> or <code>state &amp; ith mask == ith mask</code>.</li>
+<li>Given ith bit is 1, set it to be 0: <code>state - i &lt;&lt; 1</code> or <code>state ^ i &lt;&lt; 1</code>, the latter is more general since <code>state &amp; i &lt;&lt; 1</code> can be used to reverse ith bit.</li>
+<li>everything XOR(<code>^</code>) <code>0000</code> is itself and everything XOR itself is <code>0000</code>. It can be used to match characters.</li>
+</ul>
+
+</section>
+</section>
+<section	id="tree-likedynamicprogramming">
+<h2>Tree-like Dynamic Programming</h2>
+
+<blockquote>
+<p>Assuming there are N workers in a company, they have different occupation. There job hierarchy can be represented with a tree. The parent worker is the direct leader of its children. Say we have a party and each worker has an expectation value for the party. But when a worker and his direct leader come to party at the same time, the worker will be unhappy. So we need to avoid that thing to happen. Return the maximum expectation of the tree if we will select only the part of workers to join the party.</p>
+</blockquote>
+
+<p>This is a dynamic programming problem with tree-like updating logic.</p>
+
+<p>Since the co-existence of worker and his direct leader should be avoided, we should take into consideration if the current node is selected (our second parameter). Define <code>f[u, 0]</code> as the maximum expectation of selecting from <code>u</code>&#8217;s subtree and do not select <code>u</code> (indicated by 0). Similarly, define <code>f[u, 1]</code> as the maximum expectation of selecting from <code>u</code>&#8217;s subtree and select <code>u</code>.</p>
+
+<p>So, the deduction is</p>
+
+<ul>
+<li><code>f[u, 0] = sum of max(f[si, 0], f[si, 1])</code>, where <code>si</code> is <code>u</code>&#8217;s direct children. If <code>u</code> is not selected, its children can be selected or not.</li>
+<li><code>f[u, 1] = sum of f[si, 0]</code>, since <code>u</code> has been selected.</li>
+</ul>
+
+<p>The definition of <code>TreeNode</code>:</p>
+<pre><code class="cpp">class TreeNode {
+   public:
+    TreeNode() : id(0), parent(-1) {};
+    TreeNode(int _id) : id(_id), parent(-1) {};
+
+    int id;
+    int parent;
+    vector&lt;int&gt; children;
+};</code></pre>
+
+<p>Tree-like dp:</p>
+<pre><code class="cpp">void dfs(vector&lt;vector&lt;int&gt; &gt;&amp; f, vector&lt;TreeNode&gt;&amp; tree, vector&lt;int&gt;&amp; exp, int u) {
+    f[u][1] = exp[u];
+    // solve children
+    for (int i = 0; i &lt; tree[u].children.size(); i++) {
+        int child = tree[u].children[i];
+        dfs(f, tree, exp, child);   // tree-like dp
+        f[u][0] += max(f[child][0], f[child][1]);
+        f[u][1] += f[child][0];
+    }
+}
+
+/**
+ * @brief return the maximum expectation of selection
+ * 
+ * Because it is a hierarchy tree, there must be n-1 rel (edges) when there are n workers (nodes)
+ * 
+ * @param exp: expectation of each worker
+ * @param rel: relationship between two workers, worker -&gt; leader
+ * @return int 
+ */
+int PartyWithoutLeader(vector&lt;int&gt; exp, vector&lt;vector&lt;int&gt; &gt; rel) {
+    // initialize tree
+    vector&lt;TreeNode&gt; tree(exp.size());
+    for (int i = 0; i &lt; exp.size(); i++) {
+        tree[i].id = i;
+    }
+    // build up relationship
+    for (int i = 0; i &lt; rel.size(); i++) {
+        tree[rel[i][0]].parent = rel[i][1];
+        tree[rel[i][1]].children.push_back(rel[i][0]);
+    }
+
+    vector&lt;vector&lt;int&gt; &gt; f(exp.size(), vector&lt;int&gt;(2, 0));
+    // find root node, notice root is not necessarily on index 0.
+    int root = 0;
+    for (; root &lt; tree.size() &amp;&amp; tree[root].parent != -1; root++) {}
+
+    dfs(f, tree, exp, root);
+
+    return max(f[root][0], f[root][1]);
+}</code></pre>
+
+</section>
+<section	id="heuristicdynamicprogramming">
+<h2>Heuristic Dynamic Programming</h2>
+
+<section	id="skating">
+<h3>Skating</h3>
+
+<blockquote>
+<p>Given a matrix which represents an elevation map, return the maximum length of paths starting from ANY point in the matrix. We are able to go from higher place to lower place.</p>
+</blockquote>
+
+<p>Define <code>f[i, j]</code> as the maximum length of paths starting from (i, j).</p>
+
+<p>There are four choices: up, left, right, down.</p>
+
+<p><code>f[i, j] == 1 + max(f[i-1, j], f[i, j-1], f[i+1, j], f[i, j+1])</code> if we can go from (i, j) to this place (<code>h[i][j]</code> &gt; height of these places).</p>
+<pre><code class="cpp">int dfs_skating(vector&lt;vector&lt;int&gt; &gt;&amp; f, vector&lt;vector&lt;int&gt; &gt;&amp; h, int x, int y) {
+    static int dir_x[4] = {-1, +1, 0, 0};
+    static int dir_y[4] = {0, 0, -1, +1};
+
+    // if f[x][y] is calculated, return result
+    if (f[x][y] != -1) return f[x][y];
+
+    f[x][y] = 1; // path has length of at least 1 (start point)
+    for (int i = 0; i &lt; 4; i++) {
+        int nx = x + dir_x[i];
+        int ny = y + dir_y[i];
+        if (nx &gt;= 0 &amp;&amp; nx &lt; h.size() &amp;&amp; ny &gt;= 0 &amp;&amp; ny &lt; h[0].size() &amp;&amp; h[x][y] &gt; h[nx][ny]) {
+            f[x][y] = max(f[x][y], dfs_skating(f, h, nx, ny) + 1);
+        }
+    }
+
+    return f[x][y];
+}
+
+/**
+ * @brief return the maximum length of paths starting from (i, j)
+ * Define `f[i, j]` as the maximum length of paths starting from (i, j).
+ * 
+ * f[i, j] == 1 + max(f[i-1, j], f[i, j-1], f[i+1, j], f[i, j+1])
+ * 
+ * @param h 
+ * @return int 
+ */
+int Skating(vector&lt;vector&lt;int&gt; &gt; h) {
+    vector&lt;vector&lt;int&gt; &gt; f(h.size(), vector&lt;int&gt;(h[0].size(), -1));
+    int res = 0;
+    for (int i = 0; i &lt; h.size(); i++) {
+        for (int j = 0; j &lt; h[0].size(); j++) {
+            res = max(res, dfs_skating(f, h, i, j));
+        }
+    }
+
+    return res;
+}</code></pre>
+
+</section>
+</section>
+<section	id="relatedproblems">
+<h2>Related Problems</h2>
+
+<section	id="houserobber">
+<h3>House Robber</h3>
+
+<blockquote>
+<p>You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, the only constraint stopping you from robbing each of them is that adjacent houses have security systems connected and it will automatically contact the police if two adjacent houses were broken into on the same night. </p>
+
+<p>Given an integer array <code>nums</code> representing the amount of money of each house, return the maximum amount of money you can rob tonight without alerting the police.</p>
+</blockquote>
+
+<p>Define <code>f[i]</code> as:</p>
+
+<ul>
+<li>problem sets: select from first i houses.</li>
+<li>property: maximum value.</li>
+</ul>
+
+<p>Deduction: we have two choices on <code>i</code>th house, robbing or not.</p>
+
+<ul>
+<li><code>f[i] = f[i-2] + w[i]</code>, if robbing <code>i</code>th house.</li>
+<li><code>f[i] = f[i-1]</code>, if not robbing <code>i</code>th house.</li>
+</ul>
+
+<p>So, <code>f[i] = max(f[i-2] + w[i], f[i-1])</code>.</p>
+<pre><code class="cpp">int rob(vector&lt;int&gt;&amp; nums) {
+    if (nums.size() == 0) return 0;
+    if (nums.size() == 1) return nums[0];
+    if (nums.size() == 2) return max(nums[0], nums[1]);
+    vector&lt;int&gt; f(nums.size(), 0);
+    // base case
+    f[0] = nums[0];
+    f[1] = max(nums[0], nums[1]);
+    // deduction
+    for (int i = 2; i &lt; nums.size(); i++) {
+        f[i] = max(f[i - 1], f[i - 2] + nums[i]);
+    }
+
+    return f[nums.size() - 1];
+}</code></pre>
+
+</section>
+<section	id="mincostclimbingstairs">
+<h3>Min Cost Climbing Stairs</h3>
+
+<blockquote>
+<p>You are given an integer array cost where <code>cost[i]</code> is the cost of ith step on a staircase. Once you pay the cost, you can either climb one or two steps. </p>
+
+<p>You can either start from the step with index 0, or the step with index 1. </p>
+
+<p>Return the minimum cost to reach the top of the floor.</p>
+</blockquote>
+
+<p>Define <code>f[i]</code> as:</p>
+
+<ul>
+<li>problem sets: all paths from step 0 to step i.</li>
+<li>property: the minimum cost.</li>
+</ul>
+
+<p>Deduction:</p>
+
+<ul>
+<li>1 step to <code>i</code>th step: <code>f[i] = f[i-1] + cost[i-1]</code>.</li>
+<li>2 steps to <code>i</code>th step: <code>f[i] = f[i-2] + cost[i-2]</code>.</li>
+</ul>
+
+<p>So, <code>f[i] = min(f[i-1] + cost[i-1], f[i-2] + cost[i-2])</code>.</p>
+<pre><code class="cpp">int minCostClimbingStairs(vector&lt;int&gt;&amp; cost) {
+    if (cost.size() &lt; 2) return 0;
+    int top_idx = cost.size() + 1;
+    vector&lt;int&gt; f(top_idx, 1e4);
+    
+    // base case: either start from 0th or 1th step
+    f[0] = 0;
+    f[1] = 0;
+    // deduction
+    for (int i = 2; i &lt; top_idx; i++) {
+        f[i] = min(f[i - 1] + cost[i - 1], f[i - 2] + cost[i - 2]);
+    }
+
+    return f[top_idx - 1];
+}</code></pre>
+
+</section>
+<section	id="n-thtribonaccinumber">
+<h3>N-th Tribonacci Number</h3>
+
+<blockquote>
+<p>The Tribonacci sequence Tn is defined as follows: </p>
+
+<ul>
+<li><code>T0 = 0, T1 = 1, T2 = 1</code>, and <code>Tn+3 = Tn + Tn+1 + Tn+2</code> for <code>n</code> &gt;= 0.</li>
+</ul>
+
+<p>Given <code>n</code>, return the value of <code>Tn</code>.</p>
+</blockquote>
+
+<p>Define <code>f[i] = f[i-3] + f[i-2] + f[i-1]</code>.</p>
+<pre><code class="cpp">int tribonacci(int n) {
+    if (n == 0) return 0;
+    if (n &lt; 3) return 1;
+    int max_n = 37;
+    vector&lt;int&gt; f(max_n + 1, 0);
+    f[1] = 1;
+    f[2] = 1;
+    for (int i = 3; i &lt;= n; i++) {
+        f[i] = f[i - 3] + f[i - 2] + f[i - 1];
+    }
+
+    return f[n];
+}</code></pre>
+
+</section>
+<section	id="deleteandearn">
+<h3>Delete and Earn</h3>
+
+<blockquote>
+<p>You are given an integer array <code>nums</code>. You want to maximize the number of points you get by performing the following operation any number of times: </p>
+
+<ul>
+<li>Pick any <code>nums[i]</code> and delete it to earn <code>nums[i]</code> points. Afterwards, you must delete every element equal to <code>nums[i] - 1</code> and every element equal to <code>nums[i] + 1</code>.</li>
+</ul>
+
+<p>Return the maximum number of points you can earn by applying the above operation some number of times.</p>
+</blockquote>
+
+<p>One observation is that if one number is selected, all its replicates should be selected to achieve maximum interest. We can convert the input into a form that easy to use <code>{num : time of occurrence}</code>.</p>
+
+<p>Define <code>f[i]</code> as:</p>
+
+<ul>
+<li>problem sets: all kinds of operations on first <code>i</code> numbers, i.e. ranging from [0&#8230;i].</li>
+<li>property: maximum points earned.</li>
+</ul>
+
+<p>Deduction:</p>
+
+<ul>
+<li>select <code>i</code>th number: <code>f[i] = f[i-2] + earns[i]</code>.</li>
+<li>do not select <code>i</code>th number: <code>f[i] = f[i-1]</code>.</li>
+</ul>
+
+<p>So, <code>f[i] = max(f[i-2] + earns[i], f[i-1]</code>.</p>
+<pre><code class="cpp">int deleteAndEarn(vector&lt;int&gt;&amp; nums) {
+    vector&lt;int&gt; earned(1e4 + 10, 0);   // maximum of nums[i] &lt;= 10^4
+    sort(nums.begin(), nums.end());
+    int num = nums[0], cnt = 1;
+    int maxVal = num;
+    for (int i = 1; i &lt; nums.size(); i++) {
+        if (nums[i] != num) {
+            earned[num] = num * cnt;
+            num = nums[i];
+            cnt = 1;
+            // update max value
+            if (nums[i] &gt; maxVal) {
+                maxVal = nums[i];
+            }
+        } else {
+            cnt++;
+        }
+    }
+    // add the last one
+    earned[num] = num * cnt;
+    if (num &gt; maxVal) {
+        maxVal = num;
+    }
+
+    // dp
+    vector&lt;int&gt; f(earned.size(), 0);
+    f[0] = earned[0];
+    f[1] = max(earned[0], earned[1]);   // we can choose either 0 or 1
+    for (int i = 2; i &lt;= maxVal; i++) {
+        f[i] = max(f[i - 1], f[i - 2] + earned[i]);
+    }
+
+    return f[maxVal];
+}</code></pre>
+
+</section>
+<section	id="maximumscorefromperformingmultiplicationoperations">
+<h3>Maximum Score from Performing Multiplication Operations</h3>
+
+<blockquote>
+<p>You are given two integer arrays nums and multipliers of size n and m respectively, where n &gt;= m. The arrays are 1-indexed. </p>
+
+<p>You begin with a score of 0. You want to perform exactly m operations. On the ith operation (1-indexed), you will: </p>
+
+<ul>
+<li>Choose one integer x from either the start or the end of the array nums.</li>
+<li>Add <code>multipliers[i] * x</code> to your score.</li>
+<li>Remove x from the array nums.</li>
+</ul>
+
+<p>Return the maximum score after performing m operations.</p>
+</blockquote>
+
+<p>Define <code>f[i][j]</code> as:</p>
+
+<ul>
+<li>problem sets: all kinds of choices of selection from <code>nums[i...end]</code> and the first <code>j</code> elements of multipliers.</li>
+<li><code>end</code> can be calculated. Since sum of # of selecting from begin and end should be <code>j</code> and # of selecting from the start is <code>i</code>, we got <code>end = multipliers.size() - 1 - j - i</code>.</li>
+<li>property: the maximum number of <code>f</code>.</li>
+</ul>
+
+<p>The problem can be solved with recursion plus memorization.</p>
+<pre><code class="cpp">/**
+ * @brief recursively solve the problems with memorization.
+ *
+ * @param nums
+ * @param multiplies
+ * @param i: ith step.
+ * @param result
+ */
+int maximumScoreHelper(vector&lt;int&gt;&amp; nums, vector&lt;int&gt;&amp; multipliers,
+                       vector&lt;vector&lt;int&gt; &gt;&amp; f, int begin, int i) {
+    if (f[begin][i] != -1e4) {
+        return f[begin][i];
+    }
+    
+    int end = nums.size() - 1 - (i - begin);
+    if (i == multipliers.size() - 1) {
+        // check if it is the maximum score
+        return max(nums[begin] * multipliers[i], nums[end] * multipliers[i]);
+    }
+
+    int maxVal = max(
+        maximumScoreHelper(nums, multipliers, f, begin + 1, i + 1) +
+            nums[begin] * multipliers[i],
+        maximumScoreHelper(nums, multipliers, f, begin, i + 1) + nums[end] * multipliers[i]);
+    return maxVal;
+}
+
+/**
+ * @brief the max score we can get.
+ *
+ * define memory as f[i][j]: i is begin of nums, and j means jth step of multipliers.
+ *
+ * the end can be calculated by nums.size() - 1 - (j - i), where &apos;j - i&apos; is # of selecting
+ * the end &apos;i&apos; is # of selecting the begin.
+ *
+ * @param nums
+ * @param multipliers
+ * @return int
+ */
+int maximumScore(vector&lt;int&gt;&amp; nums, vector&lt;int&gt;&amp; multipliers) {
+    vector&lt;vector&lt;int&gt; &gt; f(multipliers.size(), vector&lt;int&gt;(multipliers.size(), -1e4));
+    int result = maximumScoreHelper(nums, multipliers, f, 0, 0);
+    return result;
+}</code></pre>
+
+</section>
+<section	id="minimalsquare">
+<h3>Minimal Square</h3>
+
+<blockquote>
+<p>Given an <code>m x n</code> binary matrix filled with 0&#8217;s and 1&#8217;s, find the largest square containing only 1&#8217;s and return its area.</p>
+</blockquote>
+
+<p>Define <code>f[i, j]</code> as the side length of the maximum square <strong>whose bottom right corner</strong> is the cell with index (i,j) in the original matrix. In other word, there is a square with length of <code>f[i, j]</code> whose bottom right corner is (i, j).</p>
+
+<p>for example,</p>
+<pre><code class="text">+---+
+| 1 |
++---+ (i, j)  &lt;--- the bottom right corner of this square
+
+so f[i, j] = 1 (max side length)
+
++---+
+| 0 |
++---+ (i, j)  &lt;--- f[i, j] = 0, no 1&apos;s square with bottom right corner of (i, j)
+
+To form a square with side length of 2, it requires (i-1, j), (i, j-1), and (i-1, j-1) all have at least 1 square ends with them.
+
++---+---+
+| 1 | 1 |
+|---|---|
+| 1 | 2 |
++---+---+ (i, j)
+
+similarly, imagine there is a square with side length of 2 on each cell, we can form a square with side length of 3 ending with (i, j)
+
++---+---+
+| 2 | 2 |
+|---|---|
+| 2 | 3 |
++---+---+ (i, j)</code></pre>
+
+<p>So, we got deduction formula:</p>
+
+<p><code>f[i, j] = min(f[i-1][j], f[i][j-1], f[i-1][j-1]) + 1</code>, if <code>matrix[i, j] = 1</code>. <code>f[i, j] = 0</code> otherwise.</p>
+<pre><code class="cpp">int maximalSquare(vector&lt;vector&lt;char&gt; &gt;&amp; matrix) {
+    vector&lt; vector&lt;int&gt; &gt; f(matrix.size() + 1, vector&lt;int&gt;(matrix[0].size() + 1, 0)); // 1-based
+
+    int maxLen = 0;
+    for (int i = 1; i &lt;= matrix.size(); i++) {
+        for (int j = 1; j &lt;= matrix[0].size(); j++) {
+            if (matrix[i-1][j-1] == &apos;1&apos;) {
+                f[i][j] = min(f[i][j-1], f[i-1][j]);
+                f[i][j] = min(f[i][j], f[i-1][j-1]);
+                f[i][j] += 1;
+                maxLen = max(maxLen, f[i][j]);
+            }
+        }
+    }
+
+    return maxLen * maxLen;
+}</code></pre>
+
+</section>
+<section	id="minimumdifficultyofajobschedule">
+<h3>Minimum Difficulty of a Job Schedule</h3>
+
+<blockquote>
+<p>You want to schedule a list of jobs in <code>d</code> days. Jobs are dependent (i.e To work on the ith job, you have to finish all the jobs <code>j</code> where <code>0 &lt;= j &lt; i</code>). </p>
+
+<p>You have to finish at least one task every day. The difficulty of a job schedule is the sum of difficulties of each day of the <code>d</code> days. The difficulty of a day is the maximum difficulty of a job done on that day. </p>
+
+<p>You are given an integer array <code>jobDifficulty</code> and an integer <code>d</code>. The difficulty of the ith job is <code>jobDifficulty[i]</code>. </p>
+
+<p>Return the minimum difficulty of a job schedule. If you cannot find a schedule for the jobs return &#8211;1.</p>
+</blockquote>
+
+<p>This is a classic grouping problem. Define <code>f[i, j]</code> as: (how to describe the assigned jobs for ith day?)</p>
+
+<ul>
+<li>problem sets: all arrangements up to <code>i</code>th day and the last scheduled job is <code>j</code>. <code>i</code> indicates the first <code>i</code> days and <code>j</code> the last index of scheduled jobs.</li>
+<li>property: minimum difficulty.</li>
+</ul>
+
+<p>Deduction:</p>
+
+<ul>
+<li><code>f[i, j] = f[i-1, j-k] + jobDifficulty of ith day</code>. Since it is required that each day has at least 1 scheduled job, <code>k</code> is in range <code>j-k &gt;= i-1</code> ==&gt; <code>1 &lt; k &lt;= j - i + 1</code>.</li>
+<li><code>jobDifficulty of ith day = max(jobDifficulty[j-k+1...j])</code>.</li>
+</ul>
+<pre><code class="cpp">/**
+ * @brief return the minimum difficulty of job scheduling
+ *
+ * `f[i, j] = f[i-1, j-k] + jobDifficulty of ith day`, j &gt;= i  is must
+ *
+ * how to obtain max of a specific range? track along the process
+ * how to obtain sum of a specific range? prefix.
+ *
+ * @param jobDifficulty
+ * @param d
+ * @return int
+ */
+int minDifficulty(vector&lt;int&gt;&amp; jobDifficulty, int d) {
+    if (jobDifficulty.size() &lt; d) return -1;
+    if (jobDifficulty.size() == d) {
+        int sum = 0;
+        for (int i = 0; i &lt; jobDifficulty.size(); i++) {
+            sum += jobDifficulty[i];
+        }
+        return sum;
+    }
+
+    vector&lt;vector&lt;int&gt; &gt; f(d, vector&lt;int&gt;(jobDifficulty.size(), 1e6));
+
+    // initialize when i = 0
+    int hardest = 0; // track hardest job from [j-k+1 to j]
+    for (int j = 0; j &lt; jobDifficulty.size(); j++) {
+        hardest = max(hardest, jobDifficulty[j]);
+        f[0][j] = hardest;
+    }
+
+    for (int i = 1; i &lt; d; i++) {
+        for (int j = i; j &lt; jobDifficulty.size(); j++) {
+            // select last k job for ith day
+            hardest = 0;
+            for (int k = 1; k &lt;= j - i + 1; k++) {
+                hardest = max(hardest, jobDifficulty[j - k + 1]);
+                f[i][j] = min(f[i][j], hardest + f[i - 1][j - k]);
+            }
+        }
+    }
+
+    return f[d - 1][jobDifficulty.size() - 1];
+}</code></pre>
+
+</section>
+<section	id="coinchange">
+<h3>Coin Change</h3>
+
+<blockquote>
+<p>You are given an integer array <code>coins</code> representing coins of different denominations and an integer amount representing a total amount of money. </p>
+
+<p>Return the fewest number of coins that you need to make up that amount. If that amount of money cannot be made up by any combination of the coins, return &#8211;1. </p>
+
+<p>You may assume that you have an infinite number of each kind of coin.</p>
+</blockquote>
+
+<p>This is a unlimited knapsack problem. Define <code>f[i][j]</code> as follows:</p>
+
+<ul>
+<li>problem sets: all combinations of selection from first <code>i</code> coins and total amount is <code>j</code>.</li>
+<li>property: the fewest number of coins.</li>
+</ul>
+
+<p>Deduction:</p>
+
+<ul>
+<li>continue to select ith coin: <code>f[i][j] = f[i][j-coins[i]] + 1</code>.</li>
+<li>do not select ith coin: <code>f[i][j] = f[i-1][j]</code>.</li>
+</ul>
+
+<p>So, we got <code>f[i][j] = min(f[i][j-coins[i]], f[i-1][j]) + 1</code>.</p>
+<pre><code class="cpp">/**
+ * @brief f[i][j] = min(f[i-1][j], f[i][j-coins[i]] + 1)
+ *
+ * @param coins
+ * @param amount
+ * @return int
+ */
+int coinChange(vector&lt;int&gt;&amp; coins, int amount) {
+    vector&lt;vector&lt;int&gt; &gt; f(coins.size(), vector&lt;int&gt;(amount + 1, 1e5));
+    for (int j = 1; j &lt;= amount; j++) {
+        if (j % coins[0] == 0) {
+            f[0][j] = j / coins[0];
+        }
+    }
+    for (int i = 0; i &lt; coins.size(); i++) {
+        f[i][0] = 0;
+    }
+
+    for (int i = 1; i &lt; coins.size(); i++) {
+        for (int j = 0; j &lt;= amount; j++) {
+            f[i][j] = f[i-1][j]; // no choose from ith
+            if (j &gt;= coins[i]) {
+                f[i][j] = min(f[i][j], f[i][j - coins[i]] + 1); // choose
+            }
+        }
+    }
+
+    int res = f[coins.size()-1][amount] == 1e5 ? -1 : f[coins.size()-1][amount];
+    return res;
+}</code></pre>
+
+<p>or 1-d implementation with rolling array:</p>
+<pre><code class="cpp">int coinChange(vector&lt;int&gt;&amp; coins, int amount) {
+    vector&lt;int&gt; f(amount + 1, 1e5);
+    f[0] = 0;
+
+    for (int i = 0; i &lt; coins.size(); i++) {
+        for (int j = coins[i]; j &lt;= amount; j++) {
+            f[j] = min(f[j], f[j - coins[i]] + 1); // choose
+        }
+    }
+
+    int res = f[amount] == 1e5 ? -1 : f[amount];
+    return res;
+}</code></pre>
+
+</section>
+<section	id="wordbreak">
+<h3>Word Break</h3>
+
+<blockquote>
+<p>Given a string <code>s</code> and a dictionary of strings <code>wordDict</code>, return true if <code>s</code> can be segmented into a space-separated sequence of one or more dictionary words. </p>
+
+<p>Note that the same word in the dictionary may be reused multiple times in the segmentation.</p>
+</blockquote>
+<pre><code class="text">Input:  s = &quot;applepenapple&quot;, wordDict = [&quot;apple&quot;,&quot;pen&quot;]
+Answer: true</code></pre>
+
+<p>Define <code>f[i]</code> as:</p>
+
+<ul>
+<li>problem sets: all divisions of first <code>i</code> characters in the string <code>s</code>.</li>
+<li>property: true if word break successfully.</li>
+</ul>
+
+<p>Deduction:</p>
+
+<ul>
+<li>select kth word from <code>workDict</code> as ith choice.</li>
+</ul>
+
+<p><code>f[i] = f[i-len(wordDict[k])]</code> if <code>wordDict[k]</code> matches last <code>len(wordDict[k])</code> characters of <code>s</code>. <code>f[i] = false</code>, if all matches failed on ith match.</p>
+<pre><code class="cpp">/**
+ * @brief check if there is a word breakdown for s
+ *
+ * @param s
+ * @param wordDict
+ * @return true
+ * @return false
+ */
+bool wordBreak(string s, vector&lt;string&gt;&amp; wordDict) {
+    vector&lt;bool&gt; f(s.size(), false);
+
+    for (int i = 0; i &lt; s.size(); i++) {
+        for (int j = 0; j &lt; wordDict.size(); j++) {
+            // conds:
+            // 1. f[i](s[0..i]) has not found correct breakdown.
+            // 2. s[0..i] with length of i + 1 has at least size of word[j].
+            // 3. word[j] matches last k characters (s[k - word[i].size + 1..i]).
+            if (!f[i] &amp;&amp; i + 1 &gt;= wordDict[j].size() &amp;&amp;
+                // s[k..i]: i - k + 1 = word[i].size =&gt; k = i - word[i].size + 1
+                s.substr(i - wordDict[j].size() + 1, wordDict[j].size()) == wordDict[j]) {
+                // if (i - wordDict[j].size() &gt;= 0) { // unsigned int overflow
+                if (i - wordDict[j].size() + 1 &gt; 0) {
+                    // k &gt; 0
+                    f[i] = f[i - wordDict[j].size()];
+                } else {
+                    f[i] = true;
+                }
+            }
+        }
+    }
+
+    return f[s.size() - 1];
+}</code></pre>
+
+</section>
+<section	id="longestincreasingsubsequence">
+<h3>Longest Increasing Subsequence</h3>
+
+<blockquote>
+<p>Given an integer array <code>nums</code>, return the length of the longest strictly increasing subsequence. </p>
+
+<p>A <strong>subsequence</strong> is a sequence that can be derived from an array by deleting some or no elements without changing the order of the remaining elements. For example, <code>[3,6,2,7]</code> is a subsequence of the array <code>[0,3,1,6,2,2,7]</code>.</p>
+</blockquote>
+
+<p>Define <code>f[i]</code> as:</p>
+
+<ul>
+<li>problem sets: all increasing subsequence of <code>nums[0..i]</code> ending with <code>nums[i]</code>.</li>
+<li>property: length of longest subsequence.</li>
+</ul>
+
+<p>Deduction:</p>
+
+<ul>
+<li><code>f[i] = max( f[i-j] or f[i-j] + 1 if nums[i-j] == nums[i]</code>, where <code>0 &lt; j &lt; i</code>.</li>
+</ul>
+<pre><code class="cpp">/**
+ * @brief f[i] = max( f[i-j] or f[i-j] + 1 if nums[i-j] == nums[i], where 0 &lt; j &lt; i
+ *
+ * @param nums
+ * @return int
+ */
+int lengthOfLIS(vector&lt;int&gt;&amp; nums) {
+    vector&lt;int&gt; f(nums.size(), 1);
+    
+    for (int i = 0; i &lt; nums.size(); i++) {
+        for (int j = 1; j &lt;= i; j++) {
+            if (nums[i] &gt; nums[i - j]) {
+                f[i] = max(f[i], f[i - j] + 1);
+            }
+        }
+    }
+
+    int res = 0;
+    for (int i = 0; i &lt; nums.size(); i++) {
+        res = max(res, f[i]);
+    }
+
+    return res;
+}</code></pre>
+
+</section>
+<section	id="besttimetobuyandsellstockiv">
+<h3>Best Time to Buy and Sell Stock IV</h3>
+
+<blockquote>
+<p>You are given an integer array prices where <code>prices[i]</code> is the price of a given stock on the ith day, and an integer <code>k</code>. </p>
+
+<p>Find the maximum profit you can achieve. You may complete <strong>at most</strong> k transactions. </p>
+
+<p>Note: You may not engage in multiple transactions simultaneously (i.e., you must sell the stock before you buy again). </p>
+
+<p>One transaction includes buy and sell once.</p>
+</blockquote>
+
+<p>Top-Bottom method: Define <code>f[i][j][k]</code> as:</p>
+
+<ul>
+<li>problem sets: on ith day, we have at most j transactions and we are holding a stock now (k == 1) or not holding (k == 0).</li>
+<li>property: max profit we can get.</li>
+</ul>
+
+<p>Deduction:</p>
+
+<ul>
+<li>On ith day, if we are holding a stock:
+
+<ul>
+<li>if we sold on ith day, we got <code>price[i]</code>. <code>f[i][j][1] = f[i+1][j-1][0] + price[i]</code>.</li>
+<li>if we do not sold on ith day. <code>f[i][j][1] = f[i+1][j][1]</code>.</li>
+<li>we cannot buy on ith day.</li>
+</ul></li>
+<li>On ith day, if we are not holding a stock:
+
+<ul>
+<li>if we buy on ith day, we got <code>-price[i]</code>. <code>f[i][j][0] = f[i+1][j][1] - price[i]</code>.</li>
+<li>if we do not buy on ith day. <code>f[i][j][0] = f[i+1][j][0]</code>.</li>
+</ul></li>
+</ul>
+<pre><code class="cpp">int maxProfitHelper(vector&lt;vector&lt;vector&lt;int&gt;&gt;&gt;&amp; f, vector&lt;vector&lt;vector&lt;bool&gt;&gt;&gt;&amp; visited,
+                    const vector&lt;int&gt;&amp; prices, int i, int j, int k) {
+    if (i &gt;= prices.size()) return 0;
+    if (j &lt;= 0) return 0;
+
+    if (visited[i][j][k]) {
+        return f[i][j][k];
+    } else {
+        visited[i][j][k] = true;
+        if (k == 0) {
+            // if we are not holding a stock: buy or not buy
+            f[i][j][k] = max(maxProfitHelper(f, visited, prices, i + 1, j, 1) - prices[i],
+                             maxProfitHelper(f, visited, prices, i + 1, j, 0));
+        } else {
+            // holding
+            f[i][j][k] =
+                max(maxProfitHelper(f, visited, prices, i + 1, j - 1, 0) + prices[i],
+                    maxProfitHelper(f, visited, prices, i + 1, j, 1));
+        }
+        return f[i][j][k];
+    }
+}
+
+/**
+ * @brief return the best profit
+ *
+ * @param k
+ * @param prices
+ * @return int
+ */
+int maxProfit(int k, vector&lt;int&gt;&amp; prices) {
+    vector&lt;vector&lt;vector&lt;int&gt;&gt;&gt; f(prices.size(),
+                                  vector&lt;vector&lt;int&gt;&gt;(k + 1, vector&lt;int&gt;(2, 0)));
+    vector&lt;vector&lt;vector&lt;bool&gt;&gt;&gt; visited(
+        prices.size(), vector&lt;vector&lt;bool&gt;&gt;(k + 1, vector&lt;bool&gt;(2, false)));
+
+    return maxProfitHelper(f, visited, prices, 0, k, 0);
+}</code></pre>
+
+</section>
+<section	id="besttimetobuyandsellstockwithcooldown">
+<h3>Best Time to Buy and Sell Stock with Cooldown</h3>
+
+<blockquote>
+<p>You are given an array prices where <code>prices[i]</code> is the price of a given stock on the ith day. </p>
+
+<p>Find the maximum profit you can achieve. You may complete as many transactions as you like (i.e., buy one and sell one share of the stock multiple times) with the following restrictions: </p>
+
+<ul>
+<li>After you sell your stock, you cannot buy stock on the next day (i.e., cooldown one day).</li>
+</ul>
+
+<p>Note: You may not engage in multiple transactions simultaneously (i.e., you must sell the stock before you buy again).</p>
+</blockquote>
+
+<p>This problem is similar to the one above other than constrains. In the last problem, the constraint is limitation of number of transaction while in this problem it becomes cooldown day.</p>
+
+<p>It can be solved in a similar way. Define <code>f[i][j][k]</code> as <code>i</code> means we are processing ith day, <code>j</code> indicates the day when the stock is sold out last time, and <code>k</code> is a binary number with 1 representing holding a stock and 0 not.</p>
+
+<p>On ith day, there are three cases:</p>
+
+<ul>
+<li>if <code>i == j+1</code>, only thing we can do is doing nothing, <code>f[i][j][k] = f[i+1][j][k]</code></li>
+<li>if <code>k == 0</code> (not holding a stock) and <code>i != j+1</code> (not in cooldown day), I can choose to buy on ith day or not.
+
+<ul>
+<li>if buying one, <code>f[i][j][k] = f[i+1][j][1] - prices[i]</code></li>
+<li>if not, <code>f[i][j][k] = f[i+1][j][k]</code></li>
+</ul></li>
+<li>if <code>k == 1</code> (holding a stock),
+
+<ul>
+<li>if selling the stock, <code>f[i][j][k] = f[i+1][i][0] + prices[i]</code></li>
+<li>if not, `<code>f[i][j][k] = f[i+1][j][k]</code></li>
+</ul></li>
+</ul>
+<pre><code class="cpp">int maxProfitHelperII(vector&lt;vector&lt;vector&lt;int&gt;&gt;&gt;&amp; f,
+                      vector&lt;vector&lt;vector&lt;bool&gt;&gt;&gt;&amp; visited, const vector&lt;int&gt;&amp; prices,
+                      int i, int j, int k) {
+    if (i &gt;= prices.size()) {
+        return 0;
+    }
+
+    if (visited[i][j][k]) {
+        return f[i][j][k];
+    }
+
+    if (k == 1) {
+        f[i][j][k] = max(maxProfitHelperII(f, visited, prices, i + 1, i, 0) +
+                             prices[i],   // sell and update selling day
+                         maxProfitHelperII(f, visited, prices, i + 1, j, k));
+    } else {
+        // check if this is cooldown day if i want to buy a stock
+        if (j != 0 &amp;&amp;
+            i == j + 1) {   // if j has been updated (at least 1 trans completed)
+            f[i][j][k] = maxProfitHelperII(f, visited, prices, i + 1, j, k);
+        } else {
+            f[i][j][k] = max(
+                maxProfitHelperII(f, visited, prices, i + 1, j, 1) - prices[i],   // buy
+                maxProfitHelperII(f, visited, prices, i + 1, j, k));
+        }
+    }
+
+    visited[i][j][k] = true;
+    return f[i][j][k];
+}
+
+/**
+ * @brief different constrains compared to the last problem
+ *
+ * @param prices
+ * @return int
+ */
+int maxProfit(vector&lt;int&gt;&amp; prices) {
+    vector&lt;vector&lt;vector&lt;int&gt;&gt;&gt; f(prices.size(),
+                                  vector&lt;vector&lt;int&gt;&gt;(prices.size(), vector&lt;int&gt;(2, 0)));
+    vector&lt;vector&lt;vector&lt;bool&gt;&gt;&gt; visited(
+        prices.size(), vector&lt;vector&lt;bool&gt;&gt;(prices.size(), vector&lt;bool&gt;(2, false)));
+
+    int ret = maxProfitHelperII(f, visited, prices, 0, 0, 0);
+
+    return ret;
+}</code></pre>
+
+</section>
+<section	id="mincostclimbingstairsii">
+<h3>Min Cost Climbing Stairs II</h3>
+
+<blockquote>
+<p>You are given an integer array cost where <code>cost[i]</code> is the cost of ith step on a staircase. Once you pay the cost, you can either climb one or two steps. </p>
+
+<p>You can either start from the step with index 0, or the step with index 1. </p>
+
+<p>Return the minimum cost to reach the top of the floor.</p>
+</blockquote>
+
+<ul>
+<li>Top to bottom:</li>
+</ul>
+<pre><code class="cpp">int minCostClimbingStairsHelper(vector&lt;int&gt;&amp; f, vector&lt;bool&gt;&amp; visited, vector&lt;int&gt;&amp; cost,
+                                int start) {
+    if (start &gt;= cost.size()) {
+        return 0;
+    }
+
+    if (visited[start]) {
+        return f[start];
+    }
+
+    f[start] =
+        cost[start] + min(minCostClimbingStairsHelper(f, visited, cost, start + 1),
+                          minCostClimbingStairsHelper(f, visited, cost, start + 2));
+
+    return f[start];
+}
+
+/**
+ * @brief return the minimum cost of climbing stairs, recursion plus memo
+ *
+ * @param cost
+ * @return int
+ */
+int minCostClimbingStairsII(vector&lt;int&gt;&amp; cost) {
+    vector&lt;int&gt; f(cost.size(), 1e5);
+    vector&lt;bool&gt; visited(cost.size(), false);
+    return min(minCostClimbingStairsHelper(f, visited, cost, 0),
+               minCostClimbingStairsHelper(f, visited, cost, 1));
+}</code></pre>
+
+<ul>
+<li>Bottom to top</li>
+</ul>
+
+<p>Define <code>f[i]</code> as minimum cost from 0 to <code>i</code> (where <code>i</code> is the top index). And the deduction is <code>f[i] = min(f[i-1] + cost[i-1], f[i-2] + cost[i-2])</code>.</p>
+<pre><code class="cpp">int minCostClimbingStairsIII(vector&lt;int&gt;&amp; cost) {
+    vector&lt;int&gt; f(cost.size() + 1, 1e5);
+    f[0] = f[1] = 0;
+    for (int i = 2; i &lt;= cost.size(); i++) {
+        f[i] = min(f[i - 1] + cost[i - 1], f[i - 2] + cost[i - 2]);
+    }
+
+    return f[cost.size()];
+}</code></pre>
+
+<ul>
+<li>State Compression</li>
+</ul>
+
+<p>Note that <code>f[i]</code> only relies on <code>f[i-1]</code> and <code>f[i-2]</code>, and we are only concerned about the result (<code>f[top]</code>) rather than intermediate calculations. So we can save array space with some variables.</p>
+<pre><code class="cpp">int minCostClimbingStairsIV(vector&lt;int&gt;&amp; cost) {
+    int twosteps = 0;
+    int onestep = 0;
+    int top;
+    for (int i = 2; i &lt;= cost.size(); i++) {
+        top = min(twosteps + cost[i-2], onestep + cost[i-1]);
+        // update iteratively for the next top
+        twosteps = onestep;
+        onestep = top;
+    }
+
+    return top;
+}</code></pre>
+
+</section>
+<section	id="paintfence">
+<h3>Paint Fence</h3>
+
+<blockquote>
+<p>You are painting a fence of <code>n</code> posts with <code>k</code> different colors. You must paint the posts following these rules: </p>
+
+<ul>
+<li>Every post must be painted exactly one color.</li>
+<li>There CANNOT be three or more consecutive posts with the same color.</li>
+</ul>
+
+<p>Given the two integers n and k, return the number of ways you can paint the fence.</p>
+</blockquote>
+
+<p>Define <code>f[i]</code> as</p>
+
+<ul>
+<li>problem sets: all paints first <code>i</code> posts with k colors.</li>
+<li>property: count.</li>
+</ul>
+
+<p>Deduction: on <code>i</code>th fence,</p>
+
+<ul>
+<li>painting the color different from <code>i-1</code>th post. Then we have <code>(k - 1) * f[i-1]</code> plans.</li>
+<li>painting the color same as <code>i-1</code>th post WHEN painting <code>i-1</code>th post with different color than <code>i-2</code>th post. How many ways do we have? Painting <code>i</code>th post with the same color with <code>i-1</code>th, there is only one choice. And painting different colors for <code>i-1</code>th post from <code>i-2</code>th post, there are <code>k - 1</code> choices for <code>i-1</code>th post and <code>f[i-2]</code> choices for <code>i-2</code>th post.</li>
+</ul>
+
+<p>So, <code>f[i] = (k - 1) * f[i-1] + 1 * (k - 1) * f[i-2]</code>.</p>
+
+<p>with base case <code>f[0] = k</code>, <code>f[1] = k * k</code>.</p>
+<pre><code class="cpp">int numWays(int n, int k) {
+    int N_MAX = 52;
+    int f[N_MAX];
+    memset(f, 0, sizeof(f[0]) * N_MAX);
+    
+    f[0] = k; f[1] = k * k;
+    for (int i = 2; i &lt; n; i++) {
+        f[i] = (k - 1) * f[i-1] + (k - 1) * f[i-2];
+    }
+
+    return f[n-1];  // 0-indexed
+}</code></pre>
+
+</section>
+<section	id="coinchangeii">
+<h3>Coin Change II</h3>
+
+<blockquote>
+<p>You are given an integer array <code>coins</code> representing coins of different denominations and an integer <code>amount</code> representing a total amount of money. </p>
+
+<p>Return the number of combinations that make up that amount. If that amount of money cannot be made up by any combination of the coins, return 0. </p>
+
+<p>You may assume that you have an infinite number of each kind of coin. </p>
+
+<p>The answer is guaranteed to fit into a signed 32-bit integer.</p>
+</blockquote>
+
+<p>Define <code>f[i][j]</code> as:</p>
+
+<ul>
+<li>problem sets: select from first <code>i</code> (different kinds) coins all ways of coins combination whose total is equal to <code>j</code>.</li>
+<li>property: count.</li>
+</ul>
+
+<p>Deduction: On ith coin</p>
+
+<ul>
+<li>continue to choose <code>i</code>th coin. <code>f[i][j] = 1 * f[i][j-coins[i]]</code>.</li>
+<li>choose from first <code>i-1</code> coins. <code>f[i][j] = 1 * f[i-1][j]</code>.</li>
+</ul>
+
+<p>So, we get <code>f[i][j] = f[i][j-coins[i]] + f[i-1][j]</code>.</p>
+
+<p>Base: when amount == 0, <code>f[i][0] = 1</code>. C(n, 0).</p>
+
+<ul>
+<li>2-d implementation</li>
+</ul>
+<pre><code class="cpp">vector&lt;vector&lt;int&gt;&gt; f(coins.size(), vector&lt;int&gt;(amount + 1, 0));
+
+    // base: don&apos;t choose is 1 choice when amount == 0
+    for (int i = 0; i &lt; coins.size(); i++) {
+        f[i][0] = 1;
+    }
+
+    // preprocess 0th row for 0-index coins
+    for (int j = 1; j &lt;= amount; j++) {
+        if (j % coins[0] == 0) {
+            f[0][j] = 1;
+        }
+    }
+
+    for (int i = 1; i &lt; coins.size(); i++) {
+        for (int j = 0; j &lt;= amount; j++) {
+            f[i][j] = f[i - 1][j];
+            if (coins[i] &lt;= j) {
+                f[i][j] += f[i][j - coins[i]];
+            }
+        }
+    }
+
+    return f[coins.size() - 1][amount];</code></pre>
+
+<ul>
+<li>1-d with state compression: rolling array (refer to complete knapsack)</li>
+</ul>
+<pre><code class="cpp">int changeIII(int amount, vector&lt;int&gt;&amp; coins) {
+    vector&lt;int&gt; f(amount + 1, 0);
+
+    // base: don&apos;t choose is 1 choice when amount == 0
+    f[0] = 1;
+
+    for (int i = 0; i &lt; coins.size(); i++) {
+        for (int j = coins[i]; j &lt;= amount; j++) {
+            f[j] += f[j - coins[i]];
+        }
+    }
+
+    return f[amount];
+}</code></pre>
+
+</section>
+<section	id="decodeways">
+<h3>Decode Ways</h3>
+
+<blockquote>
+<p>A message containing letters from <code>A-Z</code> can be encoded into numbers using the following mapping: </p>
+
+<p>&#8216;A&#8217; -&gt; &#8220;1&#8221;, &#8216;B&#8217; -&gt; &#8220;2&#8221;, &#8230;, &#8216;Z&#8217; -&gt; &#8220;26&#8221; </p>
+
+<p>To decode an encoded message, all the digits must be grouped then mapped back into letters using the reverse of the mapping above (there may be multiple ways). For example, &#8220;11106&#8221; can be mapped into: </p>
+
+<ul>
+<li>&#8220;AAJF&#8221; with the grouping (1 1 10 6)</li>
+<li>&#8220;KJF&#8221; with the grouping (11 10 6)</li>
+</ul>
+
+<p>Note that the grouping (1 11 06) is invalid because &#8220;06&#8221; cannot be mapped into &#8216;F&#8217; since &#8220;6&#8221; is different from &#8220;06&#8221;. </p>
+
+<p>Given a string s containing only digits, return the number of ways to decode it. </p>
+
+<p>The test cases are generated so that the answer fits in a 32-bit integer.</p>
+</blockquote>
+
+<p>Define <code>f[i]</code> as:</p>
+
+<ul>
+<li>problem set: all ways of decode first i digits in the given string.</li>
+<li>property: count.</li>
+</ul>
+
+<p>Deduction:</p>
+
+<ul>
+<li>on ith digit, it can be decoded in one digit on its own, or combined with <code>i-1</code>th digit and decoded together if it is valid. <code>f[i] = 1 * f[i-1]</code> or <code>f[i] = 1 * f[i-2]</code> if <code>ch[i-1]ch[i]</code> is a valid text to be decoded.</li>
+</ul>
+
+<p>So, <code>f[i] = f[i-1] + f[i-2]</code> if <code>ch[i-1]ch[i]</code> is a valid text to be decoded.</p>
+<pre><code class="cpp">unordered_map&lt;string, char&gt; key;
+    for (int i = 1; i &lt;= 26; i++) {
+        key[to_string(i)] = &apos;A&apos; + i - 1;
+    }
+
+    vector&lt;int&gt; f(s.size(), 0);
+    f[0] = s[0] == &apos;0&apos; ? 0 : 1;    // decode on its own
+
+    for (int i = 1; i &lt; s.size(); i++) {
+        if (s[i] != &apos;0&apos;) {
+            // when s[i] != &apos;0&apos;, it can decode on its own
+            f[i] += f[i - 1];
+        }
+        string comb = s.substr(i - 1, 2);
+        if (key.find(comb) != key.end()) {
+            if (i - 2 &gt;= 0) {
+                f[i] += f[i - 2];
+            } else {
+                f[i] += 1;
+            }
+        }
+        
+        if (s[i] == &apos;0&apos; &amp;&amp; key.find(comb) == key.end()) {   // bad 0
+            return 0;
+        }
+    }
+
+    return f[s.size() - 1];</code></pre>
+
+<p>The code above can be optimized with three variables to calculate result iteratively, given that <code>f[i]</code> only relies on <code>f[i-1]</code> and <code>f[i-2]</code> and we do not need to save intermediate calculation.</p>
+
+</section>
+<section	id="maximumsubarray">
+<h3>Maximum Subarray</h3>
+
+<blockquote>
+<p>Given an integer array <code>nums</code>, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum. </p>
+
+<p>A subarray is a contiguous part of an array.</p>
+</blockquote>
+
+<p>Define <code>f[i]</code> as:</p>
+
+<ul>
+<li>problem sets: all different continuous subsequences ending with <code>nums[i]</code>.</li>
+<li>property: maximum sum of the subsequence.</li>
+</ul>
+
+<p>Deduction:</p>
+
+<ul>
+<li>since <code>nums[i] + f[i-1]</code> or <code>nums[i]</code> may be negative, so <code>f[i] = max(nums[i], nums[i] + f[i-1])</code>.</li>
+</ul>
+<pre><code class="cpp">int maxSubArray(vector&lt;int&gt;&amp; nums) {
+    vector&lt;int&gt; f(nums.size(), -1e5);
+    f[0] = nums[0];
+    for (int i = 1; i &lt; nums.size(); i++) {
+        f[i] = max(nums[i], nums[i] + f[i - 1]);
+    }
+
+    int res = -1e5;
+    for (int i = 0; i &lt; nums.size(); i++) {
+        res = max(res, f[i]);
+    }
+ 
+    return res;
+}</code></pre>
+
+<ul>
+<li>state compression</li>
+</ul>
+
+<p>Given that <code>f[i] only relies on f[i-1]</code> and we do not care about the intermediate results. We are able to use two variables to solve the problem iteratively. Since the subsequence with max sum is not necessarily ending with the last element. We should store the maximum value among intermediate results.</p>
+<pre><code class="cpp">int maxSubArrayII(vector&lt;int&gt;&amp; nums) {
+    int pre = 0;
+    int cur = 0;
+    int maxSum = -1e5;
+    for (int i = 0; i &lt; nums.size(); i++) {
+        cur = max(nums[i], pre + nums[i]);   // update f[i]
+        maxSum = max(maxSum, cur);
+        pre = cur;   // record f[i-1]
+    }
+
+    return maxSum;
+}</code></pre>
+
+</section>
+<section	id="besttimetobuyandsellstock">
+<h3>Best Time to Buy and Sell Stock</h3>
+
+<blockquote>
+<p>You are given an array prices where prices[i] is the price of a given stock on the ith day. </p>
+
+<p>You want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock. </p>
+
+<p>Return the maximum profit you can achieve from this transaction. If you cannot achieve any profit, return 0.</p>
+</blockquote>
+
+<p>Define <code>f[i]</code> as:</p>
+
+<ul>
+<li>problem sets: all transactions happen in the first i days and sell stock on ith day.</li>
+<li>property: maximum profit.</li>
+</ul>
+
+<p>Deduction:</p>
+
+<ul>
+<li>The maximum profit when selling on ith day is the maximum profit when selling on <code>i-1</code>th day - <code>prices[i-1]</code> + <code>prices[i]</code>, or buying stock on <code>i-1</code>th day and selling on <code>i</code>th day, i.e. <code>f[i] = max(prices[i] - prices[i-1], f[i-1] - prices[i-1] + prices[i])</code>.</li>
+</ul>
+<pre><code class="cpp">int maxProfitI(vector&lt;int&gt;&amp; prices) {
+    vector&lt;int&gt; f(prices.size(), 0);
+    f[0] = 0;
+    for (int i = 1; i &lt; prices.size(); i++) {
+        f[i] = max(prices[i] - prices[i-1], f[i-1] - prices[i-1] + prices[i]);
+    }
+
+    int maxVal = -1e5;
+    for (int i = 0; i &lt; prices.size(); i++) {
+        maxVal = max(maxVal, f[i]);
+    }
+
+    return maxVal;
+}</code></pre>
+
+<ul>
+<li>state compression</li>
+</ul>
+
+<p>With the same idea as the problem above, we can use three variables to solve the problem iteratively.</p>
+<pre><code class="cpp">int maxProfitII(vector&lt;int&gt;&amp; prices) {
+    int pre = 0;
+    int cur = 0;
+    int maxVal = pre;   // assuming f[0] is the maximum
+    for (int i = 1; i &lt; prices.size(); i++) {
+        cur = max(prices[i] - prices[i - 1], pre - prices[i - 1] + prices[i]);
+        maxVal = max(maxVal, cur);
+        pre = cur;
+    }
+
+    return maxVal;
+}</code></pre>
+
+</section>
+<section	id="maximumsumcircularsubarray">
+<h3>Maximum Sum Circular Subarray</h3>
+
+<blockquote>
+<p>Given a circular integer array nums of length n, return the maximum possible sum of a non-empty subarray of nums. </p>
+
+<p>A circular array means the end of the array connects to the beginning of the array. Formally, the next element of <code>nums[i]</code> is <code>nums[(i + 1) % n]</code> and the previous element of <code>nums[i]</code> is <code>nums[(i - 1 + n) % n]</code>. </p>
+
+<p>A subarray may only include each element of the fixed buffer nums at most once. Formally, for a subarray <code>nums[i], nums[i + 1], ..., nums[j]</code>, there does not exist <code>i &lt;= k1, k2 &lt;= j</code> with <code>k1 % n == k2 % n</code>.</p>
+</blockquote>
+
+<p>The problem is similar to <strong>Maximum Sum Subarray</strong>. The only difference is the array becomes circular. We can decompose the problem into <code>n</code> non-circular arrays and solve them one by one.</p>
+
+<p>Define <code>f[i]</code> as:</p>
+
+<ul>
+<li>problem set: all subarray ending with <code>nums[i]</code>.</li>
+<li>property: maximum sum.</li>
+</ul>
+
+<p>Deduction:</p>
+
+<ul>
+<li>maximums sum of subarray ending with <code>nums[i]</code> may be 1. maximum subarray ending with <code>nums[i-1]</code> concatenated by <code>nums[i]</code> (including subarray) or 2. <code>nums[i]</code> itself (<code>f[i-1] &lt; 0</code>) (exclude subarray).</li>
+</ul>
+
+<p>So, we got <code>f[i] = max(f[i-1] + nums[i], nums[i])</code>.</p>
+
+<p>Repeat the algorithm <code>n</code> times for each non-circular array.</p>
+<pre><code class="cpp">int maxSubarraySumCircular(vector&lt;int&gt;&amp; nums) {
+    int maxVal = -1e5;
+    int shift = 0;
+    while (shift &lt; nums.size()) {
+        shiftVector(nums, 1);
+        int pre = 0;
+        int cur = 0;
+        for (int i = 0; i &lt; nums.size(); i++) {
+            cur = max(pre + nums[i], nums[i]);
+            maxVal = max(maxVal, cur);
+            pre = cur;
+        }
+        shift++;
+    }
+
+    return maxVal;
+}</code></pre>
+
+<p>The solution above may Time Limit Exceed (TLE). Let&#8217;s consider the second solution where we will present a normal way to solve circular problem, i.e. convert to linear problem. Although the solution above is also trying to do such conversion, we will discuss another better way to convert circular into linear problem. Let&#8217;s see the problem from the perspective of solution.</p>
+
+<p>Say, we have <code>nums</code> as follows,</p>
+<pre><code class="text">ex&gt; nums = 1  -2  3  -4  5 [ 1  -2  3  -4  5 ]
+           &lt;solution1&gt;   ^
+                        last</code></pre>
+
+<p>There are two possible solutions for a given problem:</p>
+
+<ul>
+<li>solution does not go cross the last point. (which can be solved in linear method)</li>
+<li>solution go cross the last point.</li>
+</ul>
+<pre><code class="text">ex&gt; nums = 1  -2  3  -4  5 [ 1  -2  3  -4  5 ]
+     idx = 0   1  2   3  4   0   1  2   3  4
+               ^     &lt; solution2 &gt;      ^
+               i     &lt;left&gt;&lt;right&gt;      i
+               |&lt;-ff[i]-&gt;|   |&lt;- f[i] -&gt;|</code></pre>
+
+<p>We just need a wise way to solve the second solution. And the answer is <code>max(solution1, solution2)</code></p>
+
+<p>Now let&#8217;s discuss how to solve <code>solution2</code>.</p>
+
+<p>Define <code>f[i]</code> as maximum subarray in range <code>[0, i]</code> and starting from 0. <code>f[i]</code> has two possibles: 1. sum starts from 0 to <code>i</code>, or 2. <code>f[i-1]</code> (maximum subarray we got from last calculation).</p>
+
+<p>So, we got <code>f[i] = max(sum[0..i], f[i-1])</code>.</p>
+
+<p>In the similar idea, define <code>ff[i]</code> as the max sum of subarray in range <code>[i, last]</code> and ending with last. <code>ff[i]</code> may be: 1. sum starts from i to last, or 2. <code>ff[i+1]</code>.</p>
+
+<p>So, we got <code>ff[i] = max(sum[i..last], ff[i+1])</code>.</p>
+
+<p>Therefore, we got <code>f[i]</code> (max sum ending with <code>i</code>]) and <code>ff[i]</code> (max sum beginning with <code>i</code>). Concatenate them and we get maxVal with <code>i</code> as the middle point. We just need to enumerate all possible middle points and get the maximum value, i.e. <code>max[i] = f[i] + ff[(i - 1 + size) % size]</code>.</p>
+
+<p>For all solutions across the middle point, we can combine them with <code>f[i]</code> and <code>ff[i]</code>. Say, we want to find the max value for the following array.</p>
+<pre><code class="text">ex&gt; nums = 1  -2  [ 3  -4   5   1  -2 ] 3  -4   5 
+     idx = 0   1    2   3   4   0   1   2   3   4
+                    &lt; ff[2] &gt;   &lt;f[1]&gt;
+
+ff[2] = 5, f[1] = 1, so the max sum = 5 + 1 = 6.</code></pre>
+
+<p>So, solution 2 can be constructed with <code>ff[i] + f[(i - 1 + size) % size]</code>, where <code>i</code> is ranging from 1 to last. The final answer is the max value of values in solution 1 and solution 2.</p>
+<pre><code class="cpp">int maxSubarraySumCircularII(vector&lt;int&gt;&amp; nums) {
+    int size = nums.size();
+
+    // solution 1
+    int pre = 0;
+    int cur = 0;
+    int maxSum = -1e5;
+    for (int i = 0; i &lt; nums.size(); i++) {
+        cur = max(nums[i], pre + nums[i]);
+        maxSum = max(maxSum, cur);
+        pre = cur;
+    }
+
+    // solution 2
+    vector&lt;int&gt; f(size, -1e5);   // max sum subarray in [0..i]
+    f[0] = nums[0];
+    int sum = nums[0];
+    for (int i = 1; i &lt; size; i++) {
+        sum += nums[i];
+        f[i] = max(sum, f[i - 1]);
+        maxSum = max(maxSum, f[i]);
+    }
+
+    vector&lt;int&gt; ff(size, -1e5);   // max sum subarray in [i..last]
+    ff[size - 1] = nums[size - 1];
+    sum = nums[size - 1];
+    for (int i = size - 2; i &gt;= 0; i--) {
+        sum += nums[i];
+        ff[i] = max(sum, ff[i + 1]);
+    }
+
+    // find the max value among solution 2
+    for (int mid = 1; mid &lt; size - 1; mid++) {
+        maxSum = max(maxSum, ff[mid] + f[(mid - 1 + size) % size]);
+    }
+
+    return maxSum;
+}</code></pre>
+
+</section>
+<section	id="uniquepaths">
+<h3>Unique Paths</h3>
+
+<blockquote>
+<p>There is a robot on an <code>m x n</code> grid. The robot is initially located at the top-left corner (i.e., <code>grid[0][0]</code>). The robot tries to move to the bottom-right corner (i.e., <code>grid[m - 1][n - 1]</code>). The robot can only move either down or right at any point in time. </p>
+
+<p>Given the two integers <code>m</code> and <code>n</code>, return the number of possible unique paths that the robot can take to reach the bottom-right corner. </p>
+
+<p>The test cases are generated so that the answer will be less than or equal to <code>2 * 10^9</code>.</p>
+</blockquote>
+
+<p>Note that the robot can only move either down or right at any point in time. Define <code>f[i][j]</code> as:</p>
+
+<ul>
+<li>problem sets: unique ways from begin to <code>matrix[i][j]</code>.</li>
+<li>property: total numbers.</li>
+</ul>
+
+<p>Deduction:</p>
+
+<ul>
+<li>we can go to <code>(i, j)</code> from <code>(i-1, j)</code> or <code>(i, j-1)</code>.</li>
+</ul>
+
+<p>So, we got <code>f[i][j] = f[i-1][j] + f[i][j-1]</code>.</p>
+<pre><code class="cpp">int uniquePaths(int m, int n) {
+    vector&lt; vector&lt;int&gt; &gt; f(m, vector&lt;int&gt;(n, 1));
+    for (int i = 1; i &lt; m; i++) {
+        for (int j = 1; j &lt; n; j++) {
+            f[i][j] = f[i-1][j] + f[i][j-1];
+        }
+    }
+
+    return f[m-1][n-1];
+}</code></pre>
+
+<ul>
+<li>state compression: with a rolling array.</li>
+</ul>
+<pre><code class="cpp">int uniquePathsCompressed(int m, int n) {
+    vector&lt;int&gt; f(n, 1);
+    for (int i = 1; i &lt; m; i++) {
+        for (int j = 1; j &lt; n; j++) {
+            f[j] = f[j] + f[j - 1];
+        }
+    }
+
+    return f[n - 1];
+}</code></pre>
+
+</section>
+<section	id="uniquepathii">
+<h3>Unique Path II</h3>
+
+<blockquote>
+<p>Following up the last problem, an obstacle and space are marked as 1 or 0 respectively in grid. A path that the robot takes cannot include any square that is an obstacle. </p>
+
+<p>Return the number of possible unique paths that the robot can take to reach the bottom-right corner.</p>
+</blockquote>
+
+<p>Can we find any correlation between this problem and above one? There is a bold assumption: the unique path with obstacles = the unique path without obstacles - all paths of traveling from entry to the exit through obstacle.</p>
+<pre><code class="text">matrix:
+    *  0  0  0
+    0  1  0  0
+    0  0  0  *
+
+without obstacle we get f[i][j] as follows
+f:  without          with obstacle
+    1  1  1  1       1  1  1  1
+    1  2  3  4       1  0  1  2
+    1  3  6  10      1  1  2  4
+
+all paths from begin to obstacles
+    1  1  0  0
+    1  2  0  0
+    0  0  0  0
+
+all paths from obstacle to the exit
+    *  0  0  0
+    0  1  1  1
+    0  1  2  3</code></pre>
+
+<p>We will find, there are 2 ways from entry point to the obstacle and 3 ways from obstacle to the exit. So the number of ways going from entry to the exit through the obstacle is 2 * 3 = 6. The answer is 10 - 6 = 4, great!.</p>
+
+<p>How to solve all the ways from entry point to some point in the matrix? That&#8217;s what we did in the last problem. How to solve the reverse one, from some point to the exit? The way from A to B equals the way from B to A. So a wise way is to consider the exit as the entry point and dp.</p>
+
+<p><code>f[i][j]</code> is defined in the same way and <code>f[i][j] = f[i-1][j] + f[i][j-1]</code>.</p>
+
+<p>Define <code>ff[i][j]</code> as:</p>
+
+<ul>
+<li>problem sets: all the ways from the exit to the point (i, j).</li>
+<li>property: number of ways.</li>
+</ul>
+
+<p>Deduction:</p>
+
+<ul>
+<li>the way from the exit to current comes from the way from the exit to (i+1, j) and (i, j+1), a mirror operation of <code>f[i][j]</code>.</li>
+</ul>
+
+<p>So, we got <code>ff[i][j] = ff[i+1][j] + ff[i][j+1]</code>.</p>
+<pre><code class="cpp">int uniquePathsWithObstacles(vector&lt;vector&lt;int&gt;&gt;&amp; obstacleGrid) {
+    int m = obstacleGrid.size();
+    int n = obstacleGrid[0].size();
+    vector&lt;vector&lt;int&gt;&gt; f(m, vector&lt;int&gt;(n, 1));   // save operation for base case
+    for (int i = 1; i &lt; m; i++) {
+        for (int j = 1; j &lt; n; j++) {
+            f[i][j] = f[i - 1][j] + f[i][j - 1];
+        }
+    }
+
+    vector&lt;vector&lt;int&gt;&gt; ff(m, vector&lt;int&gt;(n, 1));
+    for (int i = m - 2; i &gt;= 0; i--) {
+        for (int j = n - 2; j &gt;= 0; j--) {
+            ff[i][j] = ff[i + 1][j] + ff[i][j + 1];
+        }
+    }
+
+    int res = f[m - 1][n - 1];
+    for (int i = 0; i &lt; m; i++) {
+        for (int j = 0; j &lt; n; j++) {
+            if (obstacleGrid[i][j]) {
+                res -= f[i][j] * ff[i][j];
+            }
+        }
+    }
+
+    return res;
+}</code></pre>
+
+<p>But the test tells us: the algorithm above <strong>only works</strong> when there is only 1 obstacle in the matrix.</p>
+
+<p>Let&#8217;s put it simple, if (i, j) is an obstacle, there is no way from that point to the exit. We got: <code>f[i][j] = f[i-1][j] + f[i][j-1]</code> if (i, j) is not an obstacle. Otherwise, <code>f[i][j] = 0</code>. Note that we have do the same operation on base case (the first row and the first column).</p>
+<pre><code class="cpp">int uniquePathsWithObstaclesII(vector&lt;vector&lt;int&gt;&gt;&amp; obstacleGrid) {
+    int m = obstacleGrid.size();
+    int n = obstacleGrid[0].size();
+    vector&lt;vector&lt;int&gt;&gt; f(m, vector&lt;int&gt;(n, 0));
+    // base case: 1 until hitting block
+    for (int i = 0; i &lt; m &amp;&amp; !obstacleGrid[i][0]; i++) {
+        f[i][0] = 1;
+    }
+    for (int j = 0; j &lt; n &amp;&amp; !obstacleGrid[0][j]; j++) {
+        f[0][j] = 1;
+    }
+
+    // conduction
+    for (int i = 1; i &lt; m; i++) {
+        for (int j = 1; j &lt; n; j++) {
+            f[i][j] = obstacleGrid[i][j] ? 0 : f[i - 1][j] + f[i][j - 1];
+        }
+    }
+
+    return f[m - 1][n - 1];
+}</code></pre>
+
+</section>
+<section	id="maxlengthofbinarynumber">
+<h3>Max Length of Binary Number</h3>
+
+<blockquote>
+<p>Given a binary string <code>s</code> and max number <code>m</code>, find all substrings whose decimal representation is less than or equal to <code>m</code> and return the max length of substrings. </p>
+
+<p>ex&gt; s = 110110101 m = 40<br/>
+return 6 -&gt; 100101(37) &lt;= 40 </p>
+
+<p>The binary number should be leading with 1.</p>
+</blockquote>
+
+<p>Define <code>f[i, j]</code> as</p>
+
+<ul>
+<li>problem sets: substring from first i bits, min value of all substrings with length of j. (1-based)</li>
+<li>property: min value.</li>
+</ul>
+
+<p>Deduction:</p>
+<pre><code class="text">f[1, 0] = 0; f[1, 1] = 1 (leading 1);
+f[2, 0] = 0; f[2, 1] = 1 (leading 1); f[2, 2] = 3
+f[3, 0] = 0; f[3, 1] = 1; f[3, 2] = min(f[2, 2], f[2, 1] &lt;&lt; 1 + s[i]); f[3, 3] = 6
+...
+f[i, 0] = 0; f[i, 1] = 1; f[i, 2] = min(f[i-1, 2], f[i-1, 1] &lt;&lt; 1 + s[i]); f[i, j] = min(f[i-1, j], f[i-1, j-1] &lt;&lt; 1 + s[i]); ... f[i, i] = s[1..i].</code></pre>
+
+<p>So, we got <code>f[i, j] = min(f[i-1, j], f[i-1, j-1] &lt;&lt; 1 + s[i])</code> where <code>j</code> from 2 to <code>i</code>.</p>
+<pre><code class="cpp">/**
+ * @brief f[i, j] = min(f[i-1, j], f[i-1, j-1] &lt;&lt; 1 + s[i])
+ * 
+ * One observation (optimization): max length should be less than or equal to length of x in
+ * binary form.
+ * 
+ * @param s
+ * @param x
+ * @return int
+ */
+int binaryMaxLength(string s, int x) {
+    if (x == 0) return 0;
+    int len = lenOfBin(x);      // max length must be less than len
+    s.insert(s.begin(), &apos;0&apos;);   // 1 ~ s.size() - 1
+    vector&lt;vector&lt;int&gt;&gt; f(s.size(), vector&lt;int&gt;(len, 1e6));   // 1-based
+
+    // base:
+    for (int i = 1; i &lt; s.size(); i++) {
+        f[i][0] = 0;
+    }
+
+    for (int i = 1; i &lt; s.size(); i++) {
+        // optimize: if i &gt; len, we do not need to proceed
+        for (int j = 1; j &lt;= min(i, len); j++) {
+            f[i][j] = max(f[i - 1][j], (f[i - 1][j - 1] &lt;&lt; 1) + s[i] - &apos;0&apos;);
+        }
+    }
+
+    // find max length of binary whose min value is less than or equal to x
+    int j = len &lt; s.size() - 1 ? len : s.size() - 1;
+    for (; j &gt; 0 &amp;&amp; f[s.size() - 1][j] &lt;= x; j--) {
+    }
+
+    return j;
+}</code></pre>
+
+</section>
+<section	id="minimumpathsum">
+<h3>Minimum Path Sum</h3>
+
+<blockquote>
+<p>Given a m x n grid filled with non-negative numbers, find a path from top left to bottom right, which minimizes the sum of all numbers along its path. </p>
+
+<p>Note: You can only move either down or right at any point in time.</p>
+</blockquote>
+
+<p>Define <code>f[i][j]</code> as</p>
+
+<ul>
+<li>sub problems: all the way from left top to cell <code>(i, j)</code>.</li>
+<li>property: min sum.</li>
+</ul>
+
+<p>Deduction:</p>
+
+<ul>
+<li>cell <code>(i, j)</code> can only be reached from cell <code>(i-1, j)</code> (up) or <code>(i, j-1)</code> (left).</li>
+</ul>
+
+<p>So, we got <code>f[i][j] = min(f[i-1][j], f[i][j-1]) + matrix[i][j]</code>.</p>
+
+<ul>
+<li>2-d implementation</li>
+</ul>
+<pre><code class="cpp">int minPathSum(vector&lt;vector&lt;int&gt;&gt;&amp; grid) {
+    int m = grid.size(), n = grid[0].size();
+    vector&lt;vector&lt;int&gt;&gt; f(m + 1, vector&lt;int&gt;(n + 1, 1e6));   // 1-based to simplify base case
+
+    f[0][0] = f[1][0] = f[0][1] = 0;
+    for (int i = 1; i &lt;= m; i++) {
+        for (int j = 1; j &lt;= n; j++) {
+            f[i][j] = min(f[i - 1][j], f[i][j - 1]) + grid[i - 1][j - 1];
+        }
+    }
+
+    return f[m][n];
+}</code></pre>
+
+<ul>
+<li>1-d implementation</li>
+</ul>
+<pre><code class="cpp">int m = grid.size(), n = grid[0].size();
+    vector&lt;int&gt; f(n + 1, 1e6);   // 1-based to save base case
+
+    for (int i = 1; i &lt;= m; i++) {
+        f[0] = i == 1 ? 0 : 1e6;   // only set cell(1, 0) to be 1 to start iteration.
+        for (int j = 1; j &lt;= n; j++) {
+            f[j] = min(f[j], f[j - 1]) + grid[i - 1][j - 1];
+        }
+    }
+
+    return f[n];</code></pre>
+
+</section>
+<section	id="minimumfallingpathsum">
+<h3>Minimum Falling Path Sum</h3>
+
+<blockquote>
+<p>Given an n x n array of integers matrix, return the minimum sum of any falling path through matrix. </p>
+
+<p>A falling path starts at any element in the first row and chooses the element in the next row that is either directly below or diagonally left/right. Specifically, the next element from position (row, col) will be (row + 1, col - 1), (row + 1, col), or (row + 1, col + 1).</p>
+</blockquote>
+
+<p>Falling structure is pretty like trinary tree.</p>
+
+<p>Define <code>f[i][j]</code> as</p>
+
+<ul>
+<li>problem sets: all the way (falling path) from possible cells on the first row to cell(i, j).</li>
+<li>property: min sum.</li>
+</ul>
+
+<p>Deduction:</p>
+
+<ul>
+<li>for each cell (excluding those on the first row), its directly connected cells (one step before it) can comes from up left, up, and up right.</li>
+</ul>
+
+<p>So, it can be derived that <code>f[i][j] = min(f[i-1][j-1], f[i-1][j], f[i-1][j+1]) + matrix[i][j]</code>.</p>
+<pre><code class="cpp">int minFallingPathSum(vector&lt;vector&lt;int&gt;&gt;&amp; matrix) {
+    int m = matrix.size(), n = matrix[0].size();
+    vector&lt;vector&lt;int&gt;&gt; f(
+        m + 2,
+        vector&lt;int&gt;(n + 2, 1e6));   // 2 for padding left, top, right and bottom boundary
+
+    for (int j = 1; j &lt;= n; j++) {
+        f[0][j] = 0;
+    }
+
+    for (int i = 1; i &lt;= m; i++) {
+        for (int j = 1; j &lt;= n; j++) {
+            f[i][j] = min(f[i][j], f[i - 1][j]);
+            f[i][j] = min(f[i][j], f[i - 1][j - 1]);
+            f[i][j] = min(f[i][j], f[i - 1][j + 1]);
+            f[i][j] += matrix[i - 1][j - 1];   // matrix is zero based
+        }
+    }
+
+    int res = 1e6;
+    for (int j = 1; j &lt;= n; j++) {
+        res = min(res, f[m][j]);
+    }
+    return res;
+}</code></pre>
+
+<p>Note: we can NOT compress the state for <code>f[i][j]</code> since it relies on its left and right part simultaneously.</p>
+
+<p>Tricks:</p>
+
+<ul>
+<li>Padding: padding is a good way for incorporating the base into induction if they have the same logic. But we should be careful in dealing with idx of 0-based array and 1-based array.</li>
+</ul>
+
+</section>
+<section	id="besttimetobuyandsellstockwithtransactionfee">
+<h3>Best Time to Buy and Sell Stock with Transaction Fee</h3>
+
+<blockquote>
+<p>You are given an array prices where <code>prices[i]</code> is the price of a given stock on the ith day, and an integer fee representing a transaction fee. </p>
+
+<p>Find the maximum profit you can achieve. You may complete as many transactions as you like, but you need to pay the transaction fee for each transaction. </p>
+
+<p>Note: You may not engage in multiple transactions simultaneously (i.e., you must sell the stock before you buy again).</p>
+</blockquote>
+
+<p>The problem is similar to kth transaction problem, but the constraint now becomes transaction fee. Define <code>f[i][j]</code> as follows:</p>
+
+<ul>
+<li>problem sets: from ith days, and with or without (<code>j = 1</code> or <code>j = 0</code>) holding a stock, the different transaction strategies.</li>
+<li>property: the maximum profit earned.</li>
+</ul>
+
+<p>Deduction:</p>
+
+<ul>
+<li>with a stock holding in hand (<code>j = 1</code>), there are two choices:
+
+<ul>
+<li>sell it, then we can earn <code>prices[i] - fee</code>, and <code>f[i][j] = f[i+1][0] + prices[i] - fee</code>.</li>
+<li>keep holding it, then <code>f[i][j] = f[i+1][j]</code>.</li>
+</ul></li>
+<li>without holding a stock in hand (<code>j = 0</code>), there are two choices:
+
+<ul>
+<li>buy one stock, then we will pay (earn negatively) <code>-prices[i] - fee</code>, and <code>f[i][j] = f[i+1][1] - prices[i] - fee</code>.</li>
+<li>keep nothing in hand, then <code>f[i][j] = f[i+1][j]</code>.</li>
+</ul></li>
+</ul>
+<pre><code class="cpp">int maxProfitHelper(vector&lt;vector&lt;int&gt;&gt;&amp; f, vector&lt;vector&lt;bool&gt;&gt;&amp; visited, vector&lt;int&gt;&amp; prices, int fee, int i, int hold) {
+    if (i &gt;= prices.size()) {
+        return 0;
+    }
+    if (visited[i][hold]) {
+        return f[i][hold];
+    }
+
+    if (hold == 0) {
+        // buy?
+        f[i][hold] = max(f[i][hold], maxProfitHelper(f, visited, prices, fee, i + 1, 1) - prices[i] - fee);
+    }
+    if (hold == 1) {
+        // sell?
+        f[i][hold] =
+            max(f[i][hold], maxProfitHelper(f, visited, prices, fee, i + 1, 0) + prices[i]);
+    }
+    f[i][hold] = max(f[i][hold], maxProfitHelper(f, visited, prices, fee, i + 1, hold));
+
+    visited[i][hold] = true;
+    return f[i][hold];
+}</code></pre>
+<pre><code class="cpp">int maxProfit(vector&lt;int&gt;&amp; prices, int fee) {
+    vector&lt;vector&lt;int&gt;&gt; f(prices.size(), vector&lt;int&gt;(2, -1e5));
+    vector&lt;vector&lt;bool&gt;&gt; visited(prices.size(), vector&lt;bool&gt;(2, false));
+    int ret = maxProfitHelper(f, visited, prices, fee, 0, 0);
+    return ret;
+}</code></pre>
+
+</section>
+<section	id="painthouse">
+<h3>Paint House</h3>
+
+<blockquote>
+<p>There is a row of n houses, where each house can be painted one of three colors: red, blue, or green. The cost of painting each house with a certain color is different. You have to paint all the houses such that no two adjacent houses have the same color. </p>
+
+<p>The cost of painting each house with a certain color is represented by an n x 3 cost matrix costs. </p>
+
+<ul>
+<li>For example, <code>costs[0][0]</code> is the cost of painting house 0 with the color red; <code>costs[1][2]</code> is the cost of painting house 1 with color green, and so on&#8230;</li>
+</ul>
+
+<p>Return the minimum cost to paint all houses.</p>
+</blockquote>
+
+<p>The constraint in the problem is that two adjacent houses cannot be painted with the same color.</p>
+
+<p>Define <code>f[i][j]</code> as follows:</p>
+
+<ul>
+<li>problem sets: from ith house which is painted with jth color, all painting plan for <code>houses[i+1..end]</code>.</li>
+<li>property: min costs.</li>
+</ul>
+
+<p>Deduction:</p>
+
+<ul>
+<li>painting ith house with color <code>j</code> costs us <code>costs[i][j]</code> and there are only two options for <code>i+1</code>th house.</li>
+</ul>
+
+<p>So, we got <code>f[i][j] = min(f[i+1][k]) - costs[i][j]</code>, where <code>k != j</code> and <code>k</code> is in [0, 2] representing three colors.</p>
+<pre><code class="cpp">int minCostHelper(vector&lt;vector&lt;int&gt;&gt;&amp; f, vector&lt;vector&lt;bool&gt;&gt;&amp; visited,
+                  vector&lt;vector&lt;int&gt;&gt;&amp; costs, int i, int color) {
+    if (i &gt;= costs.size()) {
+        return 0;
+    }
+    if (visited[i][color]) {
+        return f[i][color];
+    }
+
+    for (int k = 0; k &lt; costs[i].size(); k++) {
+        if (k != color) {
+            f[i][color] = min(f[i][color], minCostHelper(f, visited, costs, i + 1, k));
+        }
+    }
+    f[i][color] += costs[i][color];
+
+    visited[i][color] = true;
+    return f[i][color];
+}</code></pre>
+<pre><code class="cpp">int minPaintCost(vector&lt;vector&lt;int&gt;&gt;&amp; costs) {
+    vector&lt;vector&lt;int&gt;&gt; f(costs.size(), vector&lt;int&gt;(costs[0].size(), 1e5));
+    vector&lt;vector&lt;bool&gt;&gt; visited(costs.size(), vector&lt;bool&gt;(costs[0].size(), false));
+    int ret = minCostHelper(f, visited, costs, 0, 0);
+    ret = min(ret, minCostHelper(f, visited, costs, 0, 1));
+    ret = min(ret, minCostHelper(f, visited, costs, 0, 2));
+    return ret;
+}</code></pre>
+
+</section>
+<section	id="painthouseii">
+<h3>Paint House II</h3>
+
+<blockquote>
+<p>There are a row of n houses, each house can be painted with one of the k colors. The cost of painting each house with a certain color is different. You have to paint all the houses such that no two adjacent houses have the same color. </p>
+
+<p>The cost of painting each house with a certain color is represented by an n x k cost matrix costs. </p>
+
+<ul>
+<li>For example, <code>costs[0][0]</code> is the cost of painting house 0 with color 0; <code>costs[1][2]</code> is the cost of painting house 1 with color 2, and so on..</li>
+</ul>
+
+<p>Return the minimum cost to paint all houses.</p>
+</blockquote>
+
+<p>The solution is same as Paint House with the only exception for main func.</p>
+<pre><code class="cpp">int minCostII(vector&lt;vector&lt;int&gt;&gt;&amp; costs) {
+    vector&lt;vector&lt;int&gt;&gt; f(costs.size(), vector&lt;int&gt;(costs[0].size(), 1e5));
+    vector&lt;vector&lt;bool&gt;&gt; visited(costs.size(), vector&lt;bool&gt;(costs[0].size(), false));
+    int ret = 1e5;
+    for (int k = 0; k &lt; costs[0].size(); k++) {
+        ret = min(ret, minCostHelper(f, visited, costs, 0, k));
+    }
+    return ret;
+}</code></pre>
+
+</section>
+<section	id="painthouseiii">
+<h3>Paint House III</h3>
+
+<blockquote>
+<p>There is a row of m houses in a small city, each house must be painted with one of the n colors (labeled from 1 to n), some houses that have been painted last summer should not be painted again. </p>
+
+<p>A neighborhood is a maximal group of continuous houses that are painted with the same color. </p>
+
+<ul>
+<li>For example: houses = <code>[1,2,2,3,3,2,1,1]</code> contains 5 neighborhoods <code>[{1}, {2,2}, {3,3}, {2}, {1,1}]</code>.</li>
+</ul>
+
+<p>Given an array houses, an m x n matrix cost and an integer target where: </p>
+
+<ul>
+<li><code>houses[i]</code>: is the color of the house <code>i</code>, and 0 if the house is not painted yet.</li>
+<li><code>cost[i][j]</code>: is the cost of paint the house <code>i</code> with the color <code>j + 1</code>.</li>
+</ul>
+
+<p>Return the minimum cost of painting all the remaining houses in such a way that there are exactly target neighborhoods. If it is not possible, return &#8211;1.</p>
+</blockquote>
+
+<p>There are two constraints in the problems: 1. costs and 2. number of neighborhoods.</p>
+
+<p>As we did before, we can solve it with top-to-down dynamic programming.</p>
+
+<p>Define <code>f[i][j][k]</code> as:</p>
+
+<ul>
+<li>problem sets: paint ith house with color j and number of neighborhoods is k, all painting plan of <code>houses[i+1...end]</code>.</li>
+<li>property: min cost.</li>
+</ul>
+
+<p>Deduction:</p>
+
+<ul>
+<li>there are two cases:
+
+<ul>
+<li><code>house[i]</code> is painted: 1. if the painted color is same as what we want to paint, we can save the cost for painting. 2. if it is different, this is an impossible case, simply set <code>f[i][j][k]</code> to be an impossible number (<code>1e7</code> in the following code).</li>
+<li><code>house[i]</code> is not painted: 1. paint ith house with color same as <code>i+1</code>th house or 2. with a different house.</li>
+</ul></li>
+</ul>
+
+<p>Note: painting the same color or different color affects neighborhoods which represented in code as <code>neighborCnt</code>.</p>
+
+<p>So, we got <code>f[i][j][k] = min(f[i+1][j][k], f[i+1][any color other than j][k-1]) + cost[i][j]</code>.</p>
+<pre><code class="cpp">int minCostHelperII(vector&lt;vector&lt;vector&lt;int&gt;&gt;&gt;&amp; f, vector&lt;vector&lt;vector&lt;bool&gt;&gt;&gt;&amp; visited,
+                    vector&lt;int&gt;&amp; houses, vector&lt;vector&lt;int&gt;&gt;&amp; cost, int target, int i,
+                    int color, int neighborCnt) {
+    // boundary
+    if (i == houses.size()) {
+        return neighborCnt == 0 ? 0 : 1e7;
+    }
+
+    if (visited[i][color][neighborCnt]) {
+        return f[i][color][neighborCnt];
+    }
+
+    // color 0 is not defined
+    // number of houses from i to end =  houses.size() - i
+    if (color == 0 || neighborCnt &gt; houses.size() - i || neighborCnt &lt;= 0) {
+        visited[i][color][neighborCnt] = true;
+        f[i][color][neighborCnt] = 1e7;
+        return f[i][color][neighborCnt];
+    }
+
+    // if ith house is not painted
+    if (houses[i] == 0) {
+        // paint same color as house[i+1]
+        f[i][color][neighborCnt] =
+            minCostHelperII(f, visited, houses, cost, target, i + 1, color, neighborCnt);
+        // paint different color with house[i+1]
+        for (int j = 1; j &lt;= cost[0].size(); j++) {
+            if (j != color) {
+                f[i][color][neighborCnt] =
+                    min(f[i][color][neighborCnt],
+                        minCostHelperII(f, visited, houses, cost, target, i + 1, j,
+                                        neighborCnt - 1));
+            }
+        }
+        f[i][color][neighborCnt] += cost[i][color - 1];   // cost is 0-based
+    } else {
+        if (houses[i] == color) {
+            f[i][houses[i]][neighborCnt] = minCostHelperII(
+                f, visited, houses, cost, target, i + 1, color, neighborCnt);
+            for (int j = 1; j &lt;= cost[0].size(); j++) {
+                if (j != color) {
+                    f[i][color][neighborCnt] =
+                        min(f[i][color][neighborCnt],
+                            minCostHelperII(f, visited, houses, cost, target, i + 1, j,
+                                            neighborCnt - 1));
+                }
+            }
+        } else {
+            // can not paint color
+            f[i][color][neighborCnt] = 1e7;
+        }
+    }
+
+    visited[i][color][neighborCnt] = true;
+    return f[i][color][neighborCnt];
+}</code></pre>
+<pre><code class="cpp">int minCost(vector&lt;int&gt;&amp; houses, vector&lt;vector&lt;int&gt;&gt;&amp; cost, int m, int n, int target) {
+    vector&lt;vector&lt;vector&lt;int&gt;&gt;&gt; f(
+        m, vector&lt;vector&lt;int&gt;&gt;(n + 1, vector&lt;int&gt;(target + 1, 1e7)));
+    vector&lt;vector&lt;vector&lt;bool&gt;&gt;&gt; visited(
+        m, vector&lt;vector&lt;bool&gt;&gt;(n + 1, vector&lt;bool&gt;(target + 1, false)));
+    int ret = 1e7;
+    for (int color = 1; color &lt;= n; color++) {
+        ret =
+            min(ret, minCostHelperII(f, visited, houses, cost, target, 0, color, target));
+    }
+
+    return ret &gt;= 1e7 ? -1 : ret;
+}</code></pre>
+
+</section>
+<section	id="countvowelspermutation">
+<h3>Count Vowels Permutation</h3>
+
+<blockquote>
+<p>Given an integer n, your task is to count how many strings of length n can be formed under the following rules: </p>
+
+<ul>
+<li>Each character is a lower case vowel (&#8216;a&#8217;, &#8216;e&#8217;, &#8216;i&#8217;, &#8216;o&#8217;, &#8216;u&#8217;)</li>
+<li>Each vowel &#8216;a&#8217; may only be followed by an &#8216;e&#8217;.</li>
+<li>Each vowel &#8216;e&#8217; may only be followed by an &#8216;a&#8217; or an &#8216;i&#8217;.</li>
+<li>Each vowel &#8216;i&#8217; <strong>may not</strong> be followed by another &#8216;i&#8217;.</li>
+<li>Each vowel &#8216;o&#8217; may only be followed by an &#8216;i&#8217; or a &#8216;u&#8217;.</li>
+<li>Each vowel &#8216;u&#8217; may only be followed by an &#8216;a&#8217;.</li>
+</ul>
+
+<p>Since the answer may be too large, return it modulo 10<sup>9</sup> + 7.</p>
+</blockquote>
+
+<p>Define <code>f[i][j]</code> as: top to bottom</p>
+
+<ul>
+<li>problem sets: all possible combinations of vowels from <code>i</code> to end and select <code>j</code>th vowel for ith index.</li>
+<li>property: count.</li>
+</ul>
+
+<p>Deduction:</p>
+
+<ul>
+<li>all numbers of combination of <code>s[i...end] = sum of f[i][j] for each j</code>, and <code>f[i][j] = sum(f[i+1][k])</code>, where <code>k</code> is valid choice for <code>i+1</code>th index.</li>
+</ul>
+
+<p>So, we got <code>f[i][j] = sum(f[i+1][k]) for each valid k</code>.</p>
+<pre><code class="cpp">int countVowelHelper(vector&lt;vector&lt;int&gt;&gt;&amp; f, vector&lt;vector&lt;bool&gt;&gt;&amp; visited, int n, int i, int vowel) {
+    static int mod = 1e9 + 7;
+    if (i == n - 1) {
+        return 1;
+    }
+
+    if (visited[i][vowel]) {
+        return f[i][vowel];
+    }
+
+    switch (vowel) {
+        case 0:
+            f[i][vowel] = countVowelHelper(f, visited, n, i + 1, 1);
+            break;
+        case 1:
+            f[i][vowel] = (countVowelHelper(f, visited, n, i + 1, 0) + countVowelHelper(f, visited, n, i + 1, 2)) % mod;
+            break;
+        case 2:
+            for (int j = 0; j &lt; 5; j++) {
+                if (j != 2) {
+                    f[i][vowel] = (f[i][vowel] + countVowelHelper(f, visited, n, i + 1, j)) % mod;
+                }
+            }
+            break;
+        case 3:
+            f[i][vowel] = (countVowelHelper(f, visited, n, i + 1, 2) + countVowelHelper(f, visited, n, i + 1, 4)) % mod;
+            break;
+        case 4:
+            f[i][vowel] = countVowelHelper(f, visited, n, i + 1, 0);
+            break;
+        default:
+            break;
+    }
+
+    f[i][vowel] %= mod;
+
+    visited[i][vowel] = true;
+    return f[i][vowel];
+}</code></pre>
+<pre><code class="cpp">int countVowelPermutation(int n) {
+    static int mod = 1e9 + 7;
+    enum Vowels { a, e, i, o, u };
+    vector&lt;vector&lt;int&gt;&gt; f(n, vector&lt;int&gt;(5, 0));
+    vector&lt;vector&lt;bool&gt;&gt; visited(n, vector&lt;bool&gt;(5, 0));
+    int sum = 0;
+    for (int i = 0; i &lt; 5; i++) {
+        sum = (sum + countVowelHelper(f, visited, n, 0, i)) % mod;
+    }
+
+    return sum;
+}</code></pre>
+
+</section>
+<section	id="maximumlengthofrepeatedsubarray">
+<h3>Maximum Length of Repeated Subarray</h3>
+
+<blockquote>
+<p>Given two integer arrays nums1 and nums2, return the maximum length of a subarray that appears in both arrays.</p>
+</blockquote>
+
+<p>Note that subarray is <strong>a consecutive sequence</strong>.</p>
+
+<p>Define <code>f[i][j]</code> as: (bottom to top)</p>
+
+<ul>
+<li>problem sets: all common subarray that ends with <code>nums1[i]</code> and <code>nums2[j]</code>.</li>
+<li>property: max length.</li>
+</ul>
+
+<p>Deduction:</p>
+
+<ul>
+<li>Max length of common subarray that ends with <code>nums1[i]</code> and <code>nums2[j]</code> is <code>f[i-1][j-1] + 1</code> if <code>nums1[i] == nums2[j]</code>.</li>
+</ul>
+
+<p>So, we got <code>f[i][j] = f[i-1][j-1] + 1</code> if <code>nums1[i] == nums2[j]</code>, or 0 otherwise.</p>
+<pre><code class="cpp">int findLength(vector&lt;int&gt;&amp; nums1, vector&lt;int&gt;&amp; nums2) {
+    vector&lt;vector&lt;int&gt;&gt; f(nums1.size() + 1, vector&lt;int&gt;(nums2.size() + 1, 0));   // 1-based
+    int maxLen = 0;
+    for (int i = 1; i &lt;= nums1.size(); i++) {
+        for (int j = 1; j &lt;= nums2.size(); j++) {
+            if (nums1[i - 1] == nums2[j - 1]) {   // 1-based to 0-based
+                f[i][j] = f[i - 1][j - 1] + 1;
+            }
+            maxLen = max(maxLen, f[i][j]);
+        }
+    }
+
+    return maxLen;
+}</code></pre>
+
+<p>If the problem is going to find subsequence, this problem is a digital version of longest common subsequence.</p>
+
+<p>Define <code>f[i][j]</code> as: (bottom to top)</p>
+
+<ul>
+<li>problem sets: all common subsequence between <code>nums1[0..i]</code> and <code>nums2[0..j]</code>.</li>
+<li>property: max length of common subarray.</li>
+</ul>
+
+<p>Deduction:</p>
+
+<ul>
+<li>if <code>nums1[i] == nums2[j]</code>, <code>f[i][j] = f[i-1][j-1] + 1</code>.</li>
+<li>if <code>nums1[i] != nums2[j]</code>, <code>f[i][j] = f[i-1][j-1]</code>. But there are two cases to increase the common length.
+
+<ul>
+<li>when <code>nums1[i]</code> is added, it may contribute to <code>f[i][j]</code>. We don&#8217;t know if <code>nums1[i]</code> is good for <code>f[i][j]</code>, but it will not bother us, let <code>f[i][j-1]</code> to handle that problem. So, <code>f[i][j] = f[i][j-1]</code>.</li>
+<li>similarly, when <code>nums2[j]</code> is added, <code>f[i][j] = f[i-1][j]</code>.</li>
+</ul></li>
+</ul>
+
+<p>So, we got <code>f[i][j] = max(f[i-1][j-1] + 1 if nums1[i] == nums2[j], f[i][j-1], f[i-1][j]</code>. In fact, we do not need to care about <code>f[i-1][j-1]</code>, since <code>f[i][j-1]</code> or <code>f[i-1][j]</code> must be equal to or bigger than it.</p>
+<pre><code class="cpp">int findLength(vector&lt;int&gt;&amp; nums1, vector&lt;int&gt;&amp; nums2) {
+    vector&lt;vector&lt;int&gt;&gt; f(nums1.size() + 1, vector&lt;int&gt;(nums2.size() + 1, 0));   // 1-based
+    for (int i = 1; i &lt;= nums1.size(); i++) {
+        for (int j = 1; j &lt;= nums2.size(); j++) {
+            f[i][j] = max(f[i][j - 1], f[i - 1][j]);
+            if (nums1[i - 1] == nums2[j - 1]) {   // 1-based to 0-based
+                f[i][j] = max(f[i][j], f[i - 1][j - 1] + 1);
+            }
+        }
+    }
+
+    return f[nums1.size()][nums2.size()];
+}</code></pre>
+
+</section>
+<section	id="numberofdicerollswithtargetsum">
+<h3>Number of Dice Rolls With Target Sum</h3>
+
+<blockquote>
+<p>You have n dice and each die has k faces numbered from 1 to k. </p>
+
+<p>Given three integers n, k, and target, return the number of possible ways (out of the kn total ways) to roll the dice so the sum of the face-up numbers equals target. Since the answer may be too large, return it modulo 1e9 + 7.</p>
+</blockquote>
+
+<p>Define <code>f[i][j]</code> as: (top to bottom)</p>
+
+<ul>
+<li>problem sets: In the rounds from i to end, all possible results of rolling dices and the sum of results equals to target (j).</li>
+<li>property: count.</li>
+</ul>
+
+<p>Deduction:</p>
+
+<ul>
+<li><code>f[i][j] = sum of (f[i+1][j-k])</code>, k is the result of rolling dice on ith round.</li>
+</ul>
+<pre><code class="cpp">int numRollsHelper(vector&lt;vector&lt;int&gt;&gt;&amp; f, vector&lt;vector&lt;bool&gt;&gt;&amp; visited, int n, int k, int i, int target) {
+    static int mod = 1e9 + 7;
+    // boundary
+    if (target &lt;= 0 || i &gt;= n) {
+        return 0;
+    }
+
+    if (visited[i][target]) {
+        return f[i][target];
+    }
+
+    // base
+    if (i == n - 1 &amp;&amp; target &lt;= k) {
+        f[i][target] = 1;
+        visited[i][target] = true;
+        return f[i][target];
+    }
+
+    int sum = 0;
+    for (int face = 1; face &lt;= k; face++) {
+        sum = (sum + numRollsHelper(f, visited, n, k, i + 1, target - face)) % mod;
+    }
+    f[i][target] = sum;
+
+    visited[i][target] = true;
+    return f[i][target];
+}</code></pre>
+<pre><code class="cpp">int numRollsToTarget(int n, int k, int target) {
+    static int mod = 1e9 + 7;
+    vector&lt;vector&lt;int&gt;&gt; f(n, vector&lt;int&gt;(target + 1, 0));   // k is in [0, k]
+    vector&lt;vector&lt;bool&gt;&gt; visited(n, vector&lt;bool&gt;(target + 1, false));
+    int ret = numRollsHelper(f, visited, n, k, 0, target);
+    return ret;
+}</code></pre>
+
+</section>
+<section	id="dominoandtrominotiling">
+<h3>Domino and Tromino Tiling</h3>
+
+<blockquote>
+<p>You have two types of tiles: a 2 x 1 domino shape and a tromino shape. You may rotate these shapes. </p>
+
+<p>Given an integer n, return the number of ways to tile an 2 x n board. Since the answer may be very large, return it modulo 109 + 7. </p>
+
+<p>In a tiling, every square must be covered by a tile. Two tilings are different if and only if there are two 4-directionally adjacent cells on the board such that exactly one of the tilings has both squares occupied by a tile.</p>
+</blockquote>
+
+<p>Define <code>f[i]</code> as: (from top to bottom)</p>
+
+<ul>
+<li>problem sets: all the possible tilings from i to end.</li>
+<li>property: count.</li>
+</ul>
+
+<p>Deduction:</p>
+
+<ul>
+<li>On ith column, there are three choices:
+
+<ul>
+<li>case 1: filling ith column with a 2 * 1 tile.</li>
+<li>case 2: filling ith and i+1th column with two 1 * 2 tiles, if i+1th column exists.</li>
+<li>case 3: filling ith, i+1th, and i+2th column with two tromino tiles if i+2th column exists.</li>
+</ul></li>
+</ul>
+
+<p>(note: case 2 cannot tiling with two 2 * 1 tiles, which may cause duplication with case 1).</p>
+<pre><code class="text">case 3:
+    1 2 2    or    1 1 2
+    1 1 2          1 2 2</code></pre>
+
+<p>CAUTION: There is a flaw in this solution, we cannot solve the case in the following for non-adjacent tromino.</p>
+<pre><code class="text">case 3:
+    1 3 3 2 2
+    1 1 3 3 2
+
+1 and 2 are separated by domnino.</code></pre>
+
+<ul>
+<li>bottom to top pattern</li>
+</ul>
+
+<p>Let&#8217;s divide the tiling into two cases: for board 2 * k, what&#8217;s the number of plans that fully cover the board (<code>f[k]</code>) and partially cover the board (<code>p[k]</code>).</p>
+
+<ul>
+<li>fully cover: <code>f[k] = f[k-1] (with one 2 * 1 domino) + f[k-2] (with two 1 * 2 dominos) + 2 * p[k-1] (with one of two tromino)</code>, where <code>f[0] = 1, f[1] = 2</code>. (*2 since there are two cases for tromino and they are symmetrical)</li>
+<li>partially cover: <code>p[k] = p[k-1] + f[k-2]</code>, where <code>p[0] = 0, p[1] = 1</code> (zero-indexed).</li>
+</ul>
+
+<p>Note for <code>p[k]</code>, we only care about the number of patterns that first k boards is partially covered. We do not care about if <code>board[k][0]</code> or <code>board[k][1]</code> is covered. It will be handled in <code>f</code>, where <code>f[k] = ... + 2 * p[k-1]</code>, 2 matters here.</p>
+<pre><code class="text">partially cover:
+
+add a tromino to fully cover
+p: k-2    k
+    1  2  2
+    1  2
+
+add a domino to partially cover
+p:    k-1 k
+    1  1 
+    1  2  2</code></pre>
+<pre><code class="cpp">int numTilings(int n) {
+    static int MOD = 1e9 + 7;
+    if (n == 0) return 0;
+    if (n == 1) return 1;
+    if (n == 2) return 2;
+    vector&lt;long&gt; f(n, 0);
+    vector&lt;long&gt; p(n, 0);
+    f[0] = 1; f[1] = 2;
+    p[0] = 0; p[1] = 1;
+
+    for (int i = 2; i &lt; n; i++) {
+        f[i] = (f[i - 1] + f[i - 2] + 2 * p[i - 1]) % MOD;
+        p[i] = (p[i - 1] + f[i - 2]) % MOD;
+    }
+    
+    return static_cast&lt;int&gt;(f[n - 1]);
+}</code></pre>
+
+</section>
+<section	id="minimumcostfortickets">
+<h3>Minimum Cost For Tickets</h3>
+
+<blockquote>
+<p>You have planned some train traveling one year in advance. The days of the year in which you will travel are given as an integer array days. Each day is an integer from 1 to 365. </p>
+
+<p>Train tickets are sold in three different ways: </p>
+
+<ul>
+<li>a 1-day pass is sold for <code>costs[0]</code> dollars,</li>
+<li>a 7-day pass is sold for <code>costs[1]</code> dollars, and</li>
+<li>a 30-day pass is sold for <code>costs[2]</code> dollars.</li>
+</ul>
+
+<p>The passes allow that many days of consecutive travel. </p>
+
+<p>For example, if we get a 7-day pass on day 2, then we can travel for 7 days: 2, 3, 4, 5, 6, 7, and 8. </p>
+
+<p>Return the minimum number of dollars you need to travel every day in the given list of days.</p>
+</blockquote>
+
+<p>Define <code>f[i][j]</code> as: (top to bottom pattern)</p>
+
+<ul>
+<li>problem set: On ith travel day holding the ticket which is expired on jth day, the cost for the travel from i to end days.</li>
+<li>property: the minimum cost.</li>
+</ul>
+
+<p>Deduction:</p>
+
+<ul>
+<li>We can buy one of three tickets on ith day. <code>f[i][j] = min(f[k][k + 1] + cost[0], f[k][k + 7] + cost[1], f[k][k + 30] + cost[2]</code>, where k is the first travel day that&#8217;s larger than or equal to j.</li>
+</ul>
+<pre><code class="cpp">int minTicketsHelper(vector&lt;vector&lt;int&gt;&gt;&amp; f, vector&lt;vector&lt;bool&gt;&gt;&amp; visited, vector&lt;int&gt;&amp; days, vector&lt;int&gt;&amp; costs,
+                     int i, int expired) {
+    if (i &gt;= days.size() | expired &gt; 365) {
+        return 0;
+    }
+
+    if (visited[i][expired]) {
+        return f[i][expired];
+    }
+
+    // no need to buy
+    if (days[i] &lt; expired) {
+        visited[i][expired] = true;
+        f[i][expired] = minTicketsHelper(f, visited, days, costs, i + 1, expired);
+        return f[i][expired];
+    }
+
+    // need to buy: three choices
+    int minCost = 1e6;
+    minCost = min(minCost, minTicketsHelper(f, visited, days, costs, i + 1, days[i] + 1) + costs[0]);
+    minCost = min(minCost, minTicketsHelper(f, visited, days, costs, i + 1, days[i] + 7) + costs[1]);
+    minCost = min(minCost, minTicketsHelper(f, visited, days, costs, i + 1, days[i] + 30) + costs[2]);
+    f[i][expired] = minCost;
+
+    visited[i][expired] = true;
+    return f[i][expired];
+}</code></pre>
+<pre><code class="cpp">int mincostTickets(vector&lt;int&gt;&amp; days, vector&lt;int&gt;&amp; costs) {
+    vector&lt;vector&lt;int&gt;&gt; f(days.size(), vector&lt;int&gt;(366, 1e6));
+    vector&lt;vector&lt;bool&gt;&gt; visited(days.size(), vector&lt;bool&gt;(366, false));
+    int ret = minTicketsHelper(f, visited, days, costs, 0, 0);
+    return ret;
+}</code></pre>
+
+</section>
+<section	id="interleavingstring">
+<h3>Interleaving String</h3>
+
+<blockquote>
+<p>Given strings s1, s2, and s3, find whether s3 is formed by an interleaving of s1 and s2. </p>
+
+<p>An interleaving of two strings s and t is a configuration where they are divided into non-empty substrings such that: </p>
+
+<ul>
+<li>s = s1 + s2 + &#8230; + sn</li>
+<li>t = t1 + t2 + &#8230; + tm</li>
+<li>|n - m| &lt;= 1</li>
+<li>The interleaving is s1 + t1 + s2 + t2 + s3 + t3 + &#8230; or t1 + s1 + t2 + s2 + t3 + s3 + &#8230;</li>
+</ul>
+
+<p>Note: a + b is the concatenation of strings a and b.</p>
+</blockquote>
+
+<p>Define <code>f[i][j]</code> as: (bottom to top pattern)</p>
+
+<ul>
+<li>problem sets: all interleaving of first <code>i</code> characters of s1 and first <code>j</code> characters of s2.</li>
+<li>property: true if there is an interleaving which is equal to the first <code>i + j</code> of s3 (target).</li>
+</ul>
+
+<p>Deduction:</p>
+
+<ul>
+<li>assumed that <code>f[i][j]</code> is false,
+
+<ul>
+<li>if <code>s1[i] == s3[i+j]</code>, <code>f[i][j] = f[i][j] | f[i-1][j]</code>.</li>
+<li>if <code>s2[j] == s3[i+j]</code>, <code>f[i][j] = f[i][j] | f[i][j-1]</code>.</li>
+</ul></li>
+</ul>
+<pre><code class="cpp">bool isInterleave(string s1, string s2, string s3) {
+    if (s1.size() + s2.size() != s3.size()) return false;
+    vector&lt;vector&lt;bool&gt;&gt; f(s1.size() + 1, vector&lt;bool&gt;(s2.size() + 1, false));   // one-based
+    // base case: f[i][0] and f[0][j]
+    f[0][0] = true;
+    for (int i = 1; i &lt;= s1.size(); i++) {
+        if (s1[i - 1] == s3[i - 1]) {
+            f[i][0] = f[i][0] | f[i - 1][0];
+        }
+    }
+    for (int j = 1; j &lt;= s2.size(); j++) {
+        if (s2[j - 1] == s3[j - 1]) {
+            f[0][j] = f[0][j] | f[0][j - 1];
+        }
+    }
+
+    // deduction
+    for (int i = 1; i &lt;= s1.size(); i++) {
+        for (int j = 1; j &lt;= s2.size(); j++) {
+            if (s1[i - 1] == s3[i + j - 1]) {
+                f[i][j] = f[i][j] | f[i - 1][j];
+            }
+            if (s2[j - 1] == s3[i + j - 1]) {
+                f[i][j] = f[i][j] | f[i][j - 1];
+            }
+        }
+    }
+
+    return f[s1.size()][s2.size()];
+}</code></pre>
+
+</section>
+</section>
+<p><EndMarkdown></p>

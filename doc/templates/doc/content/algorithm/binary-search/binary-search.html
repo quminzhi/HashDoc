@@ -1,0 +1,1331 @@
+{% load static %}
+
+<!-- Insert title here -->
+
+<h1 id="binarysearch">Binary Search</h1>
+
+<h2 id="tableofcontents">Table of Contents</h2>
+
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#templates">Templates</a>
+
+<ul>
+<li><a href="#templatei">Template I</a>
+
+<ul>
+<li><a href="#sqrt">Sqrt</a></li>
+<li><a href="#guessnumberhigherorlower">Guess Number Higher or Lower</a></li>
+<li><a href="#searchinrotatedsortedarray">Search in Rotated Sorted Array</a></li>
+</ul></li>
+<li><a href="#templateii">Template II</a></li>
+<li><a href="#firstbadversion">First Bad Version</a>
+
+<ul>
+<li><a href="#findpeekelement">Find Peek Element</a></li>
+<li><a href="#findminimuminrotatedsortedarray">Find Minimum in Rotated Sorted Array</a></li>
+<li><a href="#findminimuminrotatedsortedarrayii">Find Minimum in Rotated Sorted Array II</a></li>
+</ul></li>
+<li><a href="#templateiii">Template III</a>
+
+<ul>
+<li><a href="#searchforarange">Search for a Range</a></li>
+<li><a href="#findkclosestelements">Find K Closest Elements</a></li>
+<li><a href="#closestbinarysearchtree">Closest Binary Search Tree</a></li>
+<li><a href="#searchinasortedarrayofunknownsize">Search in a Sorted Array of Unknown Size</a></li>
+<li><a href="#validperfectsquare">Valid Perfect Square</a></li>
+<li><a href="#findsmallestlettergreaterthantarget">Find Smallest Letter Greater than Target</a></li>
+<li><a href="#intersectionoftwoarrays">Intersection of Two Arrays</a></li>
+<li><a href="#intersectionoftwoarraysii">Intersection of Two Arrays II</a></li>
+<li><a href="#twosum">Two Sum</a></li>
+<li><a href="#findtheduplicatenumber">Find the Duplicate Number</a></li>
+<li><a href="#medianoftwosortedarrays">Median of Two Sorted Arrays</a></li>
+<li><a href="#findk-thsmallestpairdistance">Find K-th Smallest Pair Distance</a></li>
+<li><a href="#splitarraylargestsum">Split Array Largest Sum</a></li>
+</ul></li>
+</ul></li>
+</ul>
+
+<p><TableEndMark></p>
+<!-- DO NOT ADD EndOfTable MANUALLY -->
+
+<section	id="introduction">
+<h2>Introduction</h2>
+
+<p>What is Binary Search?</p>
+
+<p>Binary Search is one of the most fundamental and useful algorithms in Computer Science. It describes the process of searching for a specific value in an ordered collection.</p>
+
+<p>Terminology used in Binary Search:</p>
+
+<ul>
+<li>Target - the value that you are searching for</li>
+<li>Index - the current location that you are searching</li>
+<li>Left, Right - the indicies from which we use to maintain our search Space</li>
+<li>Mid - the index that we use to apply a condition to determine if we should search left or right</li>
+</ul>
+
+<p>Basic problem:</p>
+
+<blockquote>
+<p>Given an array of integers <code>nums</code> which is sorted in ascending order, and an integer target, write a function to search target in <code>nums</code>. If target exists, then return its index. Otherwise, return &#8211;1. </p>
+
+<p>You must write an algorithm with O(log n) runtime complexity.</p>
+</blockquote>
+
+<ul>
+<li>Loop solution:</li>
+</ul>
+<pre><code class="cpp">int searchLoop(vector&lt;int&gt;&amp; nums, int target) {
+    int left = 0;
+    int right = nums.size() - 1;
+    int mid = 0;
+    while (left &lt;= right) {
+        mid = left + ((right - left) &gt;&gt; 1);
+        if (target == nums[mid]) {
+            return mid;
+        } else {
+            if (target &lt; nums[mid]) {
+                // left search
+                right = mid - 1;
+            } else {
+                // right search
+                left = mid + 1;
+            }
+        }
+    }
+
+    return -1;
+}</code></pre>
+
+<ul>
+<li>Recursion solution:</li>
+</ul>
+<pre><code class="cpp">int bsearchHelper(vector&lt;int&gt;&amp; nums, int target, int left, int right) {
+    if (left &gt; right) return -1;
+
+    int mid = left + ((right - left ) &gt;&gt; 1);
+    if (nums[mid] == target) {
+        return mid;
+    } else {
+        if (nums[mid] &gt; target) {
+            // search in left half
+            return bsearchHelper(nums, target, left, mid-1);
+        } else {
+            // search in right half
+            return bsearchHelper(nums, target, mid+1, right);
+        }
+    }
+}
+
+int searchRec(vector&lt;int&gt;&amp; nums, int target) {
+    return bsearchHelper(nums, target, 0, nums.size()-1);
+}</code></pre>
+
+</section>
+<section	id="templates">
+<h2>Templates</h2>
+
+<section	id="templatei">
+<h3>Template I</h3>
+
+<p>Template I is the basic form as shown in the last section. Following are some problems associated with it.</p>
+
+<section	id="sqrt">
+<h4>Sqrt</h4>
+
+<blockquote>
+<p>Given a non-negative integer <code>x</code>, compute and return the square root of <code>x</code>. </p>
+
+<p>Since the return type is an integer, the decimal digits are truncated, and only the integer part of the result is returned. </p>
+
+<p>Note: You are not allowed to use any built-in exponent function or operator, such as <code>pow(x, 0.5)</code> or <code>x ** 0.5</code>.</p>
+</blockquote>
+<pre><code class="cpp">/**
+ * @brief we only care about the integer part and the decimal digit is truncated.
+ * 
+ * 0            sqrt of 0 is 0
+ * 1 ^ 2 = 1    sqrt of numbers in [1, 4) is 1
+ * 2 ^ 2 = 4    sqrt of numbers in [4, 9) is 2
+ * 3 ^ 2 = 9    sqrt of numbers in [9, 16) is 3
+ * 4 ^ 2 = 16
+ * ...
+ * a ^ 2        sqrt of numbers in [a^2, (a+1)^2]
+ * 
+ * search [2, x/2]
+ * 
+ * @param x 
+ * @return int 
+ */
+int mySqrt(int x) {
+    if (x &lt; 2) return x;
+    int left = 2;
+    int right = x / 2;
+    int mid = 0;
+    long sqr = 0;
+    while (left &lt;= right) {
+        mid = left + ((right - left) &gt;&gt; 1);
+        sqr = mid * mid;
+        if (sqr == x) {
+            return mid;
+        } else {
+            if (sqr &lt; x) {
+                // the true sqrt is bigger than mid
+                left = mid + 1;
+            } else {
+                // the true sqrt is smaller than mid
+                right = mid - 1;
+            }
+        }
+    }
+
+    // notice that the result will converge to &apos;a+1&apos; which triggers if branch (sqr &gt; x),
+    // then right = mid - 1 which happens to be &apos;a&apos;
+    return right;
+}
+
+/**
+ * @brief This is a mathematical way to solve sqrt problem:
+ *
+ *    Observation is: sqrt(x) = e^(1/2 * log(x))
+ * 
+ * @param x 
+ * @return int 
+ */
+int mySqrtMath(int x) {
+    if (x &lt; 2) return x;
+    int leftInt = exp(0.5 * log(x));
+    int rightInt = leftInt + 1;
+    int result = (long)rightInt * rightInt &gt; x ? leftInt : rightInt;
+
+    return result;
+}</code></pre>
+
+</section>
+<section	id="guessnumberhigherorlower">
+<h4>Guess Number Higher or Lower</h4>
+
+<blockquote>
+<p>We are playing the Guess Game. The game is as follows: </p>
+
+<p>I pick a number from 1 to n. You have to guess which number I picked. </p>
+
+<p>Every time you guess wrong, I will tell you whether the number I picked is higher or lower than your guess. </p>
+
+<ul>
+<li>&#8211;1: Your guess is higher than the number I picked (i.e. num &gt; pick).</li>
+<li>1: Your guess is lower than the number I picked (i.e. num &lt; pick).</li>
+<li>0: 0: your guess is equal to the number I picked (i.e. num == pick).</li>
+</ul>
+
+<p>Return the number that I picked.</p>
+</blockquote>
+<pre><code class="cpp">/**
+ * @brief 
+ * You call a pre-defined API int guess(int num), which returns three possible results:
+ *  - -1: Your guess is higher than the number I picked (i.e. num &gt; pick).
+ *  - 1: Your guess is lower than the number I picked (i.e. num &lt; pick).
+ *  - 0: your guess is equal to the number I picked (i.e. num == pick).
+ * @param n 
+ * @return int 
+ */
+int guessNumber(int n) {
+    int left = 1;
+    int right = n;
+    int mid;
+    while (left &lt;= right) {
+        mid = left + ((right - left) &gt;&gt; 1);
+        if (guess(mid) == 0) {
+            return mid;
+        } else {
+            if (guess(mid) == 1) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+    }
+
+    return -1;
+}</code></pre>
+
+</section>
+<section	id="searchinrotatedsortedarray">
+<h4>Search in Rotated Sorted Array</h4>
+
+<blockquote>
+<p>There is an integer array nums sorted in ascending order (with distinct values). </p>
+
+<p>Prior to being passed to your function, nums is possibly rotated at an unknown pivot index <code>k</code>. </p>
+
+<p>Given the array <code>nums</code> after the possible rotation and an integer <code>target</code>, return the index of <code>target</code> if it is in nums, or <code>-1</code> if it is not in nums.</p>
+</blockquote>
+
+<p>This is a classic &#8220;half-ordered&#8221; problem. The key is to check which part is ordered given <code>left</code>, <code>pivot</code>, and <code>right</code>.</p>
+<pre><code class="cpp">int searchRotatedArrHelper(vector&lt;int&gt;&amp; nums, int target, int left, int right) {
+    if (left &gt; right) return -1;
+    int mid = left + ((right - left) &gt;&gt; 1);
+    if (nums[mid] == target) {
+        return mid;
+    } else {
+        if (nums[mid] &gt;= nums[left]) {
+            if ((target &lt; nums[mid]) &amp;&amp; (target &gt;= nums[left])) {
+                // left half is ordered
+                return bsearchHelper(nums, target, left, mid-1);
+            } else {
+                return searchRotatedArrHelper(nums, target, mid+1, right);
+            } 
+        } else {
+            if ((target &gt; nums[mid]) &amp;&amp; (target &lt;= nums[right])) {
+                // right half is ordered
+                return bsearchHelper(nums, target, mid+1, right);
+            } else {
+                return searchRotatedArrHelper(nums, target, left, mid-1);
+            }
+        }
+    }
+}
+
+/**
+ * @brief binary search in a rotated sorted array.
+ *
+ * ex&gt;  4 ... 8 9 10 1 2 3
+ * case 1: pivot is 8 (nums[pivot] &gt; nums[left]), where the left part is ordered
+ *      ^-----^
+ * case 2: pivot is 2 (nums[pivot] &lt; nums[left]), where the right part is ordered
+ *                     ^-^
+ *
+ * @param nums
+ * @param target
+ * @return int
+ */
+int searchRotatedArr(vector&lt;int&gt;&amp; nums, int target) {
+    return searchRotatedArrHelper(nums, target, 0, nums.size()-1);
+}</code></pre>
+
+</section>
+</section>
+<section	id="templateii">
+<h3>Template II</h3>
+
+<p>This version of binary search defines search range as <code>[left, right)</code> different from template I <code>[left, right]</code>.</p>
+<pre><code class="cpp">int binarySearch(vector&lt;int&gt;&amp; nums, int target){
+    if (nums.size() == 0)
+        return -1;
+
+    int left = 0, right = nums.size();
+    while (left &lt; right) {
+        int mid = left + ((right - left) &gt;&gt; 1);
+        if (nums[mid] == target) { 
+            return mid; 
+        } else {
+            if (nums[mid] &lt; target) {
+                left = mid + 1; 
+            } else {
+                right = mid;
+            }
+        }
+  }
+
+  // Post-processing:
+  // End Condition: left == right
+  // Note: left may be nums.size(), which should be excluded
+  if(left != nums.size() &amp;&amp; nums[left] == target) return left;
+  return -1;
+}</code></pre>
+
+<p>There are something to note:</p>
+
+<ul>
+<li>Guarantees Search Space is at least 2 in size at each step.</li>
+<li>Post-processing required. Loop/Recursion ends when you have 1 element left (<code>left == right</code>). Need to assess if the remaining element meets the condition.</li>
+<li>Use the element&#8217;s right neighbor to determine if the condition is met and decide whether to go left or right. (See find peek)</li>
+</ul>
+<pre><code class="cpp">// say 
+left = 4, right = 5
+// we got:
+// it is found that mid always points to the left when left and right have distance 
+// of 1.  
+mid = left + ((right - left) &gt;&gt; 1) = 4
+// two cases for recursion
+// case 1: search in right half, left and right becomes 5 (which is the right)
+left = mid + 1 = 5
+// case 2: search in left half, left and right becomes 4 (which is the left)
+right = mid = 4</code></pre>
+
+</section>
+<section	id="firstbadversion">
+<h3>First Bad Version</h3>
+
+<blockquote>
+<p>You are a product manager and currently leading a team to develop a new product. Unfortunately, the latest version of your product fails the quality check. Since each version is developed based on the previous version, all the versions after a bad version are also bad. </p>
+
+<p>Suppose you have n versions <code>[1, 2, ..., n]</code> and you want to find out the first bad one, which causes all the following ones to be bad. </p>
+
+<p>You are given an API <code>bool isBadVersion(version)</code> which returns whether version is bad. Implement a function to find the first bad version. You should minimize the number of calls to the API.</p>
+</blockquote>
+
+<p>The one of benefits of template II is it enables us to search until only one element left in the array.</p>
+<pre><code class="cpp">/**
+ * @brief We will solve the same problem with another form of binary search, which
+ * will find until there is only one element left. [left, right)
+ * 
+ * Observations:
+ * 1. if current version is good, then all versions before it are good.
+ * 2. if current version is bad, then all following versions are bad.
+ * 
+ * @param n 
+ * @return int 
+ */
+int firstBadVersionII(int n) {
+    if (n &lt;= 0) return -1;
+    unsigned int left = 0;
+    unsigned int right = (unsigned int)n + 1;
+    unsigned int mid = 0;
+    while (left &lt; right) {
+        mid = left + ((right - left) &gt;&gt; 1);
+        if (isBadVersion(mid)) {
+            // search left half, since observation 2
+            right = mid;
+        } else {
+            // search right half, observation 1
+            left = mid + 1;
+        }
+    }
+
+    // check if left is out of bound is MUST
+    if (left == (unsigned int)n + 1) return -1; // out of bound
+    if (isBadVersion(left)) {
+        return left;
+    } else {
+        return left + 1;
+    }
+}</code></pre>
+
+<ul>
+<li>When all numbers are non-negative, it is suggested to use <code>unsigned int</code> instead of <code>int</code> for solving a larger input.</li>
+</ul>
+
+<section	id="findpeekelement">
+<h4>Find Peek Element</h4>
+
+<blockquote>
+<p>A peak element is an element that is strictly greater than its neighbors. </p>
+
+<p>Given an integer array <code>nums</code>, find a peak element, and return its index. If the array contains multiple peaks, return the index to any of the peaks. </p>
+
+<p>You may imagine that <code>nums[-1] = nums[n] = -∞</code>. </p>
+
+<p>You must write an algorithm that runs in <code>O(log n)</code> time.</p>
+</blockquote>
+<pre><code class="cpp">/**
+ * @brief we solve the problem with template 2. Note that we need to locate a point,
+ * That&apos;s what template 2 is good at. We just need to find divide conditions.
+ * 
+ * - if right &gt; current, search right half
+ * - otherwise, search left half
+ * 
+ * @param nums 
+ * @return int 
+ */
+int findPeakElementII(vector&lt;int&gt;&amp; nums) {
+    int left = 0;
+    int right = nums.size() - 1;
+    int mid = 0;
+    // while there are more than one elements in the array
+    while (left &lt; right) {
+        mid = left + ((right - left) &gt;&gt; 1); // always choose left one
+        if (nums[mid] &gt; nums[mid+1]) { // right-conditional
+            right = mid;
+        } else {
+            left = mid + 1;
+        }
+    }
+
+    return left;
+}</code></pre>
+
+<p><strong>Explanation:</strong> why there is no out-of-boundary problem?</p>
+
+<ul>
+<li>First, if there is only one element left, it will jump out of the while loop.</li>
+<li>Second, if there are two elements, it always chooses the left one (since the divide operation in C++).</li>
+<li>Last, if there are more than two elements, the last one cannot be choose. (The last one can only be chosen in two cases above).</li>
+</ul>
+
+</section>
+<section	id="findminimuminrotatedsortedarray">
+<h4>Find Minimum in Rotated Sorted Array</h4>
+
+<blockquote>
+<p>Suppose an array of length n sorted in ascending order is rotated between 1 and <code>n</code> times. For example, the array <code>nums = [0,1,2,4,5,6,7]</code> might become: </p>
+
+<ul>
+<li><code>[4,5,6,7,0,1,2]</code> if it was rotated 4 times.</li>
+<li><code>[0,1,2,4,5,6,7]</code> if it was rotated 7 times.</li>
+</ul>
+
+<p>Given the sorted rotated array nums of unique elements, return the minimum element of this array. </p>
+
+<p>You must write an algorithm that runs in O(log n) time.</p>
+</blockquote>
+
+<p>The idea is the minimum follows &#8216;injection point&#8217;, which is defined as <code>[max(nums), min(nums)]</code></p>
+<pre><code class="cpp">/**
+ * @brief find minimum number in a rotated array.
+ * 
+ * ex&gt; 4 5 6 1 3
+ * 
+ * Notice: the rotated array consists of two ordered sequence and a infection point.
+ * On the infection point (6 -&gt; 1), the order is reversed and the minimum is after
+ * infection point.
+ * 
+ * How to find infection point?
+ * 
+ * - if nums[mid] &gt; nums[left], infection point is on the right half.
+ * - if otherwise, infection point is on the left half.
+ * - if nums[mid-1] &gt; nums[mid] or nums[mid] &gt; nums[mid+1], it is found.
+ * 
+ * @param nums 
+ * @return int 
+ */
+int findMin(vector&lt;int&gt;&amp; nums) {
+    int left = 0;
+    int right = nums.size() - 1;
+
+    // if last number is greater than first number, no rotation
+    if (nums[right] &gt; nums[left]) return nums[left];
+    
+    int mid = 0;
+    while (left &lt; right) {
+        mid = left + ((right - left) &gt;&gt; 1);
+        if ((mid &gt; 0) &amp;&amp; (nums[mid-1] &gt; nums[mid])) {
+            return nums[mid];
+        }
+        if (((mid + 1) &lt; nums.size()) &amp;&amp; (nums[mid] &gt; nums[mid+1])) {
+            return nums[mid+1];
+        }
+        if (nums[mid] &gt; nums[left]) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+
+    // no infection point found, meaning rotate step is 0
+    return nums[0];
+}</code></pre>
+
+<p>And there is another way to solve the problem.</p>
+<pre><code class="cpp">/**
+ * ex&gt; 11, 13, 14, 1, 2, 5, 7
+ *     left       min
+ *     mid     mid      mid
+ * There are three cases:
+ * 1. nums[mid] == nums[left], left = mid + 1
+ * 2. nums[mid] &gt; nums[left], left = mid + 1
+ * 3. nums[mid] &lt; nums[left], nums[mid] may be the answer and so right = mid.
+ */
+int findMin(vector&lt;int&gt;&amp; nums) {
+    int left = 0;
+    int right = nums.size() - 1;
+
+    int mid = 0;
+    while (left &lt; right) {
+        if (nums[right] &gt; nums[left]) return nums[left];
+        mid = left + ((right - left) &gt;&gt; 1);
+        if (nums[mid] &lt; nums[left]) {
+            right = mid;
+        } else {
+            left = mid + 1;
+        }
+    }
+    
+    return nums[left];
+}</code></pre>
+
+</section>
+<section	id="findminimuminrotatedsortedarrayii">
+<h4>Find Minimum in Rotated Sorted Array II</h4>
+
+<blockquote>
+<p>When there are duplicates in the <code>nums</code>, what&#8217;s the solution to find the minimum?</p>
+</blockquote>
+
+<p>The solution to duplicates is exactly same as the idea of the second solution above. But we need to be careful to the condition when <code>nums[mid] == nums[left]</code>, in which case the target must be on the left of <code>nums[left]</code>.</p>
+<pre><code class="cpp">// 10, 12, 1, 10, 10, 10
+// left   min     mid
+// when nums[mid] == nums[left], we need to find the last number of duplicates, which
+// happens to be nums[left]. So we can move mid to left and proceed as we did before.
+if (nums[mid] == nums[left]) {
+    left += 1 // ==== mid = left; left = mid + 1;
+}</code></pre>
+<pre><code class="cpp">/**
+ * Following algorithm only works in rotated array. So we need to check if the nums is
+ * in order. If so, just return the first element.
+ * 
+ * ex&gt; 11, 13, 14, 1, 2, 5, 7
+ *     left       min
+ *     mid     mid      mid
+ * 
+ * There are three cases:
+ * 1. nums[mid] == nums[left], left = left + 1
+ * 2. nums[mid] &gt; nums[left], left = mid + 1
+ * 3. nums[mid] &lt; nums[left], nums[mid] may be the answer and so right = mid.
+ */
+int findMin(vector&lt;int&gt;&amp; nums) {
+    int left = 0;
+    int right = nums.size() - 1;
+
+    int mid = 0;
+    while (left &lt; right) {
+        if (nums[right] &gt; nums[left]) return nums[left];
+        mid = left + ((right - left) &gt;&gt; 1);
+        if (nums[mid] == nums[left]) {
+            left += 1;
+        } else {
+            if (nums[mid] &lt; nums[left]) {
+                right = mid;
+            } else {
+                left = mid + 1;
+            }
+        }
+    }
+    
+    return nums[left];
+}</code></pre>
+
+</section>
+</section>
+<section	id="templateiii">
+<h3>Template III</h3>
+<pre><code class="cpp">int binarySearch(vector&lt;int&gt;&amp; nums, int target){
+    if (nums.size() == 0)
+        return -1;
+
+    int left = 0
+    int right = nums.size() - 1;
+    while (left + 1 &lt; right) {   // &lt;-- condition
+        int mid = left + ((right - left) &gt;&gt; 1);
+        if (nums[mid] == target) {
+            return mid;
+        } else {
+            if (nums[mid] &lt; target) {
+                left = mid;      // &lt;-- change of boundary
+            } else {
+                right = mid;
+            }
+        }
+    }
+
+    // Post-processing:
+    // End Condition: left + 1 == right
+    if (nums[left] == target) return left;
+    if (nums[right] == target) return right;
+    return -1;
+}</code></pre>
+
+<p>features:</p>
+
+<ul>
+<li>Guarantees Search Space is at least 3 in size at each step.</li>
+<li>Post-processing required. Loop/Recursion ends when you have 2 elements left. Need to assess if the remaining elements meet the condition.</li>
+</ul>
+
+<section	id="searchforarange">
+<h4>Search for a Range</h4>
+
+<blockquote>
+<p>Given an array of integers <code>nums</code> sorted in non-decreasing order, find the starting and ending position of a given target value. </p>
+
+<p>If target is not found in the array, return <code>[-1, -1]</code>. </p>
+
+<p>You must write an algorithm with <code>O(log n)</code> runtime complexity.</p>
+</blockquote>
+
+<p>To search a range, we can search leftmost index of the target and rightmost index of the target if it exists.</p>
+
+<ul>
+<li>Leftmost search:</li>
+</ul>
+<pre><code class="cpp">    int left = 0;
+    int right = nums.size() - 1;
+    int mid = 0;
+    while (left &lt; right) {
+        mid = left + ((right - left) &gt;&gt; 1);
+        if (target &lt;= nums[mid]) {
+            // left half search
+            right = mid;
+        } else {
+            left = mid + 1;
+        }
+    }
+    if (nums[left] == target) result[0] = left;</code></pre>
+
+<p>Notice when we search the index of leftmost target, the condition is <code>target &lt;= nums[mid]</code>, which means we need to search left half even <code>target == nums[mid]</code>. In that case, we move right boundary as small as possible <code>right = mid</code>. When <code>target &gt; nums[mid]</code>, we know that <code>mid</code> is not the answer and just <code>left = mid + 1</code>. <strong>One side benefit of <code>left = mid + 1</code>, it will move left back to the first element (<code>nums[mid+1]</code>), and keep the final left point to the first target element.</strong> The loop condition in this case is <code>left &lt; right</code>, which means we want left and right boundary will converge to one point.</p>
+
+<ul>
+<li>Rightmost search:</li>
+</ul>
+<pre><code class="cpp">    // find the rightmost
+    // if target &lt;= nums[mid], left half search. (target == left, left half search)
+    // otherwise, right half search
+    left = 0;
+    right = nums.size() - 1;
+    while (left &lt; right) {
+        mid = left + ((right - left + 1) &gt;&gt; 1); // +1 is important for left == right-1
+        if (target &gt;= nums[mid]) {
+            // right half search
+            left = mid;
+        } else {
+            right = mid - 1;
+        }
+    }
+    if (nums[left] == target) result[1] = left;</code></pre>
+
+<p>As a counterpart, when we search the index of rightmost target, the condition becomes <code>target &gt;= nums[mid]</code> and we will move right as carefully as possible <code>left = mid</code>. With the same idea before, <code>right = mid - 1</code> will give us a desired property, one that keep <code>nums[left]</code> or <code>nums[right]</code> to be the last target element. Another distinction is loop condition (<code>left + 1 &lt; right</code>) which means the loop will continue if there are at least three elements in the search range.</p>
+
+</section>
+<section	id="findkclosestelements">
+<h4>Find K Closest Elements</h4>
+
+<blockquote>
+<p>Given a sorted integer array <code>arr</code>, two integers k and x, return the k closest integers to x in the array. The result should also be sorted in ascending order. </p>
+
+<p>An integer a is closer to x than an integer b if: </p>
+
+<ul>
+<li><code>|a - x| &lt; |b - x|</code>, or</li>
+<li><code>|a - x| == |b - x|</code> and <code>a &lt; b</code></li>
+</ul>
+
+<p>x is not necessarily in the <code>arr</code>.</p>
+</blockquote>
+
+<ul>
+<li>We will use find the k closest elements by binary search plus slide window.</li>
+</ul>
+<pre><code class="cpp">/**
+ * @brief return k closet numbers in the arr to x, nums is sorted in ascending order.
+ * The idea is 1. finding x or the element closest to x first and 2. searching
+ * bidirectionally starting from that point.
+ * @param arr
+ * @param k
+ * @param x
+ * @return vector&lt;int&gt;
+ */
+vector&lt;int&gt; findClosestElements(vector&lt;int&gt;&amp; arr, int k, int x) {
+    // base case: k == arr.size()
+    if (arr.size() == k) {
+        vector&lt;int&gt; ret(arr.begin(), arr.end());
+        sort(ret.begin(), ret.end());
+        return ret;
+    }
+
+    // find the first one or first closest one
+    // the closet will be in either arr[left] or arr[left-1]
+    int left = 0;
+    int right = arr.size() - 1;
+    int mid = 0;
+    while (left &lt; right) {
+        mid = left + ((right - left) &gt;&gt; 1);
+        if (x &lt;= arr[mid]) {
+            right = mid;
+        } else {
+            left = mid + 1;
+        }
+    }
+
+    // search bidirectionally
+    // notice that: we cannot decide left or left - 1 is the closest
+    vector&lt;int&gt; result;
+    int l = left - 1;
+    int r = left;
+    int min = 0;
+    while (result.size() &lt; k) {
+        // no nums available
+        if ((l &lt; 0) &amp;&amp; (r &gt;= arr.size())) {
+            break;
+        }
+        // only right
+        if (l &lt; 0) {
+            result.push_back(arr[r]);
+            r++;
+            continue;
+        }
+        // only left
+        if (r &gt;= arr.size()) {
+            result.push_back(arr[l]);
+            l--;
+            continue;
+        }
+        // both exist
+        if (abs(arr[l] - x) &gt; abs(arr[r] - x)) {
+            // right win
+            result.push_back(arr[r]);
+            r++;
+        } else {
+            result.push_back(arr[l]);
+            l--;
+        }
+    }
+
+    sort(result.begin(), result.end());
+
+    return result;
+}</code></pre>
+
+<ul>
+<li>The second solution is called binary range search. We are concentrated on find left boundary of the range of the answer.</li>
+</ul>
+
+<p>We can actually find the bounds of our sliding window much faster - and independent of <code>k</code>! First of all, what is the biggest index the left bound could be? If there needs to be <code>k</code> elements, then the left bound&#8217;s upper limit is <code>arr.length - k</code>, because if it were any further to the right, you would run out of elements to include in the final answer.</p>
+
+<p>Let&#8217;s consider two indices at each binary search operation, the usual <code>mid</code>, and some index <code>mid + k</code>. The relationship between these indices is significant because only one of them could possibly be in a final answer. For example, if <code>mid = 2</code>, and <code>k = 3</code>, then <code>arr[2]</code> and <code>arr[5]</code> could not possibly both be in the answer, since that would require taking 4 elements <code>[arr[2], arr[3], arr[4], arr[5]]</code>. To be short, our solution range is <code>[mid, mid + k)</code>.</p>
+
+<p>This leads us to the question: how do we move our pointers left and right? If the element at <code>arr[mid]</code> is closer to <code>x</code> than <code>arr[mid + k]</code>, then that means <strong><code>arr[mid + k]</code>, as well as every element to the right of it can never be in the answer</strong>. This means we should <strong>move our right pointer</strong> to avoid considering them. The logic is the same vice-versa - if <code>arr[mid + k]</code> is closer to <code>x</code>, then move the left pointer.</p>
+<pre><code class="cpp">vector&lt;int&gt; findClosestElementsII(vector&lt;int&gt;&amp; arr, int k, int x) {
+    int left = 0;
+    int right = arr.size() - k;
+    int mid = 0;
+    // find left boundary: converge to an point
+    while (left &lt; right) {
+        mid = left + ((right - left) &gt;&gt; 1);
+        if (abs(arr[mid] - x) &gt; abs(arr[mid+k] - x)) {
+            // move left
+            left = mid + 1;
+        }  else {
+            right = mid;
+        }
+    }
+
+    vector&lt;int&gt; result;
+    for (int i = left; i &lt; left + k; i++) {
+        result.push_back(arr[i]);
+    }
+
+    return result;
+}</code></pre>
+
+</section>
+<section	id="closestbinarysearchtree">
+<h4>Closest Binary Search Tree</h4>
+
+<blockquote>
+<p>Given the root of a binary search tree and a target value, return the value in the BST that is closest to the target.</p>
+</blockquote>
+
+<p>The essence of binary search is a binary search tree. A process of binary search can be represented with a binary search tree.</p>
+<pre><code class="cpp">/**
+ * @brief find the closest number in BST to target number. Binary search and track closest 
+ * value.
+ * 
+ * The nature of binary search tree (BST) is range search.
+ *  
+ * @param root
+ * @param target
+ * @return int
+ */
+int closestValue(TreeNode* root, double target) {
+    if (root == nullptr) return -1;
+    
+    int closest = INT_MAX;
+    double diff = INT_MAX; // = abs(target - closest), diff CANNOT be int but double
+    TreeNode* p = root;
+    while (p != nullptr) {
+        if (p-&gt;val == target) {
+            return p-&gt;val;
+        } else {
+            // update closest
+            double p_diff = abs(target - p-&gt;val);
+            if (p_diff &lt; diff) {
+                closest = p-&gt;val;
+                diff = p_diff;
+            }
+
+            if (p-&gt;val &gt; target) {
+                p = p-&gt;left;
+            } else {
+                p = p-&gt;right;
+            }
+        }
+    }
+    return closest;
+}</code></pre>
+
+</section>
+<section	id="searchinasortedarrayofunknownsize">
+<h4>Search in a Sorted Array of Unknown Size</h4>
+
+<blockquote>
+<p>You have a sorted array of unique elements and an unknown size. You do not have an access to the array but you can use the ArrayReader interface to access it. You can call <code>ArrayReader.get(i)</code> that: </p>
+
+<ul>
+<li>returns the value at the ith index (0-indexed) of the secret array (i.e., <code>secret[i]</code>), or</li>
+<li>returns 2<sup>31</sup> - 1 if the i is out of the boundary of the array.</li>
+</ul>
+
+<p>You are also given an integer target. </p>
+
+<p>Return the index <code>k</code> of the hidden array where <code>secret[k] == target</code> or return <code>-1</code> otherwise.</p>
+</blockquote>
+
+<p>Notice <code>1 &lt;= secret.length &lt;= 10^4</code></p>
+<pre><code class="cpp">/**
+ * @brief search leftmost method
+ *
+ * @param reader
+ * @param target
+ * @return int
+ */
+int searchII(const ArrayReader&amp; reader, int target) {
+    int left = 0;
+    int right = 1e4;
+    int mid = 0;
+    while (left &lt; right) {
+        mid = left + ((right - left) &gt;&gt; 1);
+
+        if (reader.get(mid) &gt;= target) {
+            right = mid;
+        } else {
+            left = mid + 1;
+        }
+    }
+    if (reader.get(left) == target) return left;
+    return -1;
+}</code></pre>
+
+</section>
+<section	id="validperfectsquare">
+<h4>Valid Perfect Square</h4>
+
+<blockquote>
+<p>Given a positive integer <code>num</code>, write a function which returns <code>True</code> if <code>num</code> is a perfect square else <code>False</code>. </p>
+
+<p>Follow up: Do not use any built-in library function such as sqrt.</p>
+</blockquote>
+
+<p>Same idea with <code>MySqrt(int x)</code>.</p>
+<pre><code class="cpp">/**
+ * @brief True if num is a perfect square
+ * The idea is same to find sqrt of num.
+ */
+bool isPerfectSquare(int num) {
+    long left = 1;
+    int right = num;
+    long mid = 1;
+    while (left &lt; right) {
+        mid = left + ((right - left) &gt;&gt; 1);
+        if (mid * mid &gt;= num) {   // overflow warning
+            right = mid;
+        } else {
+            left = mid + 1;
+        }
+    }
+
+    if (left * left == num) return true;   // overflow warning
+    return false;
+}</code></pre>
+
+</section>
+<section	id="findsmallestlettergreaterthantarget">
+<h4>Find Smallest Letter Greater than Target</h4>
+
+<blockquote>
+<p>Given a characters array <code>letters</code> that is sorted in <strong>non-decreasing</strong> order and a character <code>target</code>, return the smallest character in the array that is larger than <code>target</code>. </p>
+
+<p>Note that the letters wrap around (circular). </p>
+
+<ul>
+<li>For example, if <code>target == 'z'</code> and <code>letters == ['a', 'b']</code>, the answer is <code>'a'</code>.</li>
+</ul>
+</blockquote>
+<pre><code class="cpp">/**
+ * @brief return the next smallest number greater than target.
+ * 1. find rightmost letter that equals target
+ * 2. if letters[left] &lt;= target, return rightmost letter + 1
+ * @param letters
+ * @param target
+ * @return char
+ */
+char nextGreatestLetter(vector&lt;char&gt;&amp; letters, char target) {
+    int left = 0;
+    int right = letters.size() - 1;
+    int mid = 0;
+    while (left &lt; right) {
+        mid = left + ((right - left + 1) &gt;&gt; 1);
+        if (letters[mid] &lt;= target) {
+            left = mid;
+        } else {
+            right = mid - 1;
+        }
+    }
+
+    // letters[left] has three possible outcome:
+    // 1. letters[left] &gt; target, when target is smaller than the smallest element of
+    // letters.
+    // 2. letters[left] == target, left must be the rightmost target.
+    // 3. letters[left] == biggest one smaller than target when target is bigger than all
+    // the elements of letters.
+    if (letters[left] &gt; target) {
+        return letters[left];
+    } else {
+        return letters[(left + 1) % letters.size()];
+    }
+}</code></pre>
+
+</section>
+<section	id="intersectionoftwoarrays">
+<h4>Intersection of Two Arrays</h4>
+
+<blockquote>
+<p>Given two integer arrays <code>nums1</code> and <code>nums2</code>, return an array of their intersection. Each element in the result must be unique and you may return the result in any order.</p>
+</blockquote>
+
+<p>The idea is straightforward:</p>
+
+<ul>
+<li>Sort the array with bigger size (N).</li>
+<li>Loop on the smaller one (M) and binary search on sorted array. Since the result should be unique, we can solve it by feed smaller array in an <code>unordered_set</code>.</li>
+</ul>
+<pre><code class="cpp">/**
+ * @brief return intersection of two arrays, elements of returned array should be unique.
+ * 1. Sort the array with bigger size (N).
+ * 2. Loop on the smaller one (M) and binary search on sorted array.
+ * 
+ * Time complexity: O(NlogN) + O(M*logN)
+ * @param nums1 
+ * @param nums2 
+ * @return vector&lt;int&gt; 
+ */
+vector&lt;int&gt; intersection(vector&lt;int&gt;&amp; nums1, vector&lt;int&gt;&amp; nums2) {
+    vector&lt;int&gt; result;
+    if (nums1.size() &lt; nums2.size()) {
+        sort(nums2.begin(), nums2.end());
+        unordered_set&lt;int&gt; unique(nums1.begin(), nums1.end());
+        for (int num : unique) {
+            if (bsearchHelper(nums2, num, 0, nums2.size()-1) != -1) {
+                result.push_back(num);
+            }
+        }
+    } else {
+        sort(nums1.begin(), nums1.end());
+        unordered_set&lt;int&gt; unique(nums2.begin(), nums2.end());
+        for (int num : unique) {
+            if (bsearchHelper(nums1, num, 0, nums1.size()-1) != -1) {
+                result.push_back(num);
+            }
+        }
+    }
+
+    return result;
+}</code></pre>
+
+</section>
+<section	id="intersectionoftwoarraysii">
+<h4>Intersection of Two Arrays II</h4>
+
+<blockquote>
+<p>Given two integer arrays nums1 and nums2, return an array of their intersection. Each element in the result must appear as many times as it shows in both arrays and you may return the result in any order.</p>
+</blockquote>
+
+<p>We will sort two arrays first and iterate them like <code>merge join</code> to get common elements. Also we can save space by utilizing one of two arrays.</p>
+<pre><code class="cpp">vector&lt;int&gt; intersectionII(vector&lt;int&gt;&amp; nums1, vector&lt;int&gt;&amp; nums2) {
+    sort(begin(nums1), end(nums1));
+    sort(begin(nums2), end(nums2));
+    int i = 0, j = 0, k = 0;
+    while (i &lt; nums1.size() &amp;&amp; j &lt; nums2.size()) {
+        if (nums1[i] &lt; nums2[j]) {
+            i++;
+        } else if (nums1[i] &gt; nums2[j]) {
+            j++;
+        } else {
+            nums1[k++] = nums1[i++];
+            j++;
+        }
+    }
+    return vector&lt;int&gt;(begin(nums1), begin(nums1) + k);
+}</code></pre>
+
+</section>
+<section	id="twosum">
+<h4>Two Sum</h4>
+
+<blockquote>
+<p>Given a 1-indexed array of integers <code>numbers</code> that is already sorted in non-decreasing order, find two numbers such that they add up to a specific target number. Let these two numbers be <code>numbers[index1]</code> and <code>numbers[index2]</code> where <code>1 &lt;= index1 &lt; index2 &lt;= numbers.length</code>. </p>
+
+<p>Return the indices of the two numbers, index1 and index2, added by one as an integer array <code>[index1, index2]</code> of length 2. </p>
+
+<p>The tests are generated such that there is exactly one solution. You may not use the same element twice.</p>
+</blockquote>
+
+<ul>
+<li>Two pointers: given the array is sorted, set two pointers, <code>min_ptr</code> and <code>max_ptr</code>, to search the result. The idea is based on the property of sorted array that two end values are extremes:
+
+<ul>
+<li>if <code>numbers[min_ptr] + numbers[max_ptr] &gt; target</code>, <code>numbers[max_ptr]</code> cannot be the result, since when it adds minimum of the array it is still greater than target.</li>
+<li>As a counterpart, if <code>numbers[min_ptr] + numbers[max_ptr] &lt; target</code> <code>numbers[min_ptr]</code> cannot be chosen as the result.</li>
+</ul></li>
+</ul>
+<pre><code class="cpp">/**
+ * @brief the property of sorted array. Two ends are extremes.
+ * 
+ * @param numbers 
+ * @param target 
+ * @return vector&lt;int&gt; 
+ */
+vector&lt;int&gt; twoSum(vector&lt;int&gt;&amp; numbers, int target) {
+    int min = 0, max = numbers.size() - 1;
+    while (min &lt; max) {
+        if (numbers[min] + numbers[max] == target) {
+            return {min+1, max+1};
+        }
+        else {
+            if (numbers[min] + numbers[max] &gt; target) {
+                max--;
+            } else {
+                min++;
+            }
+        }
+    }
+
+    return {-1, -1};
+}</code></pre>
+
+</section>
+<section	id="findtheduplicatenumber">
+<h4>Find the Duplicate Number</h4>
+
+<blockquote>
+<p>Given an array of integers nums containing <code>n + 1</code> integers where each integer is in the range <code>[1, n]</code> inclusive. </p>
+
+<p>There is only one repeated number in nums, return this repeated number. </p>
+
+<p>You must solve the problem without modifying the array nums and uses only constant extra space.</p>
+</blockquote>
+
+<p>The observation is the last duplicate number must break the rule of <code>nums[i] &lt;= countBeforeNumber(nums[i])</code>.</p>
+<pre><code class="cpp">/**
+ * @brief find duplicate numbers[1...n+1], only one duplicate number repeats m times.
+ * 
+ * count(n) returns the total number that&apos;s less than &apos;n&apos;
+ * ex&gt; 1 3 2 3 4 5  sort--&gt; 1 2 3 3 4 5
+ * count(1 2 3 3 4 5) -&gt; (1:1, 2:2, 3:4, 4:5, 5:6)
+ * 
+ * count(1 2 3 3 4 5) -&gt; (1:1, 3:3, 4:4, 5:5)
+ * 
+ * So the duplicate number breaks the rule of count(n) &lt;= n, and on the left of duplicate
+ * number are numbers follows the rule, and the others are not. Binary search comes into play.
+ * 
+ * @param nums 
+ * @return int 
+ */
+int findDuplicate(vector&lt;int&gt;&amp; nums) {
+    sort(nums.begin(), nums.end());
+    int left = 0, right = nums.size() - 1;
+    int mid = 0;
+    while (left &lt; right) {
+        mid = left + ((right - left + 1) &gt;&gt; 1);
+        if (nums[mid] &gt;= mid - 0 + 1) {
+            // n &gt;= count(n)
+            left = mid;
+        } else {
+            right = mid - 1;
+        }
+    }
+
+    return nums[left];
+}</code></pre>
+
+</section>
+<section	id="medianoftwosortedarrays">
+<h4>Median of Two Sorted Arrays</h4>
+
+<blockquote>
+<p>Given two sorted arrays <code>nums1</code> and <code>nums2</code> of size m and n respectively, return the median of the two sorted arrays. </p>
+
+<p>The overall run time complexity should be <code>O(log (m+n))</code>.</p>
+</blockquote>
+
+<p>The basic idea comes from horse race problem and one observation: <strong><code>k / 2</code> elements can be safely eliminated each time</strong>.</p>
+
+<p>To be more general, for <code>m</code> sorted arrays and finding kth element, <code>k / m</code> elements can be safely eliminated each time.</p>
+<pre><code class="cpp">/**
+ * @brief find kth number in two sorted array.
+ * How to decompose the problem of finding kth in two sorted array?
+ *
+ * ex&gt;  nums1: 1, 4, 5, 7, 10 (find k/2)
+ *      nums2: 2, 2, 5, 6 (find k/2)
+ *
+ * How finding k/2th in two arrays helps us?
+ * There are some cases to discuss:
+ * 1. nums1.size() &gt;= k/2 and nums2.size() &gt;= k/2. We can compare nums1[k/2] and
+ * nums2[k/2], and eliminate k/2 elements from smaller array based on the idea from horse
+ * race problem.
+ * 2. nums1.size() &lt; k/2, eliminate k/2 elements from nums2.size() and vice versa.
+ * 3. nums1.size() &lt; k/2, and nums2.size() &lt; k/2, CANNOT exists, since k is (sz1 + sz2) /
+ * 2
+ *
+ * @param nums1
+ * @param start1
+ * @param nums2
+ * @param start2
+ * @param k: 1-indexed
+ * @return double
+ */
+double findKthHelper(vector&lt;int&gt;&amp; nums1, int start1, vector&lt;int&gt;&amp; nums2, int start2,
+                     int k) {
+    if (start1 &gt;= nums1.size()) {
+        // no element in nums1, k is one-indexed
+        return nums2[start2 + k - 1];
+    }
+    if (start2 &gt;= nums2.size()) {
+        // no element in nums2
+        return nums1[start1 + k - 1];
+    }
+    if (k == 1) {
+        return min(nums1[start1], nums2[start2]);
+    }
+
+    int mid1 = start1 + k / 2 - 1;
+    int mid2 = start2 + k / 2 - 1;
+    // incorporate case 1 and case 2:
+    int val1 = mid1 &gt;= nums1.size() ? INT_MAX : nums1[mid1];
+    int val2 = mid2 &gt;= nums2.size() ? INT_MAX : nums2[mid2];
+    if (val1 &lt;= val2) {
+        return findKthHelper(nums1, mid1 + 1, nums2, start2, k - k / 2);
+    } else {
+        return findKthHelper(nums1, start1, nums2, mid2 + 1, k - k / 2);
+    }
+}
+
+/**
+ * @brief the more general question is finding kth value in two sorted array.
+ *
+ * @param nums1
+ * @param nums2
+ * @return double
+ */
+double findMedianSortedArrays(vector&lt;int&gt;&amp; nums1, vector&lt;int&gt;&amp; nums2) {
+    int len = nums1.size() + nums2.size();
+    if (len &amp; 1) {
+        // odd length
+        return findKthHelper(nums1, 0, nums2, 0, len / 2 + 1);
+    } else {
+        return 0.5 * (findKthHelper(nums1, 0, nums2, 0, len / 2) +
+                      findKthHelper(nums1, 0, nums2, 0, len / 2 + 1));
+    }
+}</code></pre>
+
+</section>
+<section	id="findk-thsmallestpairdistance">
+<h4>Find K-th Smallest Pair Distance</h4>
+
+<blockquote>
+<p>The distance of a pair of integers a and b is defined as the absolute difference between a and b. </p>
+
+<p>Given an integer array <code>nums</code> and an integer <code>k</code>, return the kth smallest distance among all the pairs <code>nums[i]</code> and <code>nums[j]</code> where <code>0 &lt;= i &lt; j &lt; nums.length</code>.</p>
+</blockquote>
+
+<p>This problem can be generalized as a template for finding kth element with binary search without having direct access to the array. We only know two things:</p>
+
+<ul>
+<li>the range of ordered array</li>
+<li>how many numbers less than given value returned by <code>prefixCount()</code>.</li>
+</ul>
+<pre><code class="cpp">// k is 1-indexed
+int findKthElement(int max, int min, int k) {
+    int left = min, right = max;
+    int mid = 0;
+    while (left &lt; right) {
+        mid = left + ((right - left) &gt;&gt; 1);
+        if (prefixCount(mid) &gt;= k-1) {
+            // the count of numbers less than mid is greater than k-1
+            right = mid;
+        } else {
+            left = mid + 1;
+        }
+    }
+
+    return left;
+}</code></pre>
+
+</section>
+<section	id="splitarraylargestsum">
+<h4>Split Array Largest Sum</h4>
+
+<blockquote>
+<p>Given an array nums which consists of non-negative integers and an integer m, you can split the array into m non-empty continuous subarrays. </p>
+
+<p>Write an algorithm to minimize the largest sum among these m subarrays.</p>
+</blockquote>
+
+<p>See the comment below.</p>
+<pre><code class="cpp">/**
+ * @brief In the section, we will solve spliting problem by dynamic programming.
+ *
+ * Define f as:
+ *   f(start, m) = minimum val of all spliting divisions.
+ *
+ * Deduction:
+ *   f(start, m) = min(max(f(start + i, m - 1), sum(start...i))), where i is possible
+ * offset. where i = [1, last].
+ *
+ * ex &gt; solve[0][2] =? max(solve[1][1], sum of [0, 1))
+ *                  =? max(solve[2][1], sum of [0, 2))
+ *                  =? ...
+ *                  =? max(solve[last][1], sum of [0, last))
+ *                  = MIN of all result above
+ *
+ * Base: return the sum of current array if &apos;m == 1&apos; or return the max of current array if
+ * &apos;m == size of current array&apos;.
+ *
+ * HelperFunction (Op): prefix_sum(int i), the sum of numbers before i in the array, we
+ * can cache the result in advance to avoid repeated calculation. With the helper of
+ * prefix_sum, we are able to calculate the sum of any range conveniently.
+ *
+ * ex&gt; sum of 2 to 4 included ==&gt; prefix_sum(5) - prefix_sum(2)
+ *     sum of [2, 5) ==&gt; prefix_sum(5) - prefix_sum(2)
+ *     sum of all ==&gt; prefix_sum(nums.size())
+ *
+ * @param nums
+ * @param m
+ * @return int
+ */
+int splitArrayII(vector&lt;int&gt;&amp; nums, int m) {
+    vector&lt;int&gt; prefix_sum(nums.size() + 1, 0);
+    // prefix_sum[0] = 0;
+    for (int i = 1; i &lt; prefix_sum.size(); i++) {
+        prefix_sum[i] = prefix_sum[i - 1] + nums[i - 1];
+    }
+
+    vector&lt;vector&lt;int&gt; &gt; solve(nums.size(), vector&lt;int&gt;(nums.size(), 0));
+    // init base case:
+    for (int start = 0; start &lt; nums.size(); start++) {
+        solve[start][1] = prefix_sum[nums.size()] - prefix_sum[start];
+    }
+
+    // deduction
+    for (int grp = 2; grp &lt;= nums.size(); grp++) {   // choice of m, # of subgroups
+        // notice the diagonal boundary has the property of grp + start == nums.size()
+        for (int start = 0; start &lt;= nums.size() - grp; start++) {
+            int min = INT_MAX;
+            // why &apos;nums.size() - start - grp + 1&apos;
+            // notice the diagonal boundary has the property of grp + start == nums.size()
+            // so far, grp = grp - 1, start = start, so we get the relationship.
+            for (int offset = 1; offset &lt;= nums.size() - start - grp + 1; offset++) {
+                int rangeSum = prefix_sum[start + offset] - prefix_sum[start];
+                int cur = max(solve[start + offset][grp - 1], rangeSum);
+                if (cur &lt; min) min = cur;
+            }
+            solve[start][grp] = min;
+        }
+    }
+
+    return solve[0][m];
+}</code></pre>
+
+</section>
+</section>
+</section>
+<p><EndMarkdown></p>

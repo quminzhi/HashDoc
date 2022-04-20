@@ -1,0 +1,849 @@
+{% load static %}
+
+<!-- Insert title here -->
+
+<h1 id="heap">Heap</h1>
+
+<h2 id="tableofcontents">Table of Contents</h2>
+
+<ul>
+<li><a href="#propertyofheap">Property of Heap</a>
+
+<ul>
+<li><a href="#buildheap">Build Heap</a></li>
+</ul></li>
+<li><a href="#operation">Operation</a>
+
+<ul>
+<li><a href="#insertion">Insertion</a></li>
+<li><a href="#deletion">Deletion</a></li>
+</ul></li>
+<li><a href="#implementation">Implementation</a></li>
+<li><a href="#application">Application</a>
+
+<ul>
+<li><a href="#heapsort">Heap Sort</a></li>
+<li><a href="#topkfrequentelements">Top K Frequent Elements</a></li>
+<li><a href="#kthlargestelement">Kth Largest Element</a></li>
+<li><a href="#laststoneweight">Last Stone Weight</a></li>
+<li><a href="#thekweakestrowsinamatrix">The K Weakest Rows in a Matrix</a></li>
+<li><a href="#kthsmallestelementinasortedmatrix">Kth Smallest Element in a Sorted Matrix</a></li>
+<li><a href="#meetingroomsii">Meeting Rooms II</a></li>
+<li><a href="#kclosestpointtoorigin">K Closest Point to Origin</a></li>
+<li><a href="#minimumcosttoconnectsticks">Minimum Cost to Connect Sticks</a></li>
+<li><a href="#furthestbuilding">Furthest Building</a></li>
+<li><a href="#findmedianfromdatastream">Find Median from Data Stream</a></li>
+</ul></li>
+</ul>
+
+<p><TableEndMark></p>
+<!-- DO NOT ADD EndOfTable MANUALLY -->
+
+<section	id="propertyofheap">
+<h2>Property of Heap</h2>
+
+<p>Heap is a binary tree with following properties:</p>
+
+<ul>
+<li>It is <strong>a complete tree</strong>: A complete binary tree is a binary tree in which every level, except possibly the last, is completely filled, and all nodes are as far left as possible. (FYI, A full binary tree is a tree in which every node other than the leaves has two children.)</li>
+<li>Min-heap: for each node, its left child and right child are smaller than it.</li>
+<li>Max-heap: for each node, its left and right children are greater than it.</li>
+</ul>
+
+<section	id="buildheap">
+<h3>Build Heap</h3>
+
+<p>There are two ways to build heap:</p>
+
+<ul>
+<li><code>siftDown</code> swaps a node that is too small with its largest child (thereby moving it down) until it is at least as large as both nodes below it.</li>
+<li><code>siftUp</code> swaps a node that is too large with its parent (thereby moving it up) until it is no larger than the node above it.</li>
+</ul>
+
+<p>Why building a heap with <code>sift down</code> approach has time complexity of <code>O(N)</code>.</p>
+
+<p><a href="https://stackoverflow.com/questions/9755721/how-can-building-a-heap-be-on-time-complexity#:~:text=Heapify%20is%20O(n)%20when,O(n%20log%20n)%20.">Time complexity analysis of building a heap</a></p>
+<pre><code class="cpp">/**
+ * @brief Construct a new Heap:: Heap object
+ * The tree is built with the &apos;sift down&apos; approach, which has the time complexity of O(N)
+ * 
+ * Notice the order of sift down. The idea is somewhat like dynamic algorithm, keep the 
+ * property of min heap from bottom to top.
+ * 
+ * @param _heap 
+ */
+Heap::Heap(vector&lt;int&gt; _heap) {
+    this-&gt;capacity = this-&gt;INIT_CAPACITY;
+    this-&gt;heap.resize(this-&gt;capacity, 0);
+    int size = _heap.size();
+    while (size &gt;= this-&gt;capacity) {
+        expandHeap();
+    }
+    // copy
+    this-&gt;heapSize = size;
+    for (int i = 0; i &lt; size; i++) {
+        this-&gt;heap[i] = _heap[i];
+    }
+    // update every node within the heap in &apos;sift down&apos; strategy
+    int root, left, right;
+    for (int i = this-&gt;heapSize - 1; i &gt;= 0 ; i--) {
+        root = i;
+        while (true) {
+            left = 2 * root + 1;
+            right = 2 * root + 2;
+            // case 1: no child
+            if ((left &gt;= this-&gt;heapSize) &amp;&amp; (right &gt;= this-&gt;heapSize)) {
+                break;
+            }
+            // case 2: left child only
+            if ((right &gt;= this-&gt;heapSize) &amp;&amp; (this-&gt;heap[root] &gt; this-&gt;heap[left])) {
+                swap(this-&gt;heap[root], this-&gt;heap[left]);
+                root = left; // update pointer
+                continue;
+            }
+            // case 3: left and right child
+            int min = this-&gt;heap[left] &gt; this-&gt;heap[right] ? right : left;
+            if (this-&gt;heap[root] &gt; this-&gt;heap[min]) {
+                swap(this-&gt;heap[root], this-&gt;heap[min]);
+                root = min;
+                continue;
+            }
+
+            // otherwise: root is at correct index
+            break;
+        }
+    }
+}</code></pre>
+
+</section>
+</section>
+<section	id="operation">
+<h2>Operation</h2>
+
+<p>We will take min-heap as an example.</p>
+
+<section	id="insertion">
+<h3>Insertion</h3>
+
+<p>Insertion means adding an element to the Heap. After inserting the element, the properties of the Heap should remain unchanged.</p>
+
+<ul>
+<li>Insert node to next index to meet the criteria of a complete tree.</li>
+<li>Update along its ancestor to meet the property of min-heap.</li>
+</ul>
+<pre><code class="cpp">/**
+ * @brief push an element into the heap.
+ * 1. put it into the last index of the heap.
+ * 2. update along its search path.
+ *
+ * @param val 
+ */
+void Heap::push(int val) {
+    // Corner case: the first element
+    if (this-&gt;heapSize == 0) {
+        this-&gt;heap[0] = val;
+        this-&gt;heapSize++;
+        return;
+    }
+
+    // check availability
+    while (this-&gt;heapSize &gt;= this-&gt;capacity) {
+        expandHeap();
+    }
+
+    // insert to the last index
+    this-&gt;heap[this-&gt;heapSize] = val;
+    this-&gt;heapSize++;
+
+    // update
+    int ptr = this-&gt;heapSize - 1;
+    int parent = (ptr - 1) / 2;
+    while ((ptr != 0) &amp;&amp; (this-&gt;heap[ptr] &lt; this-&gt;heap[parent])) {
+        // exchange and update ptr
+        swap(this-&gt;heap[ptr], this-&gt;heap[parent]);
+        ptr = parent;
+        parent = (ptr - 1) / 2;
+    }
+}</code></pre>
+
+</section>
+<section	id="deletion">
+<h3>Deletion</h3>
+
+<p>Deletion means removing the “top” element from the Heap. After deleting the element, the property of Heap should remain unchanged.</p>
+
+<ul>
+<li>Delete the top node (root), the minimum number in the tree.</li>
+<li>Put the last node to the root. Why? because the last node must be a leaf node, it is convenient to move it.</li>
+<li>Update the tree to meet the property of min-heap. To be specific: compare changed node to its children and exchange with its smallest child recursively until it is the smallest.</li>
+</ul>
+<pre><code class="cpp">int Heap::pop() {
+    int popped = 0;
+    // Corner case: only one element left
+    if (this-&gt;heapSize == 1) {
+        this-&gt;heapSize--;
+        return this-&gt;heap[0];
+    }
+
+    // move the last node to the root of heap
+    popped = this-&gt;heap[0];
+    this-&gt;heap[0] = this-&gt;heap[this-&gt;heapSize-1];
+    this-&gt;heapSize--;
+
+    // update heap
+    int root = 0;
+    int left = 0;
+    int right = 0;
+    while (true) {
+        // if left child exists, check property
+        left = 2 * root + 1;
+        if ((left &lt; this-&gt;heapSize) &amp;&amp; (this-&gt;heap[left] &lt; this-&gt;heap[root])) {
+            swap(this-&gt;heap[root], this-&gt;heap[left]);
+            root = left;
+            continue;
+        }
+        // if right child exists, check property
+        right = 2 * root + 2;
+        if ((right &lt; this-&gt;heapSize) &amp;&amp; (this-&gt;heap[right] &lt; this-&gt;heap[root])) {
+            swap(this-&gt;heap[root], this-&gt;heap[right]);
+            root = right;
+            continue;
+        }
+        // root is the smallest, well done
+        break;
+    }
+
+    return popped;
+}</code></pre>
+
+</section>
+</section>
+<section	id="implementation">
+<h2>Implementation</h2>
+
+<p>Considered that heap is a complete tree, it is possible to build a complete tree with an array.</p>
+
+<p>Benefits of implementing a tree with an array:</p>
+
+<ul>
+<li>the relationship is described in index rather than pointer. For zero-indexed array, parent = <code>(i - 1) / 2</code>, left child = <code>(2 * i) + 1</code>, and right child = <code>(2 * i) + 2</code>.</li>
+<li>all elements are put in the memory in a sequence.</li>
+</ul>
+
+<p>For more details, feel free to check <code>heap.hpp</code> and <code>heap.cpp</code> in <code>lib</code> directory.</p>
+
+</section>
+<section	id="application">
+<h2>Application</h2>
+
+<section	id="heapsort">
+<h3>Heap Sort</h3>
+
+<ul>
+<li>Build a heap from a vector, and the time complexity: <code>O(N)</code></li>
+<li>Repeatedly pop an element from the heap until it it empty, and the time complexity <code>O(NlogN)</code></li>
+</ul>
+<pre><code class="cpp">vector&lt;int&gt; heapSort(const vector&lt;int&gt;&amp; v) {
+    vector&lt;int&gt; sorted;
+    // heapify
+    Heap h(v);
+    // pop until heap is empty
+    while (!h.isEmpty()) {
+        sorted.push_back(h.pop());
+    }
+
+    return sorted;
+}</code></pre>
+
+</section>
+<section	id="topkfrequentelements">
+<h3>Top K Frequent Elements</h3>
+
+<blockquote>
+<p>Given an integer array <code>nums</code> and an integer <code>k</code>, return the <code>k</code> most frequent elements. You may return the answer in any order.</p>
+</blockquote>
+
+<p>There are some tricks in this problem:</p>
+
+<ul>
+<li>Customize Comparison Function for <code>priority_queue</code>. By default, <code>priority_queue</code> is a max heap, which means it is in a descending order. To keep top k frequent elements, we need convert it to min heap. That is to redefine comparison function.</li>
+</ul>
+<pre><code class="cpp">    auto cmp = [&amp;counter](int lhs, int rhs) { // capture counter variable
+        return counter[lhs] &gt; counter[rhs];
+    };
+    priority_queue&lt;int, vector&lt;int&gt;, decltype(cmp)&gt; h(cmp);</code></pre>
+
+<p>The prototype of <strong>Lambda Function</strong>: <code>[capture clause](parameter list) (mutable) (throw()) (return type) { lambda body }</code>.</p>
+
+<ul>
+<li><strong>Capture Clause</strong>: A lambda can introduce new variables in its body (in C++14), and it can also access, or capture, variables from the surrounding scope. A lambda begins with the capture clause. It specifies which variables are captured, and whether the capture is by value or by reference. Variables that have the ampersand (<code>&amp;</code>) prefix are accessed by reference and variables that don&#8217;t have it are accessed by value.</li>
+<li><strong>Mutable Specification</strong>: Typically, a lambda&#8217;s function call operator is const-by-value, but use of the mutable keyword cancels this out. It doesn&#8217;t produce mutable data members. The mutable specification enables the body of a lambda expression to modify variables that are captured by value. Some of the examples later in this article show how to use mutable.</li>
+<li><strong>Return Type</strong>: The return type of a lambda expression is automatically deduced. You don&#8217;t have to use the auto keyword unless you specify a trailing-return-type. The trailing-return-type resembles the return-type part of an ordinary function or member function. However, the return type must follow the parameter list, and you must include the trailing-return-type keyword <code>-&gt;</code> before the return type.</li>
+</ul>
+<pre><code class="cpp">auto x1 = [](int i) -&gt; int { return i; };</code></pre>
+
+<p>The complete solution is shown below.</p>
+<pre><code class="cpp">/**
+ * @brief capture the top k frequent elements
+ * 
+ * @param nums 
+ * @param k 
+ * @return vector&lt;int&gt; 
+ */
+vector&lt;int&gt; topKFrequent(vector&lt;int&gt;&amp; nums, int k) {
+    unordered_map&lt;int, int&gt; counter;
+    for (int val : nums) {
+        counter[val] += 1;
+    }
+
+    // min heap
+    auto cmp = [&amp;counter](int lhs, int rhs) {
+        return counter[lhs] &gt; counter[rhs];
+    };
+    priority_queue&lt;int, vector&lt;int&gt;, decltype(cmp)&gt; h(cmp);
+    for (pair&lt;int, int&gt; p : counter) {
+        h.push(p.first);
+        if (h.size() &gt; k) {
+            h.pop();
+        }
+    }
+
+    // output
+    vector&lt;int&gt; result(k);
+    for (int i = k-1; i &gt;= 0; i--) {
+        result[i] = h.top();
+        h.pop();
+    }
+
+    return result;
+}</code></pre>
+
+</section>
+<section	id="kthlargestelement">
+<h3>Kth Largest Element</h3>
+
+<blockquote>
+<p>Design a class to find the <code>kth</code> largest element in a stream. Note that it is the <code>kth</code> largest element in the sorted order, not the <code>kth</code>distinct element. </p>
+
+<p>Implement <code>KthLargest</code> class: </p>
+
+<ul>
+<li><code>KthLargest(int k, int[] nums)</code> Initializes the object with the integer k and the stream of integers nums.</li>
+<li><code>int add(int val)</code> Appends the integer val to the stream and returns the element representing the kth largest element in the stream.</li>
+</ul>
+</blockquote>
+
+<p>To make it clear, an example is shown as below:</p>
+<pre><code class="cpp">// Input
+[&quot;KthLargest&quot;, &quot;add&quot;, &quot;add&quot;, &quot;add&quot;, &quot;add&quot;, &quot;add&quot;]
+[[3, [4, 5, 8, 2]], [3], [5], [10], [9], [4]]
+// Output
+[null, 4, 5, 5, 8, 8]
+
+// Explanation
+KthLargest kthLargest = new KthLargest(3, [4, 5, 8, 2]);
+kthLargest.add(3);   // return 4
+kthLargest.add(5);   // return 5
+kthLargest.add(10);  // return 5
+kthLargest.add(9);   // return 8
+kthLargest.add(4);   // return 8</code></pre>
+
+<p>Our algorithm is to maintain a min heap and keep its size to be k so that the kth largest element is the root element in the min heap.</p>
+
+<p>Note: the size of <code>pq</code> may be less than k.</p>
+<pre><code class="cpp">// hpp
+class KthLargest {
+public:
+    KthLargest(int k, vector&lt;int&gt;&amp; nums);
+    int add(int val);
+
+    priority_queue&lt; int, vector&lt;int&gt;, std::greater&lt;int&gt; &gt; pq; // min heap
+    int kth;
+};</code></pre>
+<pre><code class="cpp">// cpp
+/**
+ * @brief Construct a new Kth Largest:: Kth Largest object
+ * Push each element in the priority queue (max heap by default). But for our algorithm,
+ * we should push it into a min heap. Keep the size of min heap to be k so that the root
+ * of the min heap is the kth largest element.
+ * 
+ * @param k
+ * @param nums
+ */
+KthLargest::KthLargest(int k, vector&lt;int&gt;&amp; nums) {
+    this-&gt;kth = k;
+    for (int val : nums) {
+        this-&gt;pq.push(val);
+    }
+
+    // keep the size of pq to be k
+    while (this-&gt;pq.size() &gt; k) {
+        this-&gt;pq.pop();
+    }
+}
+
+/**
+ * @brief append a val to max heap and return the kth largest element
+ * The trick here is to maintain a min heap and keep the heap size to be k. The kth
+ * element is the smallest one in the min heap. In the constructor, we have kept the
+ * size of pq to be k. Here we only need push new val and pop the minimum to get kth
+ * largest element.
+ *
+ * @param val
+ * @return int
+ */
+int KthLargest::add(int val) {
+    // push the given element
+    this-&gt;pq.push(val);
+    while (this-&gt;pq.size() &gt; this-&gt;kth) {
+        this-&gt;pq.pop();
+    }
+
+    return this-&gt;pq.top();
+}</code></pre>
+
+</section>
+<section	id="laststoneweight">
+<h3>Last Stone Weight</h3>
+
+<blockquote>
+<p>You are given an array of integers stones where <code>stones[i]</code> is the weight of the ith stone.<br/>
+We are playing a game with the stones. On each turn, we choose the heaviest two stones and smash them together. Suppose the heaviest two stones have weights x and y with <code>x &lt;= y</code>. The result of this smash is: </p>
+
+<ul>
+<li>If <code>x == y</code>, both stones are destroyed, and</li>
+<li>If <code>x != y</code>, the stone of weight x is destroyed, and the stone of weight y has new weight <code>y - x</code>.</li>
+</ul>
+
+<p>At the end of the game, there is at most one stone left.<br/>
+Return the smallest possible weight of the left stone. If there are no stones left, return 0.</p>
+</blockquote>
+
+<p>Finding kth elements in an ordered sequence is what <code>heap</code> is good at.</p>
+<pre><code class="cpp">/**
+ * @brief Simulate smash game with max heap.
+ * 
+ * @param stones 
+ * @return int 
+ */
+int lastStoneWeight(vector&lt;int&gt;&amp; stones) {
+    priority_queue&lt;int&gt; pq(stones.begin(), stones.end());
+    // game starts
+    int first, second;
+    while (pq.size() &gt; 1) {
+        // choose two heaviest stones
+        first = pq.top();
+        pq.pop();
+        second = pq.top();
+        pq.pop();
+        
+        // smash
+        pq.push(abs(first - second));
+    }
+
+    if (pq.empty()) return 0;
+    return pq.top();
+}</code></pre>
+
+</section>
+<section	id="thekweakestrowsinamatrix">
+<h3>The K Weakest Rows in a Matrix</h3>
+
+<blockquote>
+<p>You are given an <code>m x n</code> binary matrix mat of 1&#8217;s (representing soldiers) and 0&#8217;s (representing civilians). The soldiers are positioned in front of the civilians. That is, all the 1&#8217;s will appear to the left of all the 0&#8217;s in each row. </p>
+
+<p>A row <code>i</code> is weaker than a row <code>j</code> if one of the following is true: </p>
+
+<ul>
+<li>The number of soldiers in row <code>i</code> is less than the number of soldiers in row <code>j</code>.</li>
+<li>Both rows have the same number of soldiers and <code>i &lt; j</code>.</li>
+</ul>
+
+<p>Return the indices of the <code>k</code> weakest rows in the matrix ordered from weakest to strongest.</p>
+</blockquote>
+
+<p>The key here is to define a min heap in C++ according to the given rules:</p>
+
+<ul>
+<li>min heap: define greater (<code>lhs &gt; rhs</code>)</li>
+<li>max heap (default): define less (<code>lhs &lt; rhs</code>)</li>
+</ul>
+<pre><code class="cpp">    unordered_map&lt;int, int&gt; m;   // row num -&gt; num of soldiers on that row
+    // define comparison rules
+    auto cmp = [&amp;m](int i, int j) -&gt; bool {
+        return (m[i] &gt; m[j]) || ((m[i] == m[j]) &amp;&amp; (i &gt; j));
+    };
+    // notice: &apos;vector&lt;int&gt;&apos; is the type of the underlying container to use to store the
+    // elements
+    priority_queue&lt;int, vector&lt;int&gt;, decltype(cmp)&gt; pq(cmp);</code></pre>
+
+<p>The full code is shown as follows.</p>
+<pre><code class="cpp">/**
+ * @brief
+ * A row i is weaker than a row j if one of the following is true:
+ *  - The number of soldiers in row i is less than the number of soldiers in row j.
+ *  - Both rows have the same number of soldiers and i &lt; j.
+ * @param mat
+ * @param k
+ * @return vector&lt;int&gt;: k weakest rows in the given matrix.
+ */
+vector&lt;int&gt; kWeakestRows(vector&lt;vector&lt;int&gt; &gt;&amp; mat, int k) {
+    unordered_map&lt;int, int&gt; m;   // row num -&gt; num of soldiers on that row
+
+    // define comparison rules
+    auto cmp = [&amp;m](int i, int j) -&gt; bool {
+        return (m[i] &gt; m[j]) || ((m[i] == m[j]) &amp;&amp; (i &gt; j));
+    };
+    // notice: &apos;vector&lt;int&gt;&apos; is the type of the underlying container to use to store the
+    // elements
+    priority_queue&lt;int, vector&lt;int&gt;, decltype(cmp)&gt; pq(cmp);
+
+    for (int row = 0; row &lt; mat.size(); row++) {
+        for (int col = 0; col &lt; mat[0].size(); col++) {
+            if (mat[row][col] == 1) {
+                m[row] += 1;
+            }
+        }
+        pq.push(row);
+    }
+
+    vector&lt;int&gt; result;
+    // get k weakest rows
+    for (int i = 0; i &lt; k; i++) {
+        result.push_back(pq.top());
+        pq.pop();
+    }
+
+    return result;
+}</code></pre>
+
+</section>
+<section	id="kthsmallestelementinasortedmatrix">
+<h3>Kth Smallest Element in a Sorted Matrix</h3>
+
+<blockquote>
+<p>Given an n x n matrix where each of the rows and columns is sorted in ascending order, return the <code>kth</code> smallest element in the matrix. </p>
+
+<p>Note that it is the <code>kth</code> smallest element in the sorted order, not the <code>kth</code> distinct element. </p>
+
+<p>You must find a solution with a memory complexity better than <code>O(n2)</code>.</p>
+</blockquote>
+
+<p>Generic method for Kth largest number and Kth smallest number: Notice that priority queue is actually a heap. Ascending priority queue is implemented with min heap and descending priority queue is implemented with max heap. Every time we pop an element, the maximum element is popped in max heap and the minimum one in min heap.</p>
+
+<ul>
+<li>Kth largest: maintain a min heap and keep the size of it to be k. <code>pq.pop()</code> will get rid of all smaller numbers.</li>
+<li>Kth smallest: maintain a max heap and keep the size of it to be k. <code>pq.pop()</code> will remove all larger numbers.</li>
+</ul>
+<pre><code class="cpp">/**
+ * @brief return kth smallest number in an semi-ordered matrix
+ * &apos;semi-ordered&apos; means two properties are guaranteed:
+ *
+ * - each row is ordered
+ * - each colum is ordered
+ *
+ * One brute way is ignore those properties and put all numbers into a max heap with 
+ * the size of k. Then the root of the max heap is the answer.
+ * 
+ * Time complexity: O(K) + O(N * log(K))
+ * @param matrix
+ * @param k
+ * @return int
+ */
+int kthSmallest(vector&lt;vector&lt;int&gt;&gt;&amp; matrix, int k) {
+    priority_queue&lt;int&gt; pq;
+    for (int i = 0; i &lt; matrix.size(); i++) {
+        for (int j = 0; j &lt; matrix[0].size(); j++) {
+            pq.push(matrix[i][j]);
+            while (pq.size() &gt; k) {
+                pq.pop();
+            }
+        }
+    }
+
+    return pq.top();
+}</code></pre>
+
+</section>
+<section	id="meetingroomsii">
+<h3>Meeting Rooms II</h3>
+
+<blockquote>
+<p>Given an array of meeting time intervals intervals where <code>intervals[i] = [starti, endi]</code>, return the minimum number of conference rooms required.</p>
+</blockquote>
+
+<p>We need to allocate room to meetings that occur earlier. Hence we are going to sort all input intervals in terms of start time. We use a min heap to track when the allocated rooms get free (end time).</p>
+
+<ul>
+<li>Customize Comparison Function</li>
+</ul>
+<pre><code class="cpp">// customize cmp function for sort: ascending order
+    auto cmp = [&amp;intervals](vector&lt;int&gt; left, vector&lt;int&gt; right) -&gt; bool {
+        return left[0] &lt; right[0];
+    };
+    std::sort(intervals.begin(), intervals.end(), cmp);
+
+    // customize cmp function for pq (arg list: the type of key of intervals)
+    // min heap: greater, max heap: less
+    auto cmp2 = [&amp;intervals](vector&lt;int&gt; left, vector&lt;int&gt; right) -&gt; bool {
+        return left[1] &gt; right[1];
+    };
+    priority_queue&lt;vector&lt;int&gt;, vector&lt; vector&lt;int&gt; &gt;, decltype(cmp2)&gt; pq(cmp2);</code></pre>
+
+<p>Full code is shown as below:</p>
+<pre><code class="cpp">/**
+ * @brief We need to allocate room to meetings that occur earlier. Hence we are going
+ * to sort all input intervals in terms of start time. We use a min heap to track when
+ * the allocated rooms get free (end time).
+ * 
+ * There are two scenarios when a new request comes:
+ *  - the start time of new meeting is greater than the min in the min heap, meaning 
+ * it can use that room. We pop the min and push the end time of the new meeting into
+ * the min heap.
+ *  - the start time of new meeting is smaller than the min in the min heap, we have
+ * to allocate a new room for it. Room counter increases one and push the end time of
+ * the new meeting into the heap.
+ * 
+ * @param intervals 
+ * @return int 
+ */
+int minMeetingRooms(vector&lt; vector&lt;int&gt; &gt;&amp; intervals) {
+    // customize cmp function for sort: ascending order
+    auto cmp = [&amp;intervals](vector&lt;int&gt; left, vector&lt;int&gt; right) -&gt; bool {
+        return left[0] &lt; right[0];
+    };
+    std::sort(intervals.begin(), intervals.end(), cmp);
+
+    // customize cmp function for pq (arg list: the type of key of intervals)
+    // min heap: greater, max heap: less
+    auto cmp2 = [&amp;intervals](vector&lt;int&gt; left, vector&lt;int&gt; right) -&gt; bool {
+        return left[1] &gt; right[1];
+    };
+    priority_queue&lt;vector&lt;int&gt;, vector&lt; vector&lt;int&gt; &gt;, decltype(cmp2)&gt; pq(cmp2);
+
+    // allocate rooms
+    int room_counter = 0;
+    for (vector&lt;int&gt; meeting : intervals) {
+        if (pq.empty()) {
+            room_counter++;
+            pq.push(meeting);
+        } else {
+            if (pq.top()[1] &gt; meeting[0]) {
+                // no free room
+                room_counter++;
+                pq.push(meeting);
+            } else {
+                // available
+                pq.pop();
+                pq.push(meeting);
+            }
+        }
+    }
+
+    return room_counter;
+}</code></pre>
+
+</section>
+<section	id="kclosestpointtoorigin">
+<h3>K Closest Point to Origin</h3>
+
+<blockquote>
+<p>Given an array of points where <code>points[i] = [xi, yi]</code> represents a point on the X-Y plane and an integer <code>k</code>, return the <code>k</code> closest points to the origin <code>(0, 0)</code>. </p>
+
+<p>The distance between two points on the X-Y plane is the Euclidean distance (i.e., <code>√(x1 - x2)^2 + (y1 - y2)^2)</code>. </p>
+
+<p>You may return the answer in any order. The answer is guaranteed to be unique (except for the order that it is in).</p>
+</blockquote>
+
+<p>Full code is shown as below,</p>
+<pre><code class="cpp">double EuclideanDistanceToOrigin(int i, int j) {
+    return sqrt(pow(i, 2) + pow(j, 2));
+}
+
+/**
+ * @brief return k closest points to origin
+ * Since we want k closest points, we need maintain a max heap and keep its size to be k.
+ * @param points 
+ * @param k 
+ * @return vector&lt; vector&lt;int&gt; &gt; 
+ */
+vector&lt; vector&lt;int&gt; &gt; kClosest(vector&lt; vector&lt;int&gt; &gt;&amp; points, int k) {
+    auto cmp = [&amp;points](vector&lt;int&gt; left, vector&lt;int&gt; right) -&gt; bool {
+        return EuclideanDistanceToOrigin(left[0], left[1]) &lt; EuclideanDistanceToOrigin(right[0], right[1]);
+    };
+    priority_queue&lt;vector&lt;int&gt;, vector&lt; vector&lt;int&gt; &gt;, decltype(cmp)&gt; pq(cmp);
+
+    for (auto&amp; point : points) {
+        pq.push(point);
+        while (pq.size() &gt; k) {
+            pq.pop();
+        }
+    }
+
+    vector&lt; vector&lt;int&gt; &gt; closest;
+    while (!pq.empty()) {
+        closest.push_back(pq.top());
+        pq.pop();
+    }
+
+    return closest;
+}</code></pre>
+
+</section>
+<section	id="minimumcosttoconnectsticks">
+<h3>Minimum Cost to Connect Sticks</h3>
+
+<blockquote>
+<p>You have some number of sticks with positive integer lengths. These lengths are given as an array sticks, where <code>sticks[i]</code> is the length of the <code>ith</code> stick. </p>
+
+<p>You can connect any two sticks of lengths <code>x</code> and <code>y</code> into one stick by paying a cost of <code>x + y</code>. You must connect all the sticks until there is only one stick remaining. </p>
+
+<p>Return the minimum cost of connecting all the given sticks into one stick in this way.</p>
+</blockquote>
+
+<p>The observation is that we should connect two smallest one at each step to get the minimum cost. That&#8217;s where min heap comes into stage.</p>
+<pre><code class="cpp">/**
+ * @brief return minimum cost to connect sticks
+ * The observation is that we should connect two smallest one at each step to get
+ * the minimum cost. That&apos;s where min heap comes into stage.
+ *
+ * @param sticks
+ * @return int
+ */
+int connectSticks(vector&lt;int&gt;&amp; sticks) {
+    priority_queue&lt;int, vector&lt;int&gt;, std::greater&lt;int&gt;&gt; pq(sticks.begin(), sticks.end());
+    int cost = 0;
+    int s1, s2;
+    while (pq.size() &gt; 1) {
+        // retrieve two smallest sticks
+        s1 = pq.top();
+        pq.pop();
+        s2 = pq.top();
+        pq.pop();
+        cost += s1 + s2;
+        pq.push(s1 + s2);
+    }
+
+    return cost;
+}</code></pre>
+
+</section>
+<section	id="furthestbuilding">
+<h3>Furthest Building</h3>
+
+<blockquote>
+<p>You are given an integer array <code>heights</code> representing the heights of buildings, some <code>bricks</code>, and some <code>ladders</code>. </p>
+
+<p>You start your journey from building <code>0</code> and move to the next building by possibly using bricks or ladders. </p>
+
+<p>While moving from building <code>i</code> to building <code>i+1</code> (0-indexed) </p>
+
+<ul>
+<li>If the current building&#8217;s height is greater than or equal to the next building&#8217;s height, you do not need a ladder or bricks.</li>
+<li>If the current building&#8217;s height is less than the next building&#8217;s height, you can either use one ladder <strong>or</strong> (<code>h[i+1] - h[i]</code>) bricks.</li>
+</ul>
+
+<p>Return the furthest building index (0-indexed) you can reach if you use the given ladders and bricks optimally.</p>
+</blockquote>
+
+<p>The key idea is to use k ladders on top k positive <code>margins[0, where we are now]</code>.</p>
+
+<p>We can use a min heap to track top k positive margins so far.</p>
+<pre><code class="cpp">/**
+ * @brief return the furthest building we can reach from building[0]
+ * There are something to think about:
+ * 1. when do I need bricks or ladders when going from one building to another?
+ *   building[i] &lt; building[i+1]
+ * 2. Which tool should I use when it is needed to reach a optimal outcome?
+ *   The basic idea is to use ladder for maximum cost when going from one building
+ * to another. To achieve that, we have an algorithm as follows:
+ *   - Use ladders for top k margins, where k is the size of ladders
+ *   - If no bricks available, we are done.
+ * 
+ * To be short, keep k ladders applied on top k current margins
+ * 
+ * @param heights 
+ * @param bricks 
+ * @param ladders 
+ * @return int 
+ */
+int furthestBuilding(vector&lt;int&gt;&amp; heights, int bricks, int ladders) {
+    vector&lt;int&gt; margins(heights.size()-1, 0); // height margin of (i, i+1)
+    for (int i = 0; i &lt; heights.size() - 1; i++) {
+        margins[i] = heights[i+1] - heights[i];
+    }
+
+    priority_queue&lt;int, vector&lt;int&gt;, std::greater&lt;int&gt;&gt; pq; // min heap
+    int i = 0;
+    for (; i &lt; margins.size(); i++) {
+       if (margins[i] &gt; 0) {
+           if (ladders &gt; 0) {
+               // use ladders first
+               ladders--;
+               pq.push(margins[i]);
+           } else {
+               // use bricks to replace the minimum margin in current margins
+               pq.push(margins[i]);
+               bricks -= pq.top();
+               if (bricks &lt; 0) break;
+               pq.pop();
+           }
+       }
+    }
+
+    return i;
+}</code></pre>
+
+</section>
+<section	id="findmedianfromdatastream">
+<h3>Find Median from Data Stream</h3>
+
+<blockquote>
+<p>The median is the middle value in an ordered integer list. If the size of the list is even, there is no middle value and the median is the mean of the two middle values. </p>
+
+<ul>
+<li>For example, for <code>arr = [2,3,4]</code>, the median is <code>3</code>.</li>
+<li>For example, for <code>arr = [2,3]</code>, the median is <code>(2 + 3) / 2 = 2.5</code>.</li>
+</ul>
+
+<p>Implement the MedianFinder class: </p>
+
+<ul>
+<li><code>MedianFinder()</code> initializes the <code>MedianFinder</code> object.</li>
+<li><code>void addNum(int num)</code> adds the integer num from the data stream to the data structure.</li>
+<li><code>double findMedian()</code> returns the median of all elements so far. Answers within 10^&#8211;5 of the actual answer will be accepted.</li>
+</ul>
+</blockquote>
+
+<p>Using two heaps to track left and right half of input stream.</p>
+<pre><code class="cpp">/**
+ * @brief Construct a new Median Finder:: Median Finder object
+ * Maintain left half of sequence with max heap (lo) and maintain right half with 
+ * min heap (hi).
+ *   - if size = 2 * n + 1, then keep lo holding n + 1 numbers and hi holding n numbers.
+ *   - if size = 2 * n, then both of lo and hi hold n numbers.
+ */
+MedianFinder::MedianFinder() {}
+
+void MedianFinder::addNum(int num) {
+    lo.push(num);
+
+    // balancing step: pop the max of lo (max heap) to hi (min heap) 
+    // notice that lo.top() is not necessarily &apos;num&apos;, it should be the max number of lo
+    hi.push(lo.top());
+    lo.pop();
+
+    // keep our presumed property
+    if (lo.size() &lt; hi.size()) {
+        lo.push(hi.top());
+        hi.pop();
+    }
+}
+
+double MedianFinder::findMedian() {
+    return lo.size() &gt; hi.size() ? lo.top() : ((double)lo.top() + hi.top()) * 0.5;
+}</code></pre>
+
+</section>
+</section>
+<p><EndMarkdown></p>
