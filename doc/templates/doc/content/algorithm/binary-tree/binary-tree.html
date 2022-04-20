@@ -1,0 +1,443 @@
+{% load static %}
+
+<!-- Insert title here -->
+
+<h1 id="binarytree">Binary Tree</h1>
+
+<h2 id="tableofcontents">Table of Contents</h2>
+
+<ul>
+<li><a href="#problems">Problems</a>
+
+<ul>
+<li><a href="#countunivaluesubtrees">Count Univalue Subtrees</a></li>
+<li><a href="#connectii">Connect II</a></li>
+<li><a href="#non-recursiveinordertraversal">Non-recursive Inorder Traversal</a></li>
+<li><a href="#lowestcommonancestor">Lowest Common Ancestor</a></li>
+<li><a href="#serializeanddeserialize">Serialize and Deserialize</a></li>
+</ul></li>
+</ul>
+
+<p><TableEndMark></p>
+<!-- DO NOT ADD EndOfTable MANUALLY -->
+
+<section	id="problems">
+<h2>Problems</h2>
+
+<section	id="countunivaluesubtrees">
+<h3>Count Univalue Subtrees</h3>
+
+<blockquote>
+<p>Given the root of a binary tree, return the number of uni-value subtrees. </p>
+
+<p>A uni-value subtree means all nodes of the subtree have the same value.</p>
+</blockquote>
+
+<p>There are two cases where coalescence will happen (increase 1):</p>
+
+<ul>
+<li>only one child and root-&gt;val == child-&gt;val and child is UnivalTree.</li>
+<li>two children and root has the same val and count(left) == count(right) == 1 and both of them are UnivalTree.</li>
+</ul>
+<pre><code class="cpp">/**
+ * @brief A uni-value subtree means all nodes of the subtree have the same value.
+ * The solution is based on that of isUnivalTree.
+ *
+ * There are two cases where coalescence will happen (increase 1):
+ * 1. only one child and root-&gt;val == child-&gt;val and child is UnivalTree
+ * 2. two children and root has the same val and count(left) == count(right) == 1 and
+ * both of them are UnivalTree
+ *
+ * count(root) = count(left) + count(right) otherwise.
+ * @param root
+ * @return int
+ */
+int BinaryTree::countUnivalSubtreesHelper(TreeNode* root,
+                                          unordered_map&lt;TreeNode*, bool&gt;&amp; isUnival) {
+    if (root == nullptr) return 0;   // corner case
+
+    // both children are nullptr
+    if ((root-&gt;left == nullptr) &amp;&amp; (root-&gt;right == nullptr)) {
+        isUnival[root] = true;
+        return 1;
+    }
+    // only left: let it go down first, check if it is UnivalSubtree when backtracking
+    if (root-&gt;right == nullptr) {
+        int count = countUnivalSubtreesHelper(root-&gt;left, isUnival);   // go down first
+        if ((isUnival[root-&gt;left]) &amp;&amp; (root-&gt;val == root-&gt;left-&gt;val)) {
+            isUnival[root] = true;
+            return ++count;
+        }
+        return count;
+    }
+    // only right
+    if ((root-&gt;left == nullptr)) {
+        int count = countUnivalSubtreesHelper(root-&gt;right, isUnival);
+        if ((isUnival[root-&gt;right]) &amp;&amp; (root-&gt;val == root-&gt;right-&gt;val)) {
+            isUnival[root] = true;
+            return ++count;
+        }
+        return count;
+    }
+    // both are non-nullptr: 2 cases
+    int leftCount = countUnivalSubtreesHelper(root-&gt;left, isUnival);
+    int rightCount = countUnivalSubtreesHelper(root-&gt;right, isUnival);
+    int count = leftCount + rightCount;
+    // case 1: coalesce
+    if ((root-&gt;left != nullptr) &amp;&amp; isUnival[root-&gt;left] &amp;&amp;
+        (root-&gt;val == root-&gt;left-&gt;val) &amp;&amp; (root-&gt;right != nullptr) &amp;&amp;
+        isUnival[root-&gt;right] &amp;&amp; (root-&gt;val == root-&gt;right-&gt;val)) {
+        isUnival[root] = true;
+        return ++count;
+    }
+    // case 2: no coalescence
+    isUnival[root] = false;
+    return count;
+}
+
+int BinaryTree::countUnivalSubtrees(TreeNode* root) {
+    unordered_map&lt;TreeNode*, bool&gt; isUnival;
+    return countUnivalSubtreesHelper(root, isUnival);
+}</code></pre>
+
+<p>Key:</p>
+
+<ul>
+<li>How to track state of each node: <code>unordered_map</code> or <code>vector</code>.</li>
+<li>How to master down stream and up stream (backtracking): code after recursive call is to handle backtracking.</li>
+<li><code>return i++</code> != <code>return ++i</code>.</li>
+</ul>
+
+</section>
+<section	id="connectii">
+<h3>Connect II</h3>
+
+<blockquote>
+<p>Populate each next pointer to point to its next right node. If there is no next right node, the next pointer should be set to NULL. </p>
+
+<p>Initially, all next pointers are set to NULL.</p>
+</blockquote>
+
+<p>The key to this problem is to practice how to traverse tree in level order. Particularly, solve all nodes in each level once at a time.</p>
+
+<p>At each loop, we will pop all nodes (at the same level) and push all 1-gen children of them.</p>
+<pre><code class="cpp">Node* connect2(Node* root) {
+    if (root == nullptr) return nullptr;   // corner case
+    queue&lt;Node*&gt; que;
+    que.push(root);
+    while (!que.empty()) {
+        // solve all nodes in a level at once
+        int size = que.size();
+        Node* last = nullptr;   // save previous node of &apos;cur&apos;
+        for (int i = 0; i &lt; size; i++) {
+            Node* cur = que.front();
+            que.pop();
+
+            if (cur-&gt;left != nullptr) que.push(cur-&gt;left);
+            if (cur-&gt;right != nullptr) que.push(cur-&gt;right);
+
+            if (last != nullptr) last-&gt;next = cur;   // connect
+            last = cur;                              // update last
+        }
+    }
+
+    return root;
+}</code></pre>
+
+</section>
+<section	id="non-recursiveinordertraversal">
+<h3>Non-recursive Inorder Traversal</h3>
+
+<blockquote>
+<p>Given a tree, inorder traverse the tree in a non-recursive way.</p>
+</blockquote>
+
+<p>Notice the inorder traversal follows pattern of (left) root (right). We will resort to greedy algorithm to solve it.</p>
+
+<ul>
+<li>find the leftmost node and print it out.</li>
+<li>print out root (which is on the top of the stack) and put pointer to right child if possible. (repeat last step)</li>
+</ul>
+<pre><code class="cpp">/**
+ * @brief The basic idea is to solve the leftmost leave node. If it has right child,
+ * serve right child as the root node, and solve its leftmost leave node.
+ *
+ * So the basic problem is solve root and left child, which is applied to any root node.
+ *
+ * 1) Create an empty stack S.
+ * 2) Initialize current node as root
+ * 3) Push the current node to S and set current = current-&gt;left until current is NULL
+ * 4) If current is NULL and stack is not empty then
+ *      a) Pop the top item from stack.
+ *      b) Print the popped item, set current = popped_item-&gt;right
+ *      c) Go to step 3.
+ * 5) If current is NULL and stack is empty then we are done.
+ * @param root
+ * @param result
+ */
+void BinaryTree::inorderTraversalHelperNR(TreeNode* root, vector&lt;int&gt;&amp; result) {
+    if (root == nullptr) return;
+    stack&lt;TreeNode*&gt; s;
+    TreeNode* ptr = root;
+    while ((ptr != nullptr) || (!s.empty())) {
+        while (ptr != nullptr) {   // find the leftmost child
+            s.push(ptr);
+            ptr = ptr-&gt;left;
+        }
+        // print current and relay to right child
+        if ((ptr == nullptr) &amp;&amp; (!s.empty())) {
+            TreeNode* popped = s.top();
+            s.pop();
+            result.push_back(popped-&gt;val);
+            ptr = popped-&gt;right;
+        }
+    }
+}</code></pre>
+
+</section>
+<section	id="lowestcommonancestor">
+<h3>Lowest Common Ancestor</h3>
+
+<blockquote>
+<p>Given a binary tree, find the lowest common ancestor (LCA) of two given nodes in the tree. </p>
+
+<p>According to the definition of LCA on Wikipedia: &#8220;The lowest common ancestor is defined between two nodes p and q as the lowest node in T that has both p and q as descendants (where we allow a node to be a descendant of itself).&#8221;</p>
+</blockquote>
+
+<p>Our solution is to search two nodes first and record two search path. Two search paths must follow patterns:</p>
+<pre><code class="bash"># c means common node, d means different nodes
+p_path: c c c c d d d d d
+q_path: c c c c d d</code></pre>
+
+<p>Therefore, we just need to find the last common node.</p>
+<pre><code class="cpp">/**
+ * @brief search and save search path for target
+ *
+ * @param root
+ * @param target
+ * @param path
+ */
+bool BinaryTree::searchHelper(TreeNode* root, TreeNode* target, vector&lt;TreeNode*&gt;&amp; path) {
+    if (root == nullptr) return false;
+    if (root == target) {
+        // found
+        path.push_back(target);
+        return true;
+    }
+
+    path.push_back(root);
+    // left search
+    if (searchHelper(root-&gt;left, target, path)) {
+        return true;
+    }
+    // right search
+    if (searchHelper(root-&gt;right, target, path)) {
+        return true;
+    }
+        
+    path.pop_back();
+    return false;
+}
+
+/**
+ * @brief find the lowest common ancestor (LCA) of two given nodes in the tree.
+ * The lowest common ancestor is defined between two nodes p and q as the lowest node in T
+ * that has both p and q as descendants (where we allow a node to be a descendant of
+ * itself).
+ *
+ * Notice all node values are UNIQUE. Two paths must follow:
+ *
+ * p_path: (common path) -&gt; other nodes
+ * q_path: (common path) -&gt; other nodes
+ *
+ * - Searching p and q with DFS and recording search path for them.
+ * - The lowest common ancestor is the rightmost common node of two paths.
+ *
+ * @param root
+ * @param p
+ * @param q
+ * @return TreeNode*: the pointer to lowest common ancestor of p and q
+ */
+TreeNode* BinaryTree::lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+    // search p and q
+    vector&lt;TreeNode*&gt; p_path;
+    vector&lt;TreeNode*&gt; q_path;
+    searchHelper(root, p, p_path);
+    searchHelper(root, q, q_path);
+
+    // find rightmost common node
+    int lca_idx = 0;
+    int size = min(p_path.size(), q_path.size());
+    for (int i = 0; i &lt; size; i++) {
+        if (p_path[i] == q_path[i]) {
+            lca_idx = i;
+        } else {
+            break;
+        }
+    }
+
+    return p_path[lca_idx];
+}</code></pre>
+
+<p>Key:</p>
+
+<ul>
+<li>Searching target and recording path worth being discussed here. This is a pattern of finding one solution path and recording the path.</li>
+</ul>
+<pre><code class="cpp">bool searchPath(TreeNode* root, TreeNode* target, vector&lt;TreeNode*&gt;&amp; path) {
+    // base case
+
+    // found
+    if (found) {
+        path.push_back(root);
+        return true;
+    }
+
+    // not found
+    path.push_back(root); // record
+    for (type choice: choices) {
+        if (choice works) { // meaning return true
+            return true;
+        }
+    }
+
+    // all choices through this node failed
+    path.pop_back() // erase
+    return false;
+}</code></pre>
+
+</section>
+<section	id="serializeanddeserialize">
+<h3>Serialize and Deserialize</h3>
+
+<ul>
+<li>Serialize:</li>
+</ul>
+<pre><code class="cpp">/**
+ * @brief serialize a tree into a string stream.
+ * The key is to find a sequence that can save meta data and relationship between nodes.
+ *
+ * As we did before, we can build a tree from the combination of inorder sequence and
+ * preorder sequence, or that of inorder sequence and postorder sequence. Is it possible
+ * to build tree with only one sequence? The answer is YES. But we need to make a minor
+ * modification to three traversals. That is adding &apos;null&apos; string to indicate nullptr.
+ *
+ * So we have four ways to serialize and deserialize a tree.
+ *
+ * - DFS includes 1. preorder sequence, 2. inorder sequence, 3. postorder sequence.
+ * - BFS includes 4. level order sequence.
+ *
+ * We will implement preorder sequence.
+ *
+ * @param root
+ * @return string
+ */
+string serialize(TreeNode* root) {
+    if (root == nullptr) return &quot;&quot;;
+    string stream;
+    string delimiter = &quot;,&quot;;
+    // iterative implementation of preorder traversal
+    stack&lt;TreeNode*&gt; s;
+    s.push(root);
+    while (!s.empty()) {
+        TreeNode* cur = s.top();
+        s.pop();
+        // serialize current node (maybe nullptr)
+        if (cur == nullptr) {
+            stream += string(&quot;null&quot;) + delimiter;
+        } else {
+            // convert integer to a string
+            stringstream ss;
+            ss &lt;&lt; cur-&gt;val;
+            string str = ss.str();
+            stream += str + delimiter;
+            // push right first, FILO
+            s.push(cur-&gt;right);
+            s.push(cur-&gt;left);
+        }
+    }
+
+    // delete the last &apos;,&apos;
+    stream.pop_back();
+    return stream;
+}</code></pre>
+
+<ul>
+<li>Deserialize:</li>
+</ul>
+<pre><code class="cpp">/**
+ * @brief deserialize a string stream and build a tree.
+ * Deserialize is a reverse operation of serialization. We can solve it with a stack.
+ * 
+ * Decode stream by delimiter is important.
+ * 
+ * The stack is used to cache nodes being processed:
+ * - if left and right children of top node are solved, then pop it.
+ * - if left child is not solved, link it with the new node (if tokens[i] is not
+ * &quot;null&quot; or nullptr (if tokens[i] is &quot;null&quot;). Here we assume it is &quot;null&quot; and update
+ * it if not &quot;null&quot;.
+ * - update i and push(new node) if new node is not nullptr.
+ * 
+ * @param data
+ * @return TreeNode*
+ */
+TreeNode* deserialize(string stream) {
+    if (stream.size() == 0) return nullptr;
+    vector&lt;string&gt; tokens;
+    // separate stream by delimiter &apos;,&apos;
+    string delimiter = &quot;,&quot;;
+    size_t pos = 0;
+    string token;
+    while ((pos = stream.find(delimiter)) != string::npos) {
+        token = stream.substr(0, pos);
+        tokens.push_back(token);
+        stream.erase(0, pos + delimiter.length());   // remove solved token
+    }
+    tokens.push_back(stream);   // the last token
+
+    for (string&amp; token: tokens) {
+        std::cout &lt;&lt; token &lt;&lt; std::endl;
+    }
+
+    if (tokens.size() == 0) return nullptr;   // no token in stream
+
+    // Initialize nodes to point to unsolved, a placeholder
+    TreeNode* unsolved = new TreeNode();
+    TreeNode* root = new TreeNode(std::stoi(tokens[0]), unsolved, unsolved);
+    stack&lt;TreeNode*&gt; s;
+    s.push(root);
+    int size = tokens.size();
+    int i = 1;
+    while ((i &lt; size) &amp;&amp; (!s.empty())) {
+        TreeNode* cur = s.top();
+        // if current node is solved, meaning two children have been assigned
+        if ((cur-&gt;left != unsolved) &amp;&amp; (cur-&gt;right != unsolved)) {
+            s.pop();
+            continue;
+        }
+
+        TreeNode* node = nullptr;   // assume tokens[i] is &quot;null&quot;
+        if (tokens[i] != &quot;null&quot;) {
+            // update: create new node if tokens[i] != &quot;null&quot;
+            node = new TreeNode(std::stoi(tokens[i]), unsolved, unsolved);
+        }
+
+        // link to current node
+        if (cur-&gt;left == unsolved) {
+            cur-&gt;left = node;
+        } else {
+            cur-&gt;right = node;
+        }
+
+        // update
+        i++;
+        if (node != nullptr) s.push(node);
+    }
+
+    delete unsolved;
+    return root;
+}</code></pre>
+
+</section>
+</section>
+<p><EndMarkdown></p>
